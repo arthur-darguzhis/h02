@@ -20,7 +20,7 @@ export class Blog {
   @Prop({ required: true, default: false })
   isMembership: boolean;
 
-  @Prop({ default: new Date().getTime() })
+  @Prop({ default: new Date().toISOString() })
   createdAt: string;
 }
 
