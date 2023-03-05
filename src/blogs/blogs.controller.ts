@@ -85,7 +85,15 @@ export class BlogsController {
     @Param('blogId') blogId: string,
     @Body() dto: CreatePostWithoutBlogIdDTO,
   ) {
-    return this.postsService.createPost({ ...dto, blogId });
+    try {
+      return this.postsService.createPost({ ...dto, blogId });
+    } catch (e) {
+      throw new HttpException(
+        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
+        `Blog with id: ${blogId} is not exists`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   @Put(':id')
