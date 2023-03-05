@@ -19,18 +19,35 @@ export class UsersQueryRepository {
       pageNumber,
     } = dto;
 
-    //TODO Посмотреть как у других сделанно построениен вот этих условий
     const filter = {};
-    const or = [];
+
     if (searchLoginTerm) {
-      or.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
+      const loginFilter = { login: { $regex: searchLoginTerm, $options: 'i' } };
+      filter['$or']
+        ? filter['$or']?.push(loginFilter)
+        : (filter['$or'] = [loginFilter]);
     }
 
     if (searchEmailTerm) {
-      or.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
+      const emailFilter = { email: { $regex: searchEmailTerm, $options: 'i' } };
+      filter['$or']
+        ? filter['$or']?.push(emailFilter)
+        : (filter['$or'] = [emailFilter]);
     }
 
-    filter['$or'] = or;
+    //TODO Посмотреть как у других сделанно построениен вот этих условий
+    //
+    // const filter = {};
+    // const or = [];
+    // if (searchLoginTerm) {
+    //   or.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
+    // }
+    //
+    // if (searchEmailTerm) {
+    //   or.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
+    // }
+
+    // filter['$or'] = or;
     const count = await this.userModel.countDocuments(filter);
 
     const howManySkip = (pageNumber - 1) * pageSize;
