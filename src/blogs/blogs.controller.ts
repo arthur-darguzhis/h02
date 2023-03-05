@@ -21,6 +21,7 @@ import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PaginationParameters } from '../common/types/PaginationParameters';
 import { CreatePostWithoutBlogIdDTO } from '../posts/dto/createPostWithoutBlogIdDTO';
 import { PostsService } from '../posts/posts.service';
+import { mapPostToViewModel } from '../posts/posts.mapper';
 
 @Controller('blogs')
 export class BlogsController {
@@ -86,7 +87,8 @@ export class BlogsController {
     @Body() dto: CreatePostWithoutBlogIdDTO,
   ) {
     try {
-      return this.postsService.createPost({ ...dto, blogId });
+      const post = await this.postsService.createPost({ ...dto, blogId });
+      return mapPostToViewModel(post);
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
