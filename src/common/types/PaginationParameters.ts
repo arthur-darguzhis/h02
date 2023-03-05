@@ -6,7 +6,8 @@ export class PaginationParameters {
 
   //TODO вернуть валидацию
   // @IsIn(['asc', 'desc'])
-  sortDirection = 'desc';
+  @Transform(({ value }) => (value === 'asc' ? 1 : -1))
+  sortDirection;
 
   //TODO вернуть валидацию
   // @Min(1)

@@ -29,14 +29,12 @@ export class CommentsQueryRepository {
 
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const direction = sortDirection === 'asc' ? 1 : -1;
-
     const filter = { postId: post.id };
     const count = await this.commentModel.countDocuments(filter);
     const howManySkip = (pageNumber - 1) * pageSize;
     const comments = await this.commentModel
       .find(filter)
-      .sort({ [sortBy]: direction })
+      .sort({ [sortBy]: sortDirection })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();

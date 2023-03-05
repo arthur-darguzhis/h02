@@ -24,12 +24,11 @@ export class PostsQueryRepository {
   async getPaginatedPostsList(dto: PaginatedPostListDTO, userId = null) {
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const direction = sortDirection === 'asc' ? 1 : -1;
     const count = await this.postModel.countDocuments({});
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find({})
-      .sort({ [sortBy]: direction })
+      .sort({ [sortBy]: sortDirection })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
@@ -79,14 +78,12 @@ export class PostsQueryRepository {
     await this.blogsQueryRepository.getById(blogId);
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const direction = sortDirection === 'asc' ? 1 : -1;
-
     const filter = { blogId: blogId };
     const count = await this.postModel.countDocuments(filter);
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find(filter)
-      .sort({ [sortBy]: direction })
+      .sort({ [sortBy]: sortDirection })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();

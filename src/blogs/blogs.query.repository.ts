@@ -25,11 +25,10 @@ export class BlogsQueryRepository {
 
     const count = await this.blogModel.countDocuments(filter);
 
-    const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
     const blogs = await this.blogModel
       .find(filter)
-      .sort({ [sortBy]: direction })
+      .sort({ [sortBy]: sortDirection })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
