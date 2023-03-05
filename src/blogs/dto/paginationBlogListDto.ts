@@ -6,6 +6,7 @@ export class PaginationBlogListDto extends PaginationParameters {
   @Transform(({ value }) => value.trim())
   searchNameTerm: string;
 
-  @IsIn(['name', 'description', 'websiteUrl', 'createdAt'])
+  //TODO вернуть валидацию
+  // @IsIn(['name', 'description', 'websiteUrl', 'createdAt'])
   sortBy = 'createdAt';
 }
