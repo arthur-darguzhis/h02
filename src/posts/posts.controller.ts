@@ -35,7 +35,15 @@ export class PostsController {
 
   @Get(':id')
   async getPost(@Param('id') id: string) {
-    return await this.postsQueryRepository.getById(id);
+    try {
+      return await this.postsQueryRepository.getById(id);
+    } catch (e) {
+      throw new HttpException(
+        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
+        `Post with id: ${id} is not exists`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   @Get(':postId/comments')
