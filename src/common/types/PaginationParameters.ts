@@ -1,4 +1,5 @@
 import { IsIn, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class PaginationParameters {
   sortBy = 'createdAt';
@@ -9,9 +10,11 @@ export class PaginationParameters {
 
   //TODO вернуть валидацию
   // @Min(1)
+  @Transform(({ value }) => Number(value))
   pageSize = 10;
 
   //TODO вернуть валидацию
   // @Min(1)
+  @Transform(({ value }) => Number(value))
   pageNumber = 1;
 }
