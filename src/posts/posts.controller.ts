@@ -18,6 +18,7 @@ import { PostsService } from './posts.service';
 import { PostsQueryRepository } from './posts.query.repository';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { PaginatedCommentListDTO } from '../comments/dto/paginatedCommentListDTO';
+import { mapPostToViewModel } from './posts.mapper';
 
 @Controller('posts')
 export class PostsController {
@@ -58,7 +59,8 @@ export class PostsController {
 
   @Post()
   async postPost(@Body() dto: CreatePostDTO) {
-    return this.postsService.createPost(dto);
+    const post = await this.postsService.createPost(dto);
+    return mapPostToViewModel(post);
   }
 
   @Put(':id')
