@@ -19,6 +19,7 @@ export class UsersFactory {
       isActive: true,
       login: createUserDto.login,
       email: createUserDto.email,
+      createdAt: new Date().toISOString(),
     });
   }
 }

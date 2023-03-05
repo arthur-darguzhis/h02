@@ -15,6 +15,7 @@ export class BlogsFactory {
       name: createBlogDto.name,
       description: createBlogDto.description,
       websiteUrl: createBlogDto.websiteUrl,
+      createdAt: new Date().toISOString(),
     });
   }
 }

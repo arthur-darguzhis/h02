@@ -37,7 +37,7 @@ export class Post {
 
   @Prop({ type: ExtendedLikesInfo })
   extendedLikesInfo: ExtendedLikesInfo;
-  @Prop({ required: true, default: new Date().toISOString() })
+  @Prop({ required: true })
   createdAt: string;
 }
 

@@ -12,7 +12,7 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ default: new Date().toISOString() })
+  @Prop({ required: true })
   createdAt: string;
 
   @Prop({ default: false })
