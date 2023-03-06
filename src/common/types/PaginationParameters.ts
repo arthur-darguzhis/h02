@@ -5,7 +5,7 @@ export class PaginationParameters {
   sortBy = 'createdAt';
 
   //TODO вернуть валидацию
-  @IsIn(['asc', 'desc'])
+  // @IsIn(['asc', 'desc'])
   @Transform(({ value }) => (value === 'asc' ? 1 : -1))
   sortDirection = -1;
 
