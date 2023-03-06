@@ -1,6 +1,6 @@
 import { UsersFactory } from './users.factory';
 import { UserDocument } from './users-schema';
-import { CreateUserDto } from './dto/createUserDto';
+import { CreateUserDto } from './dto/createUser.dto';
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 
@@ -12,8 +12,7 @@ export class UsersService {
   ) {}
 
   async addNewUserToSystem(dto: CreateUserDto): Promise<UserDocument> {
-    const newUser = await this.usersFactory.adminAddNewUser(dto);
-    return await this.usersRepository.save(newUser);
+    return await this.usersFactory.adminAddNewUser(dto);
   }
 
   deleteUser(userId: string) {

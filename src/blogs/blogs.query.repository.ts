@@ -3,7 +3,8 @@ import { Blog, BlogDocument } from './blogs-schema';
 import { Model } from 'mongoose';
 import { BlogViewModel, mapBlogToViewModel } from './blog.mapper';
 import { Injectable } from '@nestjs/common';
-import { PaginationBlogListDto } from './dto/paginationBlogListDto';
+import { PaginationBlogListDto } from './dto/paginationBlogList.dto';
+import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -11,8 +12,9 @@ export class BlogsQueryRepository {
 
   async getById(blogId: string): Promise<BlogViewModel | never> {
     const blog = await this.blogModel.findById(blogId);
-    if (!blog) throw new Error('');
-    //TODO здесь выкидывать исключение но какое свое или нестовское, если нестовское то проект привязывается к несту плюс там исключения для запросов
+    if (!blog) {
+      throw new EntityNotFoundException(`Blog with id: ${blogId} is not found`);
+    }
     return mapBlogToViewModel(blog);
   }
 

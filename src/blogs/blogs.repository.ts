@@ -2,7 +2,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Blog, BlogDocument } from './blogs-schema';
 import { Injectable } from '@nestjs/common';
-import { UpdateBlogDto } from './dto/updateBlogDto';
+import { UpdateBlogDto } from './dto/updateBlog.dto';
+import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()
 export class BlogsRepository {
@@ -13,25 +14,23 @@ export class BlogsRepository {
   }
 
   async findById(blogId: string): Promise<BlogDocument | null> {
-    const blog = await this.blogModel.findById(blogId);
-    if (!blog) {
-      return null;
-    }
-    return blog;
+    return this.blogModel.findById(blogId);
   }
 
   async getById(blogId: string): Promise<BlogDocument | never> {
     const blog = await this.blogModel.findById(blogId);
-    if (!blog) throw new Error('');
-    //TODO здесь выкидывать исключение но какое свое или нестовское, если нестовское то проект привязывается к несту плюс там исключения для запросов
+    if (!blog) {
+      throw new EntityNotFoundException(`Blog with id: ${blogId} is not found`);
+    }
     return blog;
   }
 
   async deleteById(blogId: string): Promise<true | never> {
     const isRemoved = await this.blogModel.findByIdAndRemove(blogId);
 
-    if (!isRemoved) throw new Error('');
-    //TODO здесь выкидывать исключение но какое свое или нестовское, если нестовское то проект привязывается к несту плюс там исключения для запросов
+    if (!isRemoved) {
+      throw new EntityNotFoundException(`Blog with id: ${blogId} is not found`);
+    }
     return true;
   }
 
@@ -39,8 +38,9 @@ export class BlogsRepository {
     const isUpdated = await this.blogModel.findByIdAndUpdate(blogId, dto, {
       new: true,
     });
-    if (!isUpdated) throw new Error('');
-    //TODO здесь выкидывать исключение но какое свое или нестовское, если нестовское то проект привязывается к несту плюс там исключения для запросов
+    if (!isUpdated) {
+      throw new EntityNotFoundException(`Blog with id: ${blogId} is not found`);
+    }
     return true;
   }
 }

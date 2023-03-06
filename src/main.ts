@@ -1,11 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import {
+  DomainExceptionFilter,
+  ErrorExceptionFilter,
+  HttpExceptionFilters,
+} from './exception.filters';
+import { validationPipe } from './validation.pipe';
+import { unhandledRejectionHandler } from './common/unhandled-rejection.handler';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(validationPipe);
+  app.useGlobalFilters(
+    new ErrorExceptionFilter(),
+    new HttpExceptionFilters(),
+    new DomainExceptionFilter(),
+  );
+  unhandledRejectionHandler();
+  app.use(cookieParser());
   await app.listen(3000);
 }
 

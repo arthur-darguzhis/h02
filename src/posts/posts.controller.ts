@@ -11,13 +11,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { PaginatedPostListDTO } from './dto/paginatedPostListDTO';
-import { CreatePostDTO } from './dto/createPostDTO';
-import { UpdatePostDTO } from './dto/updatePostDTO';
+import { PaginatedPostListDto } from './dto/paginatedPostList.dto';
+import { CreatePostDto } from './dto/createPost.dto';
+import { UpdatePostDto } from './dto/updatePost.dto';
 import { PostsService } from './posts.service';
 import { PostsQueryRepository } from './posts.query.repository';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { PaginatedCommentListDTO } from '../comments/dto/paginatedCommentListDTO';
+import { PaginatedCommentListDto } from '../comments/dto/paginatedCommentList.dto';
 import { mapPostToViewModel } from './posts.mapper';
 
 @Controller('posts')
@@ -29,7 +29,7 @@ export class PostsController {
   ) {}
 
   @Get()
-  async getPosts(@Query() dto: PaginatedPostListDTO) {
+  async getPosts(@Query() dto: PaginatedPostListDto) {
     return await this.postsQueryRepository.getPaginatedPostsList(dto);
   }
 
@@ -40,7 +40,7 @@ export class PostsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${id} is not exists`,
+        `Post with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -49,7 +49,7 @@ export class PostsController {
   @Get(':postId/comments')
   async getCommentsRelatedToPost(
     @Param('postId') postId: string,
-    @Query() paginatedCommentListDTO: PaginatedCommentListDTO,
+    @Query() paginatedCommentListDTO: PaginatedCommentListDto,
   ) {
     try {
       return await this.commentsQueryRepository.findByPostId(
@@ -59,27 +59,27 @@ export class PostsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${postId} is not exists`,
+        `Post with id: ${postId} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
   }
 
   @Post()
-  async postPost(@Body() dto: CreatePostDTO) {
+  async postPost(@Body() dto: CreatePostDto) {
     const post = await this.postsService.createPost(dto);
     return mapPostToViewModel(post);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async putPost(@Param('id') id: string, @Body() dto: UpdatePostDTO) {
+  async putPost(@Param('id') id: string, @Body() dto: UpdatePostDto) {
     try {
       return await this.postsService.updatePost(id, dto);
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${id} is not exists`,
+        `Post with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -93,7 +93,7 @@ export class PostsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${id} is not exists`,
+        `Blog with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }

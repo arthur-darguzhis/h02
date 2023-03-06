@@ -13,13 +13,13 @@ import {
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryRepository } from './blogs.query.repository';
-import { CreateBlogDto } from './dto/createBlogDto';
+import { CreateBlogDto } from './dto/createBlog.dto';
 import { mapBlogToViewModel } from './blog.mapper';
-import { UpdateBlogDto } from './dto/updateBlogDto';
-import { PaginationBlogListDto } from './dto/paginationBlogListDto';
+import { UpdateBlogDto } from './dto/updateBlog.dto';
+import { PaginationBlogListDto } from './dto/paginationBlogList.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
-import { PaginationParameters } from '../common/types/PaginationParameters';
-import { CreatePostWithoutBlogIdDTO } from '../posts/dto/createPostWithoutBlogIdDTO';
+import { PaginationQueryParametersDto } from '../common/dto/PaginationQueryParametersDto';
+import { CreatePostWithoutBlogIdDto } from '../posts/dto/createPostWithoutBlogId.dto';
 import { PostsService } from '../posts/posts.service';
 import { mapPostToViewModel } from '../posts/posts.mapper';
 
@@ -45,7 +45,7 @@ export class BlogsController {
       //TODO подумать как обрабатывать исключения в этой ситуации
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${id} is not exists`,
+        `Blog with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -54,7 +54,7 @@ export class BlogsController {
   @Get(':blogId/posts')
   async getBlogPosts(
     @Param('blogId') blogId: string,
-    @Query() dto: PaginationParameters,
+    @Query() dto: PaginationQueryParametersDto,
   ) {
     try {
       return await this.postsQueryRepository.getPaginatedPostsListByBlogId(
@@ -64,7 +64,7 @@ export class BlogsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${blogId} is not exists`,
+        `Blog with id: ${blogId} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -84,18 +84,10 @@ export class BlogsController {
   @Post(':blogId/posts')
   async createPostInBlog(
     @Param('blogId') blogId: string,
-    @Body() dto: CreatePostWithoutBlogIdDTO,
+    @Body() dto: CreatePostWithoutBlogIdDto,
   ) {
-    try {
-      const post = await this.postsService.createPost({ ...dto, blogId });
-      return mapPostToViewModel(post);
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${blogId} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const post = await this.postsService.createPost({ ...dto, blogId });
+    return mapPostToViewModel(post);
   }
 
   @Put(':id')
@@ -106,7 +98,7 @@ export class BlogsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${id} is not exists`,
+        `Blog with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -120,7 +112,7 @@ export class BlogsController {
     } catch (e) {
       throw new HttpException(
         //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${id} is not exists`,
+        `Blog with id: ${id} does not exist`,
         HttpStatus.NOT_FOUND,
       );
     }

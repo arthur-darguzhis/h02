@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './users-schema';
 import { Model } from 'mongoose';
-import { PaginatedUserListDTO } from './dto/paginatedUserListDTO';
+import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
 import { mapUserToViewModel } from './user.mapper';
 
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async getPaginatedUsersList(dto: PaginatedUserListDTO) {
+  async getPaginatedUsersList(dto: PaginatedUserListDto) {
     const {
       searchEmailTerm,
       searchLoginTerm,

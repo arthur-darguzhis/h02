@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDTO } from './dto/createPostDTO';
+import { CreatePostDto } from './dto/createPost.dto';
 import { PostsFactory } from './posts.factory';
 import { PostsRepository } from './posts.repository';
-import { UpdatePostDTO } from './dto/updatePostDTO';
+import { UpdatePostDto } from './dto/updatePost.dto';
 
 @Injectable()
 export class PostsService {
@@ -11,12 +11,12 @@ export class PostsService {
     private postsRepository: PostsRepository,
   ) {}
 
-  async createPost(dto: CreatePostDTO) {
+  async createPost(dto: CreatePostDto) {
     const newPost = await this.postsFactory.createNewPost(dto);
     return this.postsRepository.save(newPost);
   }
 
-  async updatePost(postId: string, dto: UpdatePostDTO) {
+  async updatePost(postId: string, dto: UpdatePostDto) {
     return this.postsRepository.updatePost(postId, dto);
   }
 

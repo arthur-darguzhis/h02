@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { Comment, CommentDocument } from './comments-schema';
 import { CommentViewModel, mapCommentToViewModel } from './comments.mapper';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
-import { PaginatedCommentListDTO } from './dto/paginatedCommentListDTO';
+import { PaginatedCommentListDto } from './dto/paginatedCommentList.dto';
+import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -15,14 +16,17 @@ export class CommentsQueryRepository {
 
   async getById(commentId: string) {
     const comment = await this.commentModel.findById(commentId);
-    if (!comment) throw new Error('');
-    //TODO здесь выкидывать исключение но какое свое или нестовское, если нестовское то проект привязывается к несту плюс там исключения для запросов
+    if (!comment) {
+      throw new EntityNotFoundException(
+        `Comment with id: ${commentId} is not found`,
+      );
+    }
     return mapCommentToViewModel(comment);
   }
 
   async findByPostId(
     postId: string,
-    dto: PaginatedCommentListDTO,
+    dto: PaginatedCommentListDto,
     userId = null,
   ) {
     const post = await this.postsQueryRepository.getById(postId);
