@@ -32,11 +32,11 @@ export class UsersQueryRepository {
 
     filter['$or'] = or;
     const count = await this.userModel.countDocuments(filter);
-
+    const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
     const users = await this.userModel
       .find(filter)
-      .sort(`${sortBy}: ${sortDirection}`)
+      .sort({ [sortBy]: direction })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();

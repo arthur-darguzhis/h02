@@ -25,10 +25,11 @@ export class PostsQueryRepository {
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
     const count = await this.postModel.countDocuments({});
+    const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find({})
-      .sort(`${sortBy}: ${sortDirection}`)
+      .sort({ [sortBy]: direction })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
@@ -80,10 +81,11 @@ export class PostsQueryRepository {
 
     const filter = { blogId: blogId };
     const count = await this.postModel.countDocuments(filter);
+    const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find(filter)
-      .sort(`${sortBy}: ${sortDirection}`)
+      .sort({ [sortBy]: direction })
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
