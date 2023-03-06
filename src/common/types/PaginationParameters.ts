@@ -5,9 +5,10 @@ export class PaginationParameters {
   sortBy = 'createdAt';
 
   //TODO вернуть валидацию
-  // @IsIn(['asc', 'desc'])
-  @Transform(({ value }) => (value === 'asc' ? 1 : -1))
-  sortDirection;
+  @IsIn(['asc', 'desc'])
+  // @Transform(({ value }) => (value === 'asc' ? 1 : -1))
+  // @Transform(({ value }) => Number(value))
+  sortDirection = 'desc';
 
   //TODO вернуть валидацию
   // @Min(1)

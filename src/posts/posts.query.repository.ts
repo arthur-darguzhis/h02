@@ -28,7 +28,7 @@ export class PostsQueryRepository {
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find({})
-      .sort({ [sortBy]: sortDirection })
+      .sort(`${sortBy}: '${sortDirection}'`)
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
@@ -83,7 +83,7 @@ export class PostsQueryRepository {
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
       .find(filter)
-      .sort({ [sortBy]: sortDirection })
+      .sort(`${sortBy}: '${sortDirection}'`)
       .skip(howManySkip)
       .limit(pageSize)
       .lean();

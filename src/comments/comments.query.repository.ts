@@ -34,7 +34,7 @@ export class CommentsQueryRepository {
     const howManySkip = (pageNumber - 1) * pageSize;
     const comments = await this.commentModel
       .find(filter)
-      .sort({ [sortBy]: sortDirection })
+      .sort(`${sortBy}: '${sortDirection}'`)
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
