@@ -9,13 +9,15 @@ export class PaginatedUserListDTO extends PaginationParameters {
   @Transform(({ value }) => value.trim())
   searchEmailTerm: string;
 
-  @IsIn([
-    'title',
-    'shortDescription',
-    'content',
-    'blogId',
-    'blogName',
-    'createdAt',
-  ])
+  //TODO вернуть валидацию
+  //
+  // @IsIn([
+  //   'title',
+  //   'shortDescription',
+  //   'content',
+  //   'blogId',
+  //   'blogName',
+  //   'createdAt',
+  // ])
   sortBy = 'createdAt';
 }
