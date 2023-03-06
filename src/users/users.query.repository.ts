@@ -36,7 +36,7 @@ export class UsersQueryRepository {
     const howManySkip = (pageNumber - 1) * pageSize;
     const users = await this.userModel
       .find(filter)
-      .sort(`${sortBy}: '${sortDirection}'`)
+      .sort(`${sortBy}: ${sortDirection}`)
       .skip(howManySkip)
       .limit(pageSize)
       .lean();

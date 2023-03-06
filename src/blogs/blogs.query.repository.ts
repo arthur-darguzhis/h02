@@ -28,7 +28,7 @@ export class BlogsQueryRepository {
     const howManySkip = (pageNumber - 1) * pageSize;
     const blogs = await this.blogModel
       .find(filter)
-      .sort(`${sortBy}: '${sortDirection}'`)
+      .sort(`${sortBy}: ${sortDirection}`)
       .skip(howManySkip)
       .limit(pageSize)
       .lean();
