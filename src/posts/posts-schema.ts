@@ -12,8 +12,10 @@ export class PostNewestLikes {
 export class ExtendedLikesInfo {
   @Prop({ required: true, default: 0 })
   likesCount: number;
+
   @Prop({ required: true, default: 0 })
   dislikesCount: number;
+
   @Prop({ type: Array<PostNewestLikes> })
   newestLikes: Array<PostNewestLikes>;
 }

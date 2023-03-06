@@ -3,6 +3,7 @@ import {
   CommentDocument,
   CommentLikeInfo,
 } from './comments-schema';
+import { CommentReaction } from './comment-reaction-schema';
 
 export type CommentViewModel = {
   id: string;
@@ -14,7 +15,7 @@ export type CommentViewModel = {
 
 export const mapCommentToViewModel = (
   comment: CommentDocument,
-  myStatus = 'none', //TODO когда внедрю лайки обязательно исправить вот этот моментLikeOfComment.LIKE_STATUS_OPTIONS.NONE,
+  myStatus = CommentReaction.LIKE_STATUS_OPTIONS.NONE,
 ): CommentViewModel => {
   return {
     id: comment._id.toString(),

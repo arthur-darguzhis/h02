@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './users-schema';
 import { Model } from 'mongoose';
-import { PaginatedUserListDTO } from './dto/paginatedUserListDTO';
-import { mapUserToViewModel } from './user.mapper';
+import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
+import {
+  mapUserToMeViewModel,
+  mapUserToViewModel,
+  MeViewModel,
+} from './user.mapper';
 
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async getPaginatedUsersList(dto: PaginatedUserListDTO) {
+  async getPaginatedUsersList(dto: PaginatedUserListDto) {
     const {
       searchEmailTerm,
       searchLoginTerm,
@@ -19,7 +23,6 @@ export class UsersQueryRepository {
       pageNumber,
     } = dto;
 
-    //TODO Посмотреть как у других сделанно построениен вот этих условий
     const filter = {};
     const or = [];
     if (searchLoginTerm) {
@@ -30,7 +33,10 @@ export class UsersQueryRepository {
       or.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
     }
 
-    filter['$or'] = or;
+    if (or.length > 0) {
+      filter['$or'] = or;
+    }
+
     const count = await this.userModel.countDocuments(filter);
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
@@ -48,5 +54,10 @@ export class UsersQueryRepository {
       totalCount: count,
       items: users.map(mapUserToViewModel),
     };
+  }
+
+  async getInfoAboutCurrentUser(currentUserId): Promise<MeViewModel | null> {
+    const user = await this.userModel.findOne({ _id: currentUserId });
+    return user ? mapUserToMeViewModel(user) : null;
   }
 }

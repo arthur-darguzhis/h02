@@ -4,98 +4,120 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Param,
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { PaginatedPostListDTO } from './dto/paginatedPostListDTO';
-import { CreatePostDTO } from './dto/createPostDTO';
-import { UpdatePostDTO } from './dto/updatePostDTO';
+import { PaginatedPostListDto } from './dto/paginatedPostList.dto';
+import { CreatePostDto } from './dto/createPost.dto';
+import { UpdatePostDto } from './dto/updatePost.dto';
 import { PostsService } from './posts.service';
 import { PostsQueryRepository } from './posts.query.repository';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { PaginatedCommentListDTO } from '../comments/dto/paginatedCommentListDTO';
+import { PaginatedCommentListDto } from '../comments/dto/paginated-comment-list.dto';
 import { mapPostToViewModel } from './posts.mapper';
+import { AddCommentToPostDto } from './dto/add-comment-to-post.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  CurrentUserId,
+  OptionalCurrentUserId,
+} from '../global-services/decorators/current-user-id.decorator';
+import { CommentsService } from '../comments/comments.service';
+import { mapCommentToViewModel } from '../comments/comments.mapper';
+import { CommentReactionsDto } from '../comments/dto/comment-reactions.dto';
+import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
+    private commentsService: CommentsService,
     private postsQueryRepository: PostsQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
   @Get()
-  async getPosts(@Query() dto: PaginatedPostListDTO) {
-    return await this.postsQueryRepository.getPaginatedPostsList(dto);
+  async getPosts(
+    @Query() dto: PaginatedPostListDto,
+    @OptionalCurrentUserId() currentUserId,
+  ) {
+    return await this.postsQueryRepository.getPaginatedPostsList(
+      dto,
+      currentUserId,
+    );
   }
 
   @Get(':id')
-  async getPost(@Param('id') id: string) {
-    try {
-      return await this.postsQueryRepository.getById(id);
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${id} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+  async getPost(
+    @Param('id') id: string,
+    @OptionalCurrentUserId() currentUserId,
+  ) {
+    return await this.postsQueryRepository.getByIdForCurrentUser(
+      id,
+      currentUserId,
+    );
   }
 
   @Get(':postId/comments')
   async getCommentsRelatedToPost(
     @Param('postId') postId: string,
-    @Query() paginatedCommentListDTO: PaginatedCommentListDTO,
+    @Query() paginatedCommentListDTO: PaginatedCommentListDto,
+    @OptionalCurrentUserId() currentUserId,
   ) {
-    try {
-      return await this.commentsQueryRepository.findByPostId(
-        postId,
-        paginatedCommentListDTO,
-      );
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${postId} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    return await this.commentsQueryRepository.findByPostId(
+      postId,
+      paginatedCommentListDTO,
+      currentUserId,
+    );
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post()
-  async postPost(@Body() dto: CreatePostDTO) {
+  async createPost(@Body() dto: CreatePostDto) {
     const post = await this.postsService.createPost(dto);
     return mapPostToViewModel(post);
   }
 
-  @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async putPost(@Param('id') id: string, @Body() dto: UpdatePostDTO) {
-    try {
-      return await this.postsService.updatePost(id, dto);
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Post with id: ${id} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+  @UseGuards(JwtAuthGuard)
+  @Post(':postId/comments')
+  async addCommentToPost(
+    @Param('postId') postId: string,
+    @Body() dto: AddCommentToPostDto,
+    @CurrentUserId() currentUserId,
+  ) {
+    const comment = await this.commentsService.addCommentToPost(
+      postId,
+      currentUserId,
+      dto,
+    );
+    return mapCommentToViewModel(comment);
   }
 
+  @UseGuards(BasicAuthGuard)
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async putPost(@Param('id') id: string, @Body() dto: UpdatePostDto) {
+    return await this.postsService.updatePost(id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':postId/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async processLikeStatus(
+    @Param('postId') postId: string,
+    @CurrentUserId() currentUserId: string,
+    @Body() dto: CommentReactionsDto,
+  ) {
+    await this.postsService.addReaction(postId, currentUserId, dto);
+  }
+
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param('id') id: string) {
-    try {
-      await this.postsService.deletePost(id);
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `Blog with id: ${id} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    await this.postsService.deletePost(id);
   }
 }

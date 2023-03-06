@@ -4,18 +4,20 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/createUserDto';
+import { CreateUserDto } from './dto/createUser.dto';
 import { UsersService } from './users.service';
 import { UsersQueryRepository } from './users.query.repository';
 import { mapUserToViewModel } from './user.mapper';
-import { PaginatedUserListDTO } from './dto/paginatedUserListDTO';
+import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
+import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
+// @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -24,31 +26,21 @@ export class UsersController {
   ) {}
 
   @Get()
-  async getUsersList(@Query() dto: PaginatedUserListDTO) {
+  async getUsersList(@Query() dto: PaginatedUserListDto) {
     return this.usersQueryRepository.getPaginatedUsersList(dto);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post()
-  async postUser(@Body() dto: CreateUserDto) {
-    try {
-      const user = await this.usersService.addNewUserToSystem(dto);
-      return mapUserToViewModel(user);
-    } catch (e) {
-      //TODO подумать как обрабатывать исключения в этой ситуации
-    }
+  async createUser(@Body() dto: CreateUserDto) {
+    const user = await this.usersService.addNewUserToSystem(dto);
+    return mapUserToViewModel(user);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
-    try {
-      await this.usersService.deleteUser(id);
-    } catch (e) {
-      throw new HttpException(
-        //TODO может как то по другому можно поступить с исключениями, выкидывть где то глубоко а здесь перехватывать? хотя это не так гибко может быть.
-        `User with id: ${id} is not exists`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    await this.usersService.deleteUser(id);
   }
 }

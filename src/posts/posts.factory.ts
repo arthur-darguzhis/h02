@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDTO } from './dto/createPostDTO';
+import { CreatePostDto } from './dto/createPost.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './posts-schema';
 import { Model } from 'mongoose';
@@ -11,10 +11,11 @@ export class PostsFactory {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private blogsRepository: BlogsRepository,
   ) {}
-  async createNewPost(dto: CreatePostDTO): Promise<PostDocument | never> {
+
+  async createNewPost(dto: CreatePostDto): Promise<PostDocument | never> {
     const blog = await this.blogsRepository.getById(dto.blogId);
 
-    return this.postModel.create({
+    return await this.postModel.create({
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,
