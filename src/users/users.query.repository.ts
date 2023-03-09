@@ -19,7 +19,6 @@ export class UsersQueryRepository {
       pageNumber,
     } = dto;
 
-    //TODO Посмотреть как у других сделанно построениен вот этих условий
     const filter = {};
     const or = [];
     if (searchLoginTerm) {
@@ -30,7 +29,10 @@ export class UsersQueryRepository {
       or.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
     }
 
-    filter['$or'] = or;
+    if (or.length > 0) {
+      filter['$or'] = or;
+    }
+
     const count = await this.userModel.countDocuments(filter);
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
