@@ -7,11 +7,11 @@ export class AppController {
 
   @Get()
   testRejectedPromiseAfterSendingResponse() {
-    const myPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('Promise resolved after 5 seconds');
-      }, 5000);
-    });
+    // const myPromise = new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     reject('Promise resolved after 5 seconds');
+    //   }, 5000);
+    // });
     return 'asdf';
   }
 }
