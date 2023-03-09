@@ -7,7 +7,7 @@ import {
 } from './exception.filters';
 import { validationPipe } from './validation.pipe';
 import { unhandledRejectionHandler } from './common/unhandled-rejection.handler';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
