@@ -17,7 +17,7 @@ import { mapUserToViewModel } from './user.mapper';
 import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
-@UseGuards(BasicAuthGuard)
+// @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
