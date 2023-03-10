@@ -32,6 +32,7 @@ export class UsersController {
   }
 
   @Post()
+  @UseGuards(BasicAuthGuard)
   async postUser(@Body() dto: CreateUserDto) {
     console.log(dto);
     const user = await this.usersService.addNewUserToSystem(dto);
