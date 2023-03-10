@@ -45,8 +45,8 @@ export class AuthService {
     const user = await this.usersRepository.getByEmail(dto.email);
     if (user.isUserConfirmed()) {
       throw new UnprocessableEntityException(
-        'The code is already confirmed',
-        'code',
+        'The email is already confirmed',
+        'email',
       );
     }
     user.generateEmailConfirmationInfo();
