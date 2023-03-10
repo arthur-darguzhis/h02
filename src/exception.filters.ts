@@ -53,7 +53,18 @@ export class DomainExceptionFilter implements ExceptionFilter {
       case exception instanceof UnprocessableEntityException:
         statusCode = HttpStatus.BAD_REQUEST;
     }
-    response.status(statusCode).send({ errorsMessages: exception.message });
+
+    const errors = { errorsMessages: [] };
+    if (exception instanceof EntityAlreadyExistsException) {
+      errors.errorsMessages.push({
+        message: exception.message,
+        field: exception.property,
+      });
+    } else {
+      errors.errorsMessages.push({ message: exception.message });
+    }
+
+    response.status(statusCode).send(errors);
   }
 }
 

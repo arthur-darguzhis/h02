@@ -53,6 +53,7 @@ export class UsersRepository {
     if (isEmailInUse) {
       throw new EntityAlreadyExistsException(
         `User with email: ${email} already exists`,
+        'email',
       );
     }
   }
@@ -62,6 +63,7 @@ export class UsersRepository {
     if (isLoginInUse) {
       throw new EntityAlreadyExistsException(
         `User with login: ${login} already exists`,
+        'login',
       );
     }
   }
@@ -71,6 +73,7 @@ export class UsersRepository {
     if (!user) {
       throw new EntityAlreadyExistsException(
         `User with email: ${email} does not exist`,
+        'email',
       );
     }
     return user;
