@@ -1,5 +1,7 @@
 export class DomainException extends Error {
-  constructor(message: string) {
+  public property: string;
+  constructor(message, property = null) {
     super(message);
+    this.property = property;
   }
 }

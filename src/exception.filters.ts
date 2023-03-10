@@ -55,7 +55,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
     }
 
     const errors = { errorsMessages: [] };
-    if (exception instanceof EntityAlreadyExistsException) {
+    if (exception.property) {
       errors.errorsMessages.push({
         message: exception.message,
         field: exception.property,

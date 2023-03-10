@@ -34,6 +34,7 @@ export class AuthService {
     } catch (e) {
       throw new UnprocessableEntityException(
         'The confirmation code is incorrect',
+        'code',
       );
     }
     user.confirmRegistration();
