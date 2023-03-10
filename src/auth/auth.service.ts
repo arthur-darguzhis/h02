@@ -50,6 +50,7 @@ export class AuthService {
       );
     }
     user.generateEmailConfirmationInfo();
+    await this.emailSenderService.sendRegistrationConfirmationEmail(user);
     await this.usersRepository.save(user);
   }
 
