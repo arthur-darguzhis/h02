@@ -31,7 +31,7 @@ export class EmailSenderService {
       );
     }
 
-    const confirmUrl = `${process.env.APP_HOST} 'confirm-registration?code='${user.emailConfirmationInfo.confirmationCode}`;
+    const confirmUrl = `${process.env.APP_HOST} 'confirm-registration?code=${user.emailConfirmationInfo.confirmationCode}`;
 
     await this.sendMail({
       from: `"Artur Darguzhis" <${process.env.GMAIL_APP_LOGIN}>`,
