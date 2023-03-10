@@ -43,9 +43,12 @@ export class AuthService {
 
   public async resendRegistrationEmail(dto: ResendRegistrationEmailDto) {
     const user = await this.usersRepository.getByEmail(dto.email);
-    // if (user.isUserConfirmed()) {
-    //   throw new UnprocessableEntityException('The email is already confirmed');
-    // }
+    if (user.isUserConfirmed()) {
+      throw new UnprocessableEntityException(
+        'The email is already confirmed',
+        'email',
+      );
+    }
     user.generateEmailConfirmationInfo();
     await this.usersRepository.save(user);
   }

@@ -24,23 +24,27 @@ export class AuthController {
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() dto: RegistrationDto) {
+    console.log(dto);
     return this.authService.registration(dto);
   }
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmRegistration(@Body() dto: ConfirmRegistrationDto) {
+    console.log(dto);
     return this.authService.confirmRegistration(dto);
   }
 
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendRegistrationEmail(@Body() dto: ResendRegistrationEmailDto) {
+    console.log(dto);
     return this.authService.resendRegistrationEmail(dto);
   }
 
   @Post('login')
   async login(@Body() dto: LoginDto, @Res() res: Response) {
+    console.log(dto);
     try {
       const { accessToken, refreshToken } = await this.authService.login(dto);
 
