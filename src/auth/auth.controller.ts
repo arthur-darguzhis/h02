@@ -7,6 +7,7 @@ import {
   Post,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PasswordRecoveryDto } from './dto/passwordRecovery.dto';
@@ -16,6 +17,7 @@ import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
 import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { Response } from 'express';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,6 +44,7 @@ export class AuthController {
     return this.authService.resendRegistrationEmail(dto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Body() dto: LoginDto, @Res() res: Response) {
     console.log(dto);

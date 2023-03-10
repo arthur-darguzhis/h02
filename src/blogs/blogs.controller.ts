@@ -10,6 +10,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryRepository } from './blogs.query.repository';
@@ -22,6 +23,7 @@ import { PaginationQueryParametersDto } from '../common/dto/PaginationQueryParam
 import { CreatePostWithoutBlogIdDto } from '../posts/dto/createPostWithoutBlogId.dto';
 import { PostsService } from '../posts/posts.service';
 import { mapPostToViewModel } from '../posts/posts.mapper';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -70,8 +72,9 @@ export class BlogsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async postBlog(@Body() dto: CreateBlogDto) {
+  async createBlog(@Body() dto: CreateBlogDto) {
     try {
       const blog = await this.blogsService.createBlog(dto);
       return mapBlogToViewModel(blog);

@@ -35,6 +35,8 @@ import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
 import { JwtService } from './auth/jwt.service';
 import { BasicStrategy } from './auth/strategies/basic.strategy';
+import { LocalStrategy } from './auth/strategies/local.strategy';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -80,6 +82,8 @@ import { BasicStrategy } from './auth/strategies/basic.strategy';
     CommentsRepository,
     CommentsQueryRepository,
     BasicStrategy,
+    LocalStrategy,
+    JwtStrategy,
   ],
 })
 export class AppModule {}
