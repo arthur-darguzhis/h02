@@ -27,11 +27,13 @@ export class UsersController {
 
   @Get()
   async getUsersList(@Query() dto: PaginatedUserListDto) {
+    console.log(dto);
     return this.usersQueryRepository.getPaginatedUsersList(dto);
   }
 
   @Post()
   async postUser(@Body() dto: CreateUserDto) {
+    console.log(dto);
     const user = await this.usersService.addNewUserToSystem(dto);
     return mapUserToViewModel(user);
   }
