@@ -76,7 +76,7 @@ export class UsersRepository {
     return user;
   }
 
-  async getByLoginOrEmail(loginOrEmail: string) {
+  async getByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | never> {
     const user = await this.userModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });

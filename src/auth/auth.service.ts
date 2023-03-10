@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegistrationDto } from './dto/registration.dto';
 import { UsersRepository } from '../users/users.repository';
 import { UsersFactory } from '../users/users.factory';
@@ -11,6 +11,7 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { InvalidValueException } from '../common/exceptions/domain.exceptions/invalid-value-exception';
 import { JwtService } from './jwt.service';
+import { DomainException } from '../common/exceptions/domain.exceptions/domain.exception';
 
 @Injectable()
 export class AuthService {
@@ -52,11 +53,8 @@ export class AuthService {
     dto: LoginDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.usersRepository.getByLoginOrEmail(dto.loginOrEmail);
+    if (!user.isActive) throw new DomainException('User is not active');
     await this.comparePasswordWithHash(dto.password, user.passwordHash);
-
-    if (!user.isActive) {
-      throw new UnprocessableEntityException('User is not active');
-    }
 
     return {
       accessToken: this.jwtService.generateAuthToken(user),
@@ -67,7 +65,9 @@ export class AuthService {
   private async comparePasswordWithHash(password, passwordHash) {
     const result = await bcrypt.compare(password, passwordHash);
     if (!result) {
-      throw new InvalidValueException('something went wrong');
+      throw new InvalidValueException(
+        'Incorrect username or password. Please try again.',
+      );
     }
   }
 }

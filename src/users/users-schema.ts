@@ -36,10 +36,6 @@ export class User {
   @Prop({ required: false, type: EmailConfirmationInfo })
   emailConfirmationInfo: EmailConfirmationInfo;
 
-  isUserActive(): boolean {
-    return this.isActive;
-  }
-
   isUserConfirmed(): boolean {
     return this.emailConfirmationInfo.isConfirmed;
   }
@@ -84,7 +80,6 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 Object.assign(UserSchema.methods, {
   isUserConfirmed: User.prototype.isUserConfirmed,
-  isUserActive: User.prototype.isUserActive,
   isConfirmationCodeExpired: User.prototype.isConfirmationCodeExpired,
   confirmEmailAndActivateAccount: User.prototype.confirmEmailAndActivateAccount,
   confirmRegistration: User.prototype.confirmRegistration,

@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PasswordRecoveryDto } from './dto/passwordRecovery.dto';
@@ -39,16 +40,20 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: LoginDto, @Res() res: Response) {
-    const { accessToken, refreshToken } = await this.authService.login(dto);
+    try {
+      const { accessToken, refreshToken } = await this.authService.login(dto);
 
-    res
-      .status(HttpStatus.OK)
-      .cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
-      })
-      .json({ accessToken });
+      res
+        .status(HttpStatus.OK)
+        .cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+        })
+        .json({ accessToken });
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
   }
 
   @Post('refresh-token')
