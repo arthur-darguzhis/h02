@@ -29,11 +29,9 @@ import { PostsService } from './posts/posts.service';
 import { PostsRepository } from './posts/posts.repository';
 import { BlogsQueryRepository } from './blogs/blogs.query.repository';
 import { ConfigModule } from '@nestjs/config';
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
-import { JwtService } from './auth/jwt.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -46,12 +44,12 @@ import { JwtService } from './auth/jwt.service';
       { name: Comment.name, schema: CommentSchema },
     ]),
     GlobalServicesModule,
+    AuthModule,
   ],
   controllers: [
     AppController,
     TestingController,
     UsersController,
-    AuthController,
     BlogsController,
     PostsController,
     CommentsController,
@@ -63,8 +61,6 @@ import { JwtService } from './auth/jwt.service';
     UsersService,
     UsersRepository,
     UsersQueryRepository,
-    AuthService,
-    JwtService,
     EmailSenderService,
     BlogsFactory,
     BlogsService,
