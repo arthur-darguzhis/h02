@@ -14,6 +14,7 @@ export class PaginatedUserListDto extends PaginationQueryParametersDto {
   searchEmailTerm: string;
 
   @IsIn([
+    'login',
     'title',
     'shortDescription',
     'content',
