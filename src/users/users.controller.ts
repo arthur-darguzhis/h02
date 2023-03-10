@@ -17,6 +17,7 @@ import { mapUserToViewModel } from './user.mapper';
 import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
+// @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -31,7 +32,6 @@ export class UsersController {
   }
 
   @Post()
-  @UseGuards(BasicAuthGuard)
   async postUser(@Body() dto: CreateUserDto) {
     console.log(dto);
     const user = await this.usersService.addNewUserToSystem(dto);
@@ -39,7 +39,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
     await this.usersService.deleteUser(id);
