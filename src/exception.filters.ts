@@ -53,7 +53,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
       case exception instanceof UnprocessableEntityException:
         statusCode = HttpStatus.BAD_REQUEST;
     }
-    response.status(statusCode).send({ message: exception.message });
+    response.status(statusCode).send({ errorsMessages: exception.message });
   }
 }
 
