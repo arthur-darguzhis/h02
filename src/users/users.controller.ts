@@ -31,16 +31,16 @@ export class UsersController {
     return this.usersQueryRepository.getPaginatedUsersList(dto);
   }
 
-  @Post()
   @UseGuards(BasicAuthGuard)
+  @Post()
   async postUser(@Body() dto: CreateUserDto) {
     console.log(dto);
     const user = await this.usersService.addNewUserToSystem(dto);
     return mapUserToViewModel(user);
   }
 
-  @Delete(':id')
   @UseGuards(BasicAuthGuard)
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
     await this.usersService.deleteUser(id);
