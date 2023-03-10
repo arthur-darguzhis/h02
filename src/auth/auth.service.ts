@@ -28,17 +28,18 @@ export class AuthService {
   }
 
   public async confirmRegistration(dto: ConfirmRegistrationDto) {
-    let user: UserDocument;
     try {
-      user = await this.usersRepository.getByConfirmationCode(dto.code);
+      const user = await this.usersRepository.getByConfirmationCode(dto.code);
+      if (user.isUserConfirmed()) throw new DomainException('');
+
+      user.confirmRegistration();
+      await this.usersRepository.save(user);
     } catch (e) {
       throw new UnprocessableEntityException(
         'The confirmation code is incorrect',
         'code',
       );
     }
-    user.confirmRegistration();
-    await this.usersRepository.save(user);
   }
 
   public async resendRegistrationEmail(dto: ResendRegistrationEmailDto) {
