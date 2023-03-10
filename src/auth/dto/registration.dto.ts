@@ -13,7 +13,7 @@ export class RegistrationDto {
   @IsString()
   password: string;
 
-  @IsEmail()
+  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) //@IsEmail()
   @Trim()
   @IsString()
   email: string;
