@@ -34,6 +34,7 @@ import { AuthService } from './auth/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
 import { JwtService } from './auth/jwt.service';
+import { BasicStrategy } from './auth/strategies/basic.strategy';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { JwtService } from './auth/jwt.service';
     CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
+    BasicStrategy,
   ],
 })
 export class AppModule {}
