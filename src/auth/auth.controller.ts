@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Request,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -12,7 +13,6 @@ import {
 import { AuthService } from './auth.service';
 import { PasswordRecoveryDto } from './dto/passwordRecovery.dto';
 import { SetNewPasswordDto } from './dto/setNewPassword.dto';
-import { LoginDto } from './dto/login.dto';
 import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
 import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
 import { RegistrationDto } from './dto/registration.dto';
@@ -46,10 +46,11 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res() res: Response) {
-    console.log(dto);
+  async login(@Request() req, @Res() res: Response) {
     try {
-      const { accessToken, refreshToken } = await this.authService.login(dto);
+      const { accessToken, refreshToken } = await this.authService.login(
+        req.user,
+      );
 
       res
         .status(HttpStatus.OK)

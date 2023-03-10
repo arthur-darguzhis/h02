@@ -33,10 +33,12 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
-import { JwtService } from './auth/jwt.service';
 import { BasicStrategy } from './auth/strategies/basic.strategy';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import * as process from 'process';
 
 @Module({
   imports: [
@@ -48,6 +50,11 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
     ]),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_AUTH_SECRET,
+      signOptions: { expiresIn: '10m' },
+    }),
     GlobalServicesModule,
   ],
   controllers: [
@@ -67,7 +74,6 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
     UsersRepository,
     UsersQueryRepository,
     AuthService,
-    JwtService,
     EmailSenderService,
     BlogsFactory,
     BlogsService,

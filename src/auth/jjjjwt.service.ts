@@ -7,7 +7,8 @@ import { InvalidValueException } from '../common/exceptions/domain.exceptions/in
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 
 @Injectable()
-export class JwtService {
+//TODO удалить, сейчас используется сервис из родного для nest jwt-module
+export class JjjjwtService {
   private authSecret = process.env.JWT_AUTH_SECRET;
   private refreshSecret = process.env.JWT_REFRESH_SECRET;
 

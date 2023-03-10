@@ -7,11 +7,11 @@ import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UserDocument } from '../users/users-schema';
 import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
-import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { InvalidValueException } from '../common/exceptions/domain.exceptions/invalid-value-exception';
-import { JwtService } from './jwt.service';
 import { DomainException } from '../common/exceptions/domain.exceptions/domain.exception';
+import { JwtService } from '@nestjs/jwt';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -56,15 +56,11 @@ export class AuthService {
   }
 
   public async login(
-    dto: LoginDto,
+    user: UserDocument,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const user = await this.usersRepository.getByLoginOrEmail(dto.loginOrEmail);
-    if (!user.isActive) throw new DomainException('User is not active');
-    await this.comparePasswordWithHash(dto.password, user.passwordHash);
-
     return {
-      accessToken: this.jwtService.generateAuthToken(user),
-      refreshToken: this.jwtService.generateRefreshToken(user),
+      accessToken: this.generateJwtAccessToken(user),
+      refreshToken: this.generateJwtRefreshToken(user),
     };
   }
 
@@ -75,5 +71,30 @@ export class AuthService {
         'Incorrect username or password. Please try again.',
       );
     }
+  }
+
+  public async checkUserCredentials(loginOrEmail: string, password: string) {
+    try {
+      const user = await this.usersRepository.getByLoginOrEmail(loginOrEmail);
+      if (!user.isActive) throw new DomainException('User is not active');
+      await this.comparePasswordWithHash(password, user.passwordHash);
+      return user;
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
+  }
+
+  private generateJwtAccessToken(user: UserDocument) {
+    return this.jwtService.sign({ userId: user._id.toString() });
+  }
+
+  private generateJwtRefreshToken(
+    user: UserDocument,
+    deviceId: string = uuidv4(),
+  ) {
+    return this.jwtService.sign(
+      { userId: user._id.toString(), deviceId: deviceId },
+      { expiresIn: '14d' },
+    );
   }
 }
