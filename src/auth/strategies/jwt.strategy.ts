@@ -9,4 +9,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_AUTH_SECRET,
     });
   }
+
+  async validate(payload: any) {
+    return { userId: payload.userId };
+  }
 }

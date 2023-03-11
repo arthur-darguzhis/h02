@@ -24,6 +24,7 @@ import { CreatePostWithoutBlogIdDto } from '../posts/dto/createPostWithoutBlogId
 import { PostsService } from '../posts/posts.service';
 import { mapPostToViewModel } from '../posts/posts.mapper';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUserId } from '../global-services/decorators/current-user-id.decorator';
 
 @Controller('blogs')
 export class BlogsController {
@@ -74,7 +75,7 @@ export class BlogsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createBlog(@Body() dto: CreateBlogDto) {
+  async createBlog(@CurrentUserId() currentUserId, @Body() dto: CreateBlogDto) {
     try {
       const blog = await this.blogsService.createBlog(dto);
       return mapBlogToViewModel(blog);
