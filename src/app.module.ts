@@ -6,7 +6,6 @@ import { User, UserSchema } from './users/users-schema';
 import { UsersRepository } from './users/users.repository';
 import { UsersController } from './users/users.controller';
 import { UsersFactory } from './users/users.factory';
-import { UsersService } from './users/users.service';
 import { UsersQueryRepository } from './users/users.query.repository';
 import { TestingController } from './testing/testing.controller';
 import { TestingService } from './testing/testing.service';
@@ -65,6 +64,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { getConfiguration } from './configuration';
 import { AuthConfigService } from './auth/auth-config.service';
 import { AppConfigService } from './app-config.service';
+import { AddNewUserUseCase } from './users/use-cases/add-new-user.use-case';
+import { DeleteUserUseCase } from './users/use-cases/delete-user.use-case';
+
+//TODO разбивать для других будущих модулей список их useCases.
+const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
 
 @Module({
   imports: [
@@ -108,7 +112,6 @@ import { AppConfigService } from './app-config.service';
     AppService,
     TestingService,
     UsersFactory,
-    UsersService,
     UsersRepository,
     UsersQueryRepository,
     AuthService,
@@ -142,6 +145,7 @@ import { AppConfigService } from './app-config.service';
     UserSessionsRepository,
     UserSessionsQueryRepository,
     UserSessionsFactory,
+    ...userUseCases,
   ],
 })
 export class AppModule {}

@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
-import { UsersService } from './users.service';
 import { UsersQueryRepository } from './users.query.repository';
 import { mapUserToViewModel } from './user.mapper';
 import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
+import { AddNewUserUseCase } from './use-cases/add-new-user.use-case';
+import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
 
 // @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
-    private usersService: UsersService,
+    private addNewUserUseCase: AddNewUserUseCase,
+    private deleteUserUseCase: DeleteUserUseCase,
     private usersQueryRepository: UsersQueryRepository,
   ) {}
 
@@ -33,7 +35,7 @@ export class UsersController {
   @UseGuards(BasicAuthGuard)
   @Post()
   async createUser(@Body() dto: CreateUserDto) {
-    const user = await this.usersService.addNewUserToSystem(dto);
+    const user = await this.addNewUserUseCase.execute(dto);
     return mapUserToViewModel(user);
   }
 
@@ -41,6 +43,6 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
-    await this.usersService.deleteUser(id);
+    await this.deleteUserUseCase.execute(id);
   }
 }
