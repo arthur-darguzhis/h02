@@ -1,4 +1,4 @@
-import { CreateUserDto } from '../../src/users/dto/createUser.dto';
+import { CreateUserDto } from '../../src/users/api/dto/createUser.dto';
 import request, { Response } from 'supertest';
 import { LoginDto } from '../../src/auth/dto/login.dto';
 
@@ -18,6 +18,11 @@ import { LoginDto } from '../../src/auth/dto/login.dto';
  **/
 
 export const RequestsMaker = {
+  testing: {
+    clearDb: async (app) => {
+      await request(app).delete('/testing/all-data');
+    },
+  },
   users: {
     createUser: async (app, dto: CreateUserDto) => {
       const newUser = await request(app)
@@ -72,6 +77,20 @@ export const RequestsMaker = {
         .post('/auth/logout')
         .set('Cookie', [...cookie])
         .send();
+    },
+  },
+  blogger: {
+    createNewBlog: async (
+      app,
+      accessToken,
+      dto,
+      status,
+    ): Promise<request.Response> => {
+      return request(app)
+        .post('/blogger/blogs')
+        .auth(accessToken, { type: 'bearer' })
+        .send(dto)
+        .expect(status);
     },
   },
 };
