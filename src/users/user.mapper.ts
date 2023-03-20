@@ -5,6 +5,11 @@ export type UserViewModel = {
   login: string;
   email: string;
   createdAt: string;
+  banInfo: {
+    isBanned: boolean;
+    banDate: string;
+    banReason: string;
+  };
 };
 
 export type MeViewModel = {
@@ -19,6 +24,11 @@ export const mapUserToViewModel = (user: UserDocument): UserViewModel => {
     login: user.login,
     email: user.email,
     createdAt: user.createdAt,
+    banInfo: {
+      isBanned: user.banInfo.isBanned,
+      banDate: user.banInfo.banDate,
+      banReason: user.banInfo.banReason,
+    },
   };
 };
 

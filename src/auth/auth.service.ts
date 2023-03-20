@@ -133,7 +133,7 @@ export class AuthService {
   private generateJwtRefreshToken(userId: string, deviceId: string = uuidv4()) {
     return this.jwtService.sign(
       { userId: userId, deviceId: deviceId },
-      { expiresIn: '20s' },
+      { expiresIn: '20m' },
     );
   }
 }

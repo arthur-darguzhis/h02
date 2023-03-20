@@ -1,0 +1,20 @@
+import { faker } from '@faker-js/faker';
+import { HttpStatus } from '@nestjs/common';
+
+it('should throw an error if "$fieldName$" is less than $minLength$ characters', async () => {
+  const response = await sendTestRequest(
+    { ...dto, $fieldName$: faker.datatype.string($minLength$ - 1) },
+    HttpStatus.BAD_REQUEST,
+  );
+
+  checkFieldsInErrorMessage(response, ['$fieldName$']);
+});
+
+it('should throw an error if "$fieldName$" is more than $maxLength$ characters', async () => {
+  const response = await sendTestRequest(
+    { ...dto, $fieldName$: faker.datatype.string($maxLength$ + 1) },
+    HttpStatus.BAD_REQUEST,
+  );
+
+  checkFieldsInErrorMessage(response, ['$fieldName$']);
+});

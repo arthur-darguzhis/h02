@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './users-schema';
 import { Model } from 'mongoose';
-import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
+import { PaginatedUserListDto } from './api/dto/paginatedUserList.dto';
 import {
   mapUserToMeViewModel,
   mapUserToViewModel,
@@ -24,6 +24,14 @@ export class UsersQueryRepository {
     } = dto;
 
     const filter = {};
+    if (dto.banStatus === 'banned') {
+      filter['banInfo.isBanned'] = true;
+    }
+
+    if (dto.banStatus === 'notBanned') {
+      filter['banInfo.isBanned'] = false;
+    }
+
     const or = [];
     if (searchLoginTerm) {
       or.push({ login: { $regex: searchLoginTerm, $options: 'i' } });

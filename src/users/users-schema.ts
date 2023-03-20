@@ -17,6 +17,18 @@ export class EmailConfirmationInfo {
 }
 
 @Schema()
+export class BanInfo {
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
+  @Prop({ required: false, type: String, default: null })
+  banDate: string | null;
+
+  @Prop({ required: false, type: String, default: null })
+  banReason: string | null;
+}
+
+@Schema()
 export class User {
   @Prop({ required: true })
   login: string;
@@ -32,6 +44,9 @@ export class User {
 
   @Prop({ required: true, default: false })
   isActive: boolean;
+
+  @Prop({ required: false, type: BanInfo })
+  banInfo: BanInfo;
 
   @Prop({ required: false, type: EmailConfirmationInfo })
   emailConfirmationInfo: EmailConfirmationInfo;

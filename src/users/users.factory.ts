@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './users-schema';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './api/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { RegistrationDto } from '../auth/dto/registration.dto';
@@ -26,6 +26,7 @@ export class UsersFactory {
       isActive: isActive,
       login: dto.login,
       email: dto.email,
+      banInfo: { isBanned: false, banDate: null, banReason: null },
       createdAt: new Date().toISOString(),
     });
 

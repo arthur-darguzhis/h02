@@ -4,9 +4,8 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users/users-schema';
 import { UsersRepository } from './users/users.repository';
-import { UsersController } from './users/users.controller';
+import { UsersController } from './users/api/users.controller';
 import { UsersFactory } from './users/users.factory';
-import { UsersService } from './users/users.service';
 import { UsersQueryRepository } from './users/users.query.repository';
 import { TestingController } from './testing/testing.controller';
 import { TestingService } from './testing/testing.service';
@@ -65,9 +64,41 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { getConfiguration } from './configuration';
 import { AuthConfigService } from './auth/auth-config.service';
 import { AppConfigService } from './app-config.service';
+import { AddNewUserUseCase } from './users/application/use-cases/add-new-user.use-case';
+import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
+import { CqrsModule } from '@nestjs/cqrs';
+import { BloggerController } from './blogger/api/blogger.controller';
+import { BloggerCreateBlogUseCase } from './blogger/application/use-cases/blogger-create-blog.use-case';
+import { BloggerUpdateBlogUseCase } from './blogger/application/use-cases/blogger-update-blog.use-case';
+import { BloggerDeleteBlogUseCase } from './blogger/application/use-cases/blogger-delete-blog.use-case';
+import { BloggerCreatePostUseCase } from './blogger/application/use-cases/blogger-create-post';
+import { BloggerUpdatePostUseCase } from './blogger/application/use-cases/blogger-update-post';
+import { BloggerDeletePostUseCase } from './blogger/application/use-cases/blogger-delete-post.use-case';
+import { AdminSetOwnerToOrphanBlogUseCase } from './super-admin/blogs/use-cases/admin-set-owner-to-orphan-blog.use-case';
+import { SuperAdminBlogsController } from './super-admin/blogs/api/super-admin.blogs.controller';
+import { SuperAdminUsersController } from './super-admin/users/super-admin.users.controller';
+import { AdminBanOrUnbanUserUseCase } from './super-admin/users/use-cases/admin-ban-or-unban-user.use-case';
+import { AdminAddNewUserUseCase } from './super-admin/users/use-cases/admin-add-new-user.use-case';
+import { AdminDeleteUserByIdUseCase } from './super-admin/users/use-cases/admin-delete-user-by-id.use-case';
+
+//TODO разбивать для других будущих модулей список их useCases.
+const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
+const bloggerUseCases = [
+  BloggerCreateBlogUseCase,
+  BloggerUpdateBlogUseCase,
+  BloggerDeleteBlogUseCase,
+  BloggerCreatePostUseCase,
+  BloggerUpdatePostUseCase,
+  BloggerDeletePostUseCase,
+  AdminSetOwnerToOrphanBlogUseCase,
+  AdminBanOrUnbanUserUseCase,
+  AdminAddNewUserUseCase,
+  AdminDeleteUserByIdUseCase,
+];
 
 @Module({
   imports: [
+    CqrsModule,
     ConfigModule.forRoot({
       load: [getConfiguration],
       isGlobal: true,
@@ -89,7 +120,7 @@ import { AppConfigService } from './app-config.service';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10m' },
     }),
     GlobalServicesModule,
   ],
@@ -102,13 +133,15 @@ import { AppConfigService } from './app-config.service';
     PostsController,
     CommentsController,
     SecurityController,
+    BloggerController,
+    SuperAdminBlogsController,
+    SuperAdminUsersController,
   ],
   providers: [
     ConfigService,
     AppService,
     TestingService,
     UsersFactory,
-    UsersService,
     UsersRepository,
     UsersQueryRepository,
     AuthService,
@@ -142,6 +175,8 @@ import { AppConfigService } from './app-config.service';
     UserSessionsRepository,
     UserSessionsQueryRepository,
     UserSessionsFactory,
+    ...userUseCases,
+    ...bloggerUseCases,
   ],
 })
 export class AppModule {}

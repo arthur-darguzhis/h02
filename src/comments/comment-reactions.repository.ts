@@ -30,6 +30,7 @@ export class CommentReactionsRepository {
     return this.commentReactionModel.countDocuments({
       commentId: commentId,
       status: CommentReaction.LIKE_STATUS_OPTIONS.LIKE,
+      isBanned: false,
     });
   }
 
@@ -37,6 +38,22 @@ export class CommentReactionsRepository {
     return this.commentReactionModel.countDocuments({
       commentId: commentId,
       status: CommentReaction.LIKE_STATUS_OPTIONS.DISLIKE,
+      isBanned: false,
     });
+  }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.commentReactionModel.updateMany(
+      { userId: userId },
+      { $set: { isBanned } },
+    );
+  }
+
+  async getCommentIdListWhereUserId(userId: string) {
+    const reactions = await this.commentReactionModel
+      .find({ userId: userId })
+      .select('commentId')
+      .lean();
+    return reactions.map((reaction) => ({ id: reaction.commentId }));
   }
 }

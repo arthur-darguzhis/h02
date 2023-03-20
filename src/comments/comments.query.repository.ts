@@ -36,7 +36,7 @@ export class CommentsQueryRepository {
 
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const filter = { postId: post.id };
+    const filter = { postId: post.id, isBanned: false };
     const count = await this.commentModel.countDocuments(filter);
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
@@ -84,24 +84,23 @@ export class CommentsQueryRepository {
     };
   }
 
-  async getByIdForCurrentUser(commentId: string, userId) {
+  async getByIdForCurrentUser(commentId: string, userId: string) {
     const comment = await this.commentModel.findById(commentId);
-    if (!comment)
+    if (!comment || comment.isBanned)
       throw new EntityNotFoundException(
         `Comment with ID: ${commentId} is not exists`,
       );
 
     let myStatus = CommentReaction.LIKE_STATUS_OPTIONS.NONE;
-    if (userId) {
-      const myReaction =
-        await this.commentReactionsQueryRepository.findUserReaction(
-          commentId,
-          userId,
-        );
-      if (myReaction) {
-        myStatus = myReaction.status;
-      }
+    const myReaction =
+      await this.commentReactionsQueryRepository.findUserReaction(
+        commentId,
+        userId,
+      );
+    if (myReaction) {
+      myStatus = myReaction.status;
     }
+
     return mapCommentToViewModel(comment, myStatus);
   }
 }

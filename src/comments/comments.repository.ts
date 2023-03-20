@@ -60,4 +60,11 @@ export class CommentsRepository {
     );
     return result.modifiedCount === 1;
   }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.commentModel.updateMany(
+      { 'commentatorInfo.userId': userId },
+      { $set: { isBanned } },
+    );
+  }
 }

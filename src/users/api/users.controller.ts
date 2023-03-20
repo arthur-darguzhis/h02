@@ -11,17 +11,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
-import { UsersService } from './users.service';
-import { UsersQueryRepository } from './users.query.repository';
-import { mapUserToViewModel } from './user.mapper';
+import { UsersQueryRepository } from '../users.query.repository';
+import { mapUserToViewModel } from '../user.mapper';
 import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
-import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
+import { AddNewUserCommand } from '../application/use-cases/add-new-user.use-case';
+import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
+import { CommandBus } from '@nestjs/cqrs';
 
 // @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
-    private usersService: UsersService,
+    private commandBus: CommandBus,
     private usersQueryRepository: UsersQueryRepository,
   ) {}
 
@@ -33,7 +35,7 @@ export class UsersController {
   @UseGuards(BasicAuthGuard)
   @Post()
   async createUser(@Body() dto: CreateUserDto) {
-    const user = await this.usersService.addNewUserToSystem(dto);
+    const user = await this.commandBus.execute(new AddNewUserCommand(dto));
     return mapUserToViewModel(user);
   }
 
@@ -41,6 +43,6 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string) {
-    await this.usersService.deleteUser(id);
+    await this.commandBus.execute(new DeleteUserCommand(id));
   }
 }

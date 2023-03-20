@@ -27,6 +27,7 @@ export class PostReactionsRepository {
     return this.postReactionModel.countDocuments({
       postId: postId,
       status: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+      isBanned: false,
     });
   }
 
@@ -34,6 +35,7 @@ export class PostReactionsRepository {
     return this.postReactionModel.countDocuments({
       postId: postId,
       status: PostReaction.LIKE_STATUS_OPTIONS.DISLIKE,
+      isBanned: false,
     });
   }
 
@@ -42,10 +44,26 @@ export class PostReactionsRepository {
       .find({
         postId: postId,
         status: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+        isBanned: false,
       })
       .select('-_id addedAt userId login')
       .sort({ addedAt: 'desc' })
       .limit(3)
       .lean();
+  }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.postReactionModel.updateMany(
+      { userId: userId },
+      { $set: { isBanned } },
+    );
+  }
+
+  async getPostIdListWhereUserId(userId: string) {
+    const reactions = await this.postReactionModel
+      .find({ userId: userId })
+      .select('postId')
+      .lean();
+    return reactions.map((reaction) => ({ id: reaction.postId }));
   }
 }

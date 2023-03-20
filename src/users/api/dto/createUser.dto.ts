@@ -1,5 +1,5 @@
 import { IsString, Length, Matches } from 'class-validator';
-import { Trim } from '../../common/crutches/class-transformer/trim.decorator';
+import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
 
 export class CreateUserDto {
   @Matches(/^[a-zA-Z0-9_-]*$/)

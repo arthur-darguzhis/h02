@@ -54,4 +54,10 @@ export class UserSessionsRepository {
     });
     return result.deletedCount === 1;
   }
+
+  async deleteAllSessionsByUserId(userId: string) {
+    await this.userSessionsModel.deleteMany({
+      userId: userId,
+    });
+  }
 }

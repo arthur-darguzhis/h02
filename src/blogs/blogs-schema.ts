@@ -1,6 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+export class BlogOwnerInfo {
+  @Prop({ required: true })
+  userId: string;
+  @Prop({ required: true })
+  userLogin: string;
+}
+
 /*
  * TODO похоже что во всех mongoose схемах надо добавить какую то валидацию, по тому что.
  *   Данные из DTO могут быть преобразованы и в итоге оказаться невалидными для сохранения.
@@ -22,6 +29,12 @@ export class Blog {
 
   @Prop({ required: true })
   createdAt: string;
+
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
+  @Prop({ type: BlogOwnerInfo })
+  blogOwnerInfo: BlogOwnerInfo;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

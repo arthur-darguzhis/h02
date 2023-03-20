@@ -3,8 +3,13 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class PostNewestLikes {
+  @Prop({ required: true })
   addedAt: string;
+
+  @Prop({ required: true })
   userId: string;
+
+  @Prop({ required: true })
   login: string;
 }
 
@@ -18,6 +23,12 @@ export class ExtendedLikesInfo {
 
   @Prop({ type: Array<PostNewestLikes> })
   newestLikes: Array<PostNewestLikes>;
+}
+
+@Schema()
+export class PostOwnerInfo {
+  @Prop({ required: true })
+  userId: string;
 }
 
 @Schema()
@@ -39,6 +50,13 @@ export class Post {
 
   @Prop({ type: ExtendedLikesInfo })
   extendedLikesInfo: ExtendedLikesInfo;
+
+  @Prop({ type: PostOwnerInfo })
+  postOwnerInfo: PostOwnerInfo;
+
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
   @Prop({ required: true })
   createdAt: string;
 }

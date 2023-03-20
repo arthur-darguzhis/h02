@@ -9,6 +9,14 @@ import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/
 export class PostsRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
+  async getById(postId: string): Promise<PostDocument> {
+    const post = await this.postModel.findById(postId);
+    if (!post) {
+      throw new EntityNotFoundException(`Post with id: ${post} is not found`);
+    }
+    return post;
+  }
+
   async save(postModel: PostDocument): Promise<PostDocument> {
     return postModel.save();
   }
@@ -56,5 +64,12 @@ export class PostsRepository {
       },
     );
     return result.modifiedCount === 1;
+  }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.postModel.updateMany(
+      { 'postOwnerInfo.userId': userId },
+      { $set: { isBanned } },
+    );
   }
 }

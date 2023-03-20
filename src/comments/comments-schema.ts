@@ -29,6 +29,9 @@ export class Comment {
   @Prop({ required: true })
   postId: string;
 
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
   @Prop({ required: true })
   createdAt: string;
 
