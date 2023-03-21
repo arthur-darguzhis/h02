@@ -1,0 +1,9 @@
+  it('should throw an error if "$fieldName$" is not one of the following: name, description, websiteUrl, createdAt."', async () => {
+    const response = await sendTestRequest(
+      { ...dto, $fieldName$: 'nonexistent property' },
+      HttpStatus.BAD_REQUEST,
+    );
+
+    //TODO set here break point ant then take info from response.body.errorsMessages[0].$fieldName$
+    checkFieldsInErrorMessage(response, ['$fieldName$']);
+  });

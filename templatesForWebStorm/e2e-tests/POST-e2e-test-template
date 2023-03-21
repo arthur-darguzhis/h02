@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { setConfigTestApp } from '../appConfigurations';
 import request from 'supertest';
 import { RequestsMaker } from '../requestsMaker';
-import { faker } from '@faker-js/faker';
 import { checkFieldsInErrorMessage } from '../responseChecker';
 
 //TODO 1. START: Place here url of endPoint (after making this step replace "TODO" to "STEP")
