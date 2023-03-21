@@ -43,4 +43,33 @@ export class BlogsQueryRepository {
       items: blogs.map(mapBlogToViewModel),
     };
   }
+
+  async getPaginatedBlogsListByOwner(
+    dto: PaginationBlogListDto,
+    userId: string,
+  ) {
+    const { searchNameTerm, sortBy, sortDirection, pageSize, pageNumber } = dto;
+    const filter = { 'blogOwnerInfo.userId': userId };
+    if (searchNameTerm) {
+      filter['name'] = { $regex: searchNameTerm, $options: 'i' };
+    }
+
+    const count = await this.blogModel.countDocuments(filter);
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    const howManySkip = (pageNumber - 1) * pageSize;
+    const blogs = await this.blogModel
+      .find(filter)
+      .sort({ [sortBy]: direction })
+      .skip(howManySkip)
+      .limit(pageSize)
+      .lean();
+
+    return {
+      pagesCount: Math.ceil(count / pageSize),
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: count,
+      items: blogs.map(mapBlogToViewModel),
+    };
+  }
 }
