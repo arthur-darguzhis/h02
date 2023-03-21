@@ -68,11 +68,17 @@ import { AddNewUserUseCase } from './users/application/use-cases/add-new-user.us
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
 import { BloggerController } from './blogger/api/blogger.controller';
-import { UserCreateBlogUseCase } from './blogger/application/use-cases/user-create-blog.use-case';
+import { BloggerCreateBlogUseCase } from './blogger/application/use-cases/blogger-create-blog.use-case';
+import { BloggerUpdateBlogCommand } from './blogger/application/use-cases/blogger-update-blog.use-case';
+import { BloggerDeleteBlogUseCase } from './blogger/application/use-cases/blogger-delete-blog.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
-const bloggerUseCases = [UserCreateBlogUseCase];
+const bloggerUseCases = [
+  BloggerCreateBlogUseCase,
+  BloggerUpdateBlogCommand,
+  BloggerDeleteBlogUseCase,
+];
 
 @Module({
   imports: [
