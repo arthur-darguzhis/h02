@@ -13,7 +13,6 @@ export class BlogsService {
   ) {}
 
   async createBlog(dto: CreateBlogDto): Promise<BlogDocument> {
-    //TODO здесь await и вот интерестно сильно ли дорогая операция генерация id? стоит ли из-за нее делать создание блога ассинхроными попробовать нагрузочно потестировать или поискать инфу в интернете?
     const newBlog = await this.blogsFactory.createNewBlog(dto);
     return this.blogsRepository.save(newBlog);
   }
