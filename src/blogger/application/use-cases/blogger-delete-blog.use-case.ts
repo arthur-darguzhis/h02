@@ -14,7 +14,7 @@ export class BloggerDeleteBlogUseCase {
     const blog = await this.blogsRepository.getById(command.blogId);
     if (blog.blogOwnerInfo.userId !== command.userId) {
       throw new UnauthorizedActionException(
-        'Unauthorized updating. This blog belongs to another user.',
+        'Unauthorized delete. This blog belongs to another user.',
       );
     }
     await this.blogsRepository.save(blog);

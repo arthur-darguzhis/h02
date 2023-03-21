@@ -26,6 +26,12 @@ export class ExtendedLikesInfo {
 }
 
 @Schema()
+export class PostOwnerInfo {
+  @Prop({ required: true })
+  userId: string;
+}
+
+@Schema()
 export class Post {
   @Prop({ required: true })
   title: string;
@@ -44,6 +50,10 @@ export class Post {
 
   @Prop({ type: ExtendedLikesInfo })
   extendedLikesInfo: ExtendedLikesInfo;
+
+  @Prop({ type: PostOwnerInfo })
+  postOwnerInfo: PostOwnerInfo;
+
   @Prop({ required: true })
   createdAt: string;
 }
