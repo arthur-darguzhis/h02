@@ -80,17 +80,14 @@ export const RequestsMaker = {
     },
   },
   blogger: {
-    createNewBlog: async (
-      app,
-      accessToken,
-      dto,
-      status,
-    ): Promise<request.Response> => {
-      return request(app)
+    createNewBlog: async (app, accessToken, dto, status): Promise<string> => {
+      const newBlog = await request(app)
         .post('/blogger/blogs')
         .auth(accessToken, { type: 'bearer' })
         .send(dto)
         .expect(status);
+
+      return newBlog.body.id;
     },
   },
 };
