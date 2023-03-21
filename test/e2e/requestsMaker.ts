@@ -17,6 +17,8 @@ import { LoginDto } from '../../src/auth/dto/login.dto';
  * In result we have a map of actions based on swagger documentation
  **/
 
+export const ID_FOR_NOT_FOUND = '6419e881e3b73481c6270b0a';
+
 export const RequestsMaker = {
   testing: {
     clearDb: async (app) => {
