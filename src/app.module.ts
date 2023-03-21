@@ -71,6 +71,7 @@ import { BloggerController } from './blogger/api/blogger.controller';
 import { BloggerCreateBlogUseCase } from './blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerUpdateBlogUseCase } from './blogger/application/use-cases/blogger-update-blog.use-case';
 import { BloggerDeleteBlogUseCase } from './blogger/application/use-cases/blogger-delete-blog.use-case';
+import { BloggerCreatePostUseCase } from './blogger/application/use-cases/blogger-create-post';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -78,6 +79,7 @@ const bloggerUseCases = [
   BloggerCreateBlogUseCase,
   BloggerUpdateBlogUseCase,
   BloggerDeleteBlogUseCase,
+  BloggerCreatePostUseCase,
 ];
 
 @Module({
