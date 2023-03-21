@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './users-schema';
 import { Model } from 'mongoose';
-import { PaginatedUserListDto } from './dto/paginatedUserList.dto';
+import { PaginatedUserListDto } from './api/dto/paginatedUserList.dto';
 import {
   mapUserToMeViewModel,
   mapUserToViewModel,
