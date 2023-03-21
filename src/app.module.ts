@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users/users-schema';
 import { UsersRepository } from './users/users.repository';
-import { UsersController } from './users/users.controller';
+import { UsersController } from './users/api/users.controller';
 import { UsersFactory } from './users/users.factory';
 import { UsersQueryRepository } from './users/users.query.repository';
 import { TestingController } from './testing/testing.controller';
@@ -64,14 +64,19 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { getConfiguration } from './configuration';
 import { AuthConfigService } from './auth/auth-config.service';
 import { AppConfigService } from './app-config.service';
-import { AddNewUserUseCase } from './users/use-cases/add-new-user.use-case';
-import { DeleteUserUseCase } from './users/use-cases/delete-user.use-case';
+import { AddNewUserUseCase } from './users/application/use-cases/add-new-user.use-case';
+import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
+import { CqrsModule } from '@nestjs/cqrs';
+import { BloggerController } from './blogger/api/blogger.controller';
+import { UserCreateBlogUseCase } from './blogger/application/use-cases/user-create-blog.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
+const bloggerUseCases = [UserCreateBlogUseCase];
 
 @Module({
   imports: [
+    CqrsModule,
     ConfigModule.forRoot({
       load: [getConfiguration],
       isGlobal: true,
@@ -106,6 +111,7 @@ const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
     PostsController,
     CommentsController,
     SecurityController,
+    BloggerController,
   ],
   providers: [
     ConfigService,
@@ -146,6 +152,7 @@ const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
     UserSessionsQueryRepository,
     UserSessionsFactory,
     ...userUseCases,
+    ...bloggerUseCases,
   ],
 })
 export class AppModule {}

@@ -3,8 +3,13 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class PostNewestLikes {
+  @Prop({ required: true })
   addedAt: string;
+
+  @Prop({ required: true })
   userId: string;
+
+  @Prop({ required: true })
   login: string;
 }
 

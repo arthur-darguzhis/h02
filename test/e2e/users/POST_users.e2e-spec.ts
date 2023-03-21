@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { setConfigTestApp } from '../appConfigurations';
 import request from 'supertest';
-import { CreateUserDto } from '../../../src/users/dto/createUser.dto';
+import { CreateUserDto } from '../../../src/users/api/dto/createUser.dto';
 
 describe('POST /users (e2e)', () => {
   let configuredTestApp: INestApplication;
