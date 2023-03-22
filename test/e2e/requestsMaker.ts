@@ -1,6 +1,7 @@
 import { CreateUserDto } from '../../src/users/api/dto/createUser.dto';
 import request, { Response } from 'supertest';
 import { LoginDto } from '../../src/auth/dto/login.dto';
+import { HttpStatus } from '@nestjs/common';
 
 /**
  * RequestMaker is an object that collects arrow functions to make HTTP requests, such as "create user" or "create blog".
@@ -79,6 +80,17 @@ export const RequestsMaker = {
         .post('/auth/logout')
         .set('Cookie', [...cookie])
         .send();
+    },
+  },
+  blogs: {
+    adminCreateNewBlog: async (app, dto): Promise<string> => {
+      const createBlogResponse = await request(app)
+        .post('/blogs')
+        .auth('admin', 'qwerty', { type: 'basic' })
+        .send(dto)
+        .expect(HttpStatus.CREATED);
+
+      return createBlogResponse.body.id;
     },
   },
   blogger: {

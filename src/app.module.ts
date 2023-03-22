@@ -74,6 +74,8 @@ import { BloggerDeleteBlogUseCase } from './blogger/application/use-cases/blogge
 import { BloggerCreatePostUseCase } from './blogger/application/use-cases/blogger-create-post';
 import { BloggerUpdatePostUseCase } from './blogger/application/use-cases/blogger-update-post';
 import { BloggerDeletePostUseCase } from './blogger/application/use-cases/blogger-delete-post.use-case';
+import { AdminSetOwnerToOrphanBlogUseCase } from './super-admin/blogs/api/dto/admin-set-owner-to-orphan-blog.use-case';
+import { SuperAdminBlogsController } from './super-admin/blogs/api/super-admin.blogs.controller';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -84,6 +86,7 @@ const bloggerUseCases = [
   BloggerCreatePostUseCase,
   BloggerUpdatePostUseCase,
   BloggerDeletePostUseCase,
+  AdminSetOwnerToOrphanBlogUseCase,
 ];
 
 @Module({
@@ -124,6 +127,7 @@ const bloggerUseCases = [
     CommentsController,
     SecurityController,
     BloggerController,
+    SuperAdminBlogsController,
   ],
   providers: [
     ConfigService,
