@@ -17,6 +17,6 @@ export class BloggerDeleteBlogUseCase {
         'Unauthorized delete. This blog belongs to another user.',
       );
     }
-    await this.blogsRepository.save(blog);
+    await this.blogsRepository.deleteById(command.blogId);
   }
 }
