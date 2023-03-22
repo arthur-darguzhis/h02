@@ -5,7 +5,7 @@ import { ID_FOR_NOT_FOUND, RequestsMaker } from '../requestsMaker';
 import { faker } from '@faker-js/faker';
 import { checkFieldsInErrorMessage } from '../responseChecker';
 
-describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
+describe(`PUT /blogger/blogs/:blogId/posts (e2e)`, () => {
   let configuredTestApp: INestApplication;
   let app: any;
 
@@ -13,11 +13,13 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
   let tokensUser2: any;
   let blogIdOfUser1: string;
   let blogIdOfUser2: string;
+  let postIdOfUser1: string;
+  let postIdOfUser2: string;
 
   const dtoWithValidData = {
-    title: 'Управление состоянием в React',
-    shortDescription: 'Все мы прекрасно знаем что построит...',
-    content: 'Буквально каждую конференцию мы слышим от !',
+    title: 'updated title',
+    shortDescription: 'updated shortDescription',
+    content: 'updated content',
   };
 
   let sendTestRequest: (
@@ -54,6 +56,18 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
       HttpStatus.CREATED,
     );
 
+    postIdOfUser1 = await RequestsMaker.blogger.createNewPost(
+      app,
+      tokensUser1.accessToken,
+      blogIdOfUser1,
+      {
+        title: 'Управление состоянием в React',
+        shortDescription: 'Все мы прекрасно знаем что построит...',
+        content: 'Буквально каждую конференцию мы слышим от !',
+      },
+      HttpStatus.CREATED,
+    );
+
     await RequestsMaker.users.createUser(app, {
       login: 'user2',
       password: '123456',
@@ -76,9 +90,21 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
       HttpStatus.CREATED,
     );
 
+    postIdOfUser2 = await RequestsMaker.blogger.createNewPost(
+      app,
+      tokensUser2.accessToken,
+      blogIdOfUser2,
+      {
+        title: 'Управление состоянием в React',
+        shortDescription: 'Все мы прекрасно знаем что построит...',
+        content: 'Буквально каждую конференцию мы слышим от !',
+      },
+      HttpStatus.CREATED,
+    );
+
     sendTestRequest = async (dto, status): Promise<request.Response> => {
       return request(app)
-        .post(`/blogger/blogs/${blogIdOfUser1}/posts`)
+        .put(`/blogger/blogs/${blogIdOfUser1}/posts/${postIdOfUser1}`)
         .auth(tokensUser1.accessToken, { type: 'bearer' })
         .send(dto)
         .expect(status);
@@ -91,23 +117,23 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
 
   it('Should return error if auth credentials are incorrect. Status 401', async () => {
     await request(app)
-      .post(`/blogger/blogs/${blogIdOfUser1}/posts`)
+      .put(`/blogger/blogs/${blogIdOfUser1}/posts/${postIdOfUser1}`)
       .send()
       .expect(HttpStatus.UNAUTHORIZED);
   });
 
-  it('Should return error if blog with blogId does not exist. Status 404', async () => {
+  it('Should return error if post with postId does not exist. Status 404', async () => {
     await request(app)
-      .post(`/blogger/blogs/${ID_FOR_NOT_FOUND}/posts`)
+      .put(`/blogger/blogs/${blogIdOfUser1}/posts/${ID_FOR_NOT_FOUND}`)
       .auth(tokensUser1.accessToken, { type: 'bearer' })
       .send(dtoWithValidData)
       .expect(HttpStatus.NOT_FOUND);
   });
 
-  it('Should return error if blogger try to create post not in blog  that does not belong to him. Status 403', async () => {
+  it('Should return error if blogger try to update post that does not belong to him. Status 403', async () => {
     await request(app)
-      .post(`/blogger/blogs/${blogIdOfUser2}/posts`)
-      .auth(tokensUser1.accessToken, { type: 'bearer' })
+      .put(`/blogger/blogs/${blogIdOfUser2}/posts/${postIdOfUser1}`)
+      .auth(tokensUser2.accessToken, { type: 'bearer' })
       .send(dtoWithValidData)
       .expect(HttpStatus.FORBIDDEN);
   });
@@ -199,26 +225,7 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
     });
   });
 
-  it('Should "create new blog". Status 201', async () => {
-    const response = await sendTestRequest(
-      dtoWithValidData,
-      HttpStatus.CREATED,
-    );
-
-    expect(response.body).toEqual({
-      id: expect.any(String),
-      title: 'Управление состоянием в React',
-      shortDescription: 'Все мы прекрасно знаем что построит...',
-      content: 'Буквально каждую конференцию мы слышим от !',
-      blogId: expect.any(String),
-      blogName: 'second blog',
-      createdAt: expect.any(String),
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        newestLikes: [],
-        myStatus: 'None',
-      },
-    });
+  it('Should "update post". Status 204', async () => {
+    await sendTestRequest(dtoWithValidData, HttpStatus.NO_CONTENT);
   });
 });

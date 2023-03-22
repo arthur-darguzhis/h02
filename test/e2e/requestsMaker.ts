@@ -91,5 +91,19 @@ export const RequestsMaker = {
 
       return newBlog.body.id;
     },
+    createNewPost: async (
+      app: any,
+      accessToken,
+      blogId,
+      dto,
+      status,
+    ): Promise<string> => {
+      const newPost = await request(app)
+        .post(`/blogger/blogs/${blogId}/posts`)
+        .auth(accessToken, { type: 'bearer' })
+        .send(dto)
+        .expect(status);
+      return newPost.body.id;
+    },
   },
 };
