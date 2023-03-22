@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../../../users/users.repository';
-import { BlogsRepository } from '../../../../blogs/blogs.repository';
-import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { BlogOwnerInfo } from '../../../../blogs/blogs-schema';
+import { UsersRepository } from '../../../users/users.repository';
+import { BlogsRepository } from '../../../blogs/blogs.repository';
+import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { BlogOwnerInfo } from '../../../blogs/blogs-schema';
 export class AdminSetOwnerToOrphanBlogCommand {
   constructor(public blogId: string, public userId: string) {}
 }
