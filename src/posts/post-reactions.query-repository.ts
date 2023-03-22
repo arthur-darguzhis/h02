@@ -15,7 +15,7 @@ export class PostReactionsQueryRepository {
     userId: string,
   ): Promise<PostReaction[]> {
     return this.postReactionModel
-      .find({ postId: { $in: postsIdList }, userId: userId })
+      .find({ postId: { $in: postsIdList }, userId: userId, isBanned: false })
       .lean();
   }
 

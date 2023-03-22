@@ -36,7 +36,7 @@ export class CommentsQueryRepository {
 
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const filter = { postId: post.id };
+    const filter = { postId: post.id, isBanned: false };
     const count = await this.commentModel.countDocuments(filter);
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;

@@ -33,7 +33,7 @@ export class PostsQueryRepository {
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
     const posts = await this.postModel
-      .find({})
+      .find({ isBanned: false })
       .sort({ [sortBy]: direction })
       .skip(howManySkip)
       .limit(pageSize)

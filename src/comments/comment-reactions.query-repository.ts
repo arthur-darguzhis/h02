@@ -18,7 +18,11 @@ export class CommentReactionsQueryRepository {
     userId: string,
   ): Promise<CommentReaction[]> {
     return this.commentReactionModel
-      .find({ commentId: { $in: commentsIdList }, userId: userId })
+      .find({
+        commentId: { $in: commentsIdList },
+        userId: userId,
+        isBanned: false,
+      })
       .lean();
   }
 

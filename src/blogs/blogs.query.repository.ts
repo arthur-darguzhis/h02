@@ -24,9 +24,9 @@ export class BlogsQueryRepository {
 
   async getPaginatedBlogsList(dto: PaginationBlogListDto) {
     const { searchNameTerm, sortBy, sortDirection, pageSize, pageNumber } = dto;
-    let filter = {};
+    const filter = { isBanned: false };
     if (searchNameTerm) {
-      filter = { name: { $regex: searchNameTerm, $options: 'i' } };
+      filter['name'] = { $regex: searchNameTerm, $options: 'i' };
     }
 
     const count = await this.blogModel.countDocuments(filter);
