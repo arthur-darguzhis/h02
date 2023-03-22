@@ -23,6 +23,9 @@ export class CommentReaction {
 
   @Prop({ required: true })
   createdAt: string;
+
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
 }
 
 export const CommentReactionSchema =

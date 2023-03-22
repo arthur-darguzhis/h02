@@ -65,4 +65,11 @@ export class PostsRepository {
     );
     return result.modifiedCount === 1;
   }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.postModel.updateMany(
+      { 'postOwnerInfo.userId': userId },
+      { $set: { isBanned } },
+    );
+  }
 }

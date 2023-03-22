@@ -199,7 +199,7 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
     });
   });
 
-  it('Should "create new blog". Status 201', async () => {
+  it('Should "create new post". Status 201', async () => {
     const response = await sendTestRequest(
       dtoWithValidData,
       HttpStatus.CREATED,

@@ -48,4 +48,11 @@ export class PostReactionsRepository {
       .limit(3)
       .lean();
   }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.postReactionModel.updateMany(
+      { userId: userId },
+      { $set: { isBanned } },
+    );
+  }
 }

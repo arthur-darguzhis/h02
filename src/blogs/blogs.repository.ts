@@ -43,4 +43,11 @@ export class BlogsRepository {
     }
     return true;
   }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.blogModel.updateMany(
+      { 'blogOwnerInfo.userId': userId },
+      { $set: { isBanned } },
+    );
+  }
 }

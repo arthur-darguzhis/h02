@@ -39,4 +39,11 @@ export class CommentReactionsRepository {
       status: CommentReaction.LIKE_STATUS_OPTIONS.DISLIKE,
     });
   }
+
+  async setBanStatusByUserId(userId: string, isBanned: boolean) {
+    await this.commentReactionModel.updateMany(
+      { userId: userId },
+      { $set: { isBanned } },
+    );
+  }
 }

@@ -21,6 +21,9 @@ export class PostReaction {
   @Prop({ required: true })
   status: string;
 
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
   @Prop({ required: true })
   addedAt: string;
 }

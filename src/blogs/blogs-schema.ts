@@ -30,6 +30,9 @@ export class Blog {
   @Prop({ required: true })
   createdAt: string;
 
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
   @Prop({ type: BlogOwnerInfo })
   blogOwnerInfo: BlogOwnerInfo;
 }

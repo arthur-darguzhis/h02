@@ -26,6 +26,7 @@ export class UsersFactory {
       isActive: isActive,
       login: dto.login,
       email: dto.email,
+      banInfo: { isBanned: false, banDate: null, banReason: null },
       createdAt: new Date().toISOString(),
     });
 

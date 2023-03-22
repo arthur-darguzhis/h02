@@ -54,6 +54,9 @@ export class Post {
   @Prop({ type: PostOwnerInfo })
   postOwnerInfo: PostOwnerInfo;
 
+  @Prop({ required: true, default: false })
+  isBanned: boolean;
+
   @Prop({ required: true })
   createdAt: string;
 }
