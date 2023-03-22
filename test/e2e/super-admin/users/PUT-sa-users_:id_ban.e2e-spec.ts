@@ -3,6 +3,7 @@ import { setConfigTestApp } from '../../appConfigurations';
 import request from 'supertest';
 import { RequestsMaker } from '../../requestsMaker';
 
+//Очень сырой тест он не проверят забаненность коммента лайка по постам и по комментам
 describe(`PUT /sa/users/:userId/ban (e2e)`, () => {
   let configuredTestApp: INestApplication;
   let app: any;
