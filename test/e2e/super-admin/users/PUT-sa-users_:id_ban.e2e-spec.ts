@@ -76,10 +76,5 @@ describe(`PUT /sa/users/:userId/ban (e2e)`, () => {
       .auth('admin', 'qwerty', { type: 'basic' })
       .send({ isBanned: true, banReason: 'stringstringstringst' })
       .expect(HttpStatus.NO_CONTENT);
-
-    await RequestsMaker.users.login(app, {
-      loginOrEmail: 'user1',
-      password: '123456',
-    });
   });
 });
