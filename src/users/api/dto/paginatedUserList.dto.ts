@@ -3,6 +3,11 @@ import { IsIn, IsOptional, IsString } from 'class-validator';
 import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
 
 export class PaginatedUserListDto extends PaginationQueryParametersDto {
+  @IsIn(['all', 'banned', 'notBanned'])
+  @Trim()
+  @IsString()
+  banStatus = 'all';
+
   @Trim()
   @IsString()
   @IsOptional()

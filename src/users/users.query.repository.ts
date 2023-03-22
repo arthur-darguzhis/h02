@@ -24,6 +24,14 @@ export class UsersQueryRepository {
     } = dto;
 
     const filter = {};
+    if (dto.banStatus === 'banned') {
+      filter['banInfo.isBanned'] = true;
+    }
+
+    if (dto.banStatus === 'notBanned') {
+      filter['banInfo.isBanned'] = false;
+    }
+
     const or = [];
     if (searchLoginTerm) {
       or.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
