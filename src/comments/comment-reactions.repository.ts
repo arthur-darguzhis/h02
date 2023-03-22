@@ -30,6 +30,7 @@ export class CommentReactionsRepository {
     return this.commentReactionModel.countDocuments({
       commentId: commentId,
       status: CommentReaction.LIKE_STATUS_OPTIONS.LIKE,
+      isBanned: false,
     });
   }
 
@@ -37,6 +38,7 @@ export class CommentReactionsRepository {
     return this.commentReactionModel.countDocuments({
       commentId: commentId,
       status: CommentReaction.LIKE_STATUS_OPTIONS.DISLIKE,
+      isBanned: false,
     });
   }
 
