@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       loginOrEmail,
       password,
     );
-    if (!user) {
+    if (!user || user.banInfo.isBanned) {
       throw new UnauthorizedException();
     }
     return user;

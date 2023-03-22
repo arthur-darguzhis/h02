@@ -31,7 +31,8 @@ export const RequestsMaker = {
       const newUser = await request(app)
         .post('/users')
         .auth('admin', 'qwerty', { type: 'basic' })
-        .send(dto);
+        .send(dto)
+        .expect(HttpStatus.CREATED);
 
       return newUser.body.id;
     },
@@ -45,7 +46,8 @@ export const RequestsMaker = {
     }> => {
       const response: Response = await request(app)
         .post('/auth/login')
-        .send(dto);
+        .send(dto)
+        .expect(HttpStatus.OK);
 
       const accessToken = response.body.accessToken;
       const cookie = response.header['set-cookie'];
