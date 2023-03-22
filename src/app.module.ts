@@ -78,6 +78,8 @@ import { AdminSetOwnerToOrphanBlogUseCase } from './super-admin/blogs/use-cases/
 import { SuperAdminBlogsController } from './super-admin/blogs/api/super-admin.blogs.controller';
 import { SuperAdminUsersController } from './super-admin/users/super-admin.users.controller';
 import { AdminBanOrUnbanUserUseCase } from './super-admin/users/use-cases/admin-ban-or-unban-user.use-case';
+import { AdminAddNewUserUseCase } from './super-admin/users/use-cases/admin-add-new-user.use-case';
+import { AdminDeleteUserByIdUseCase } from './super-admin/users/use-cases/admin-delete-user-by-id.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -90,6 +92,8 @@ const bloggerUseCases = [
   BloggerDeletePostUseCase,
   AdminSetOwnerToOrphanBlogUseCase,
   AdminBanOrUnbanUserUseCase,
+  AdminAddNewUserUseCase,
+  AdminDeleteUserByIdUseCase,
 ];
 
 @Module({
