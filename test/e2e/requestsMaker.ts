@@ -120,4 +120,18 @@ export const RequestsMaker = {
       return newPost.body.id;
     },
   },
+  superAdminCreateNewUser: async (
+    app,
+    dto = {
+      login: 'user1',
+      password: '123456',
+      email: 'user1-test@test.test',
+    },
+  ) => {
+    return request(app)
+      .post('/sa/users')
+      .auth('admin', 'qwerty', { type: 'basic' })
+      .send(dto)
+      .expect(HttpStatus.CREATED);
+  },
 };
