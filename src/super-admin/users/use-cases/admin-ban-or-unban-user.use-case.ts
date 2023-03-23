@@ -99,7 +99,7 @@ export class AdminBanOrUnbanUserUseCase {
         return this.commentsService.updateCommentReactionsCount(comment.id);
       });
 
-    await Promise.allSettled([
+    return await Promise.allSettled([
       ...promisesToRecalculatePostsReactions,
       ...promisesToRecalculateCommentsReactions,
     ]);
