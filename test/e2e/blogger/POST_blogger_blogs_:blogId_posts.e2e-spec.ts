@@ -16,7 +16,7 @@ describe(`POST /blogger/blogs/:blogId/posts (e2e)`, () => {
 
   const dtoWithValidData = {
     title: 'Управление состоянием в React',
-    shortDescription: 'Все мы прекрасно знаем что построит...',
+    shortDescription: 'Все мы прекрасно знаем что построит..',
     content: 'Буквально каждую конференцию мы слышим от !',
   };
 
