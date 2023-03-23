@@ -128,10 +128,11 @@ export const RequestsMaker = {
       email: 'user1-test@test.test',
     },
   ) => {
-    return request(app)
+    const response = await request(app)
       .post('/sa/users')
       .auth('admin', 'qwerty', { type: 'basic' })
       .send(dto)
       .expect(HttpStatus.CREATED);
+    return response.body.id;
   },
 };
