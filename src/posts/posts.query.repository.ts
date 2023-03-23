@@ -84,7 +84,7 @@ export class PostsQueryRepository {
     await this.blogsQueryRepository.getById(blogId);
     const { sortBy, sortDirection, pageNumber, pageSize } = dto;
 
-    const filter = { blogId: blogId };
+    const filter = { blogId: blogId, isBanned: false };
     const count = await this.postModel.countDocuments(filter);
     const direction = sortDirection === 'asc' ? 1 : -1;
     const howManySkip = (pageNumber - 1) * pageSize;
@@ -134,7 +134,7 @@ export class PostsQueryRepository {
 
   async getByIdForCurrentUser(postId: string, currentUserId = null) {
     const post = await this.postModel.findById(postId);
-    if (!post) {
+    if (!post || post.isBanned) {
       throw new EntityNotFoundException(`Post with id: ${postId} is not found`);
     }
 

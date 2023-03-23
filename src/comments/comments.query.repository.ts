@@ -86,7 +86,7 @@ export class CommentsQueryRepository {
 
   async getByIdForCurrentUser(commentId: string, userId) {
     const comment = await this.commentModel.findById(commentId);
-    if (!comment)
+    if (!comment || comment.isBanned)
       throw new EntityNotFoundException(
         `Comment with ID: ${commentId} is not exists`,
       );
