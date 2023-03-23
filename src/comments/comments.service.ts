@@ -76,7 +76,7 @@ export class CommentsService {
     await this.updateCommentReactionsCount(commentId);
   }
 
-  private async updateCommentReactionsCount(commentId: string) {
+  public async updateCommentReactionsCount(commentId: string) {
     const likesCount =
       await this.commentReactionsRepository.calculateCountOfLikes(commentId);
     const dislikesCount =

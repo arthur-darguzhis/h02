@@ -53,7 +53,7 @@ export class PostsService {
     await this.updatePostReactionsCount(postId);
   }
 
-  private async updatePostReactionsCount(postId: any) {
+  public async updatePostReactionsCount(postId: any) {
     const likesCount = await this.postReactionsRepository.calculateCountOfLikes(
       postId,
     );

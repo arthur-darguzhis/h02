@@ -8,6 +8,8 @@ import { CommentReactionsRepository } from '../../../comments/comment-reactions.
 import { CommentsRepository } from '../../../comments/comments.repository';
 import { UserSessionsRepository } from '../../../security/user-sessions.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { PostsService } from '../../../posts/posts.service';
+import { CommentsService } from '../../../comments/comments.service';
 
 export class AdminBanOrUnbanUserCommand {
   constructor(
@@ -26,6 +28,8 @@ export class AdminBanOrUnbanUserUseCase {
     private commentsRepository: CommentsRepository,
     private postReactionsRepository: PostReactionsRepository,
     private commentReactionsRepository: CommentReactionsRepository,
+    private postsService: PostsService,
+    private commentsService: CommentsService,
   ) {}
   async execute(command: AdminBanOrUnbanUserCommand) {
     const user = await this.usersRepository.getById(command.userId);
@@ -69,6 +73,31 @@ export class AdminBanOrUnbanUserUseCase {
         command.userId,
         command.dto.isBanned,
       ),
+    ]);
+
+    await this.recalculatePostsAndCommentsReactionWithUserId(command.userId);
+  }
+
+  private async recalculatePostsAndCommentsReactionWithUserId(userId: string) {
+    const postIdListToRecalculateLikes =
+      await this.postReactionsRepository.getPostIdListWhereUserId(userId);
+
+    const commentIdListToRecalculateLikes =
+      await this.commentReactionsRepository.getCommentIdListWhereUserId(userId);
+
+    const promisesToRecalculatePostsReactions =
+      postIdListToRecalculateLikes.map((post) => {
+        return this.postsService.updatePostReactionsCount(post.id);
+      });
+
+    const promisesToRecalculateCommentsReactions =
+      commentIdListToRecalculateLikes.map((comment) => {
+        return this.commentsService.updateCommentReactionsCount(comment.id);
+      });
+
+    await Promise.allSettled([
+      ...promisesToRecalculatePostsReactions,
+      ...promisesToRecalculateCommentsReactions,
     ]);
   }
 }

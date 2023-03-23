@@ -57,4 +57,11 @@ export class PostReactionsRepository {
       { $set: { isBanned } },
     );
   }
+
+  async getPostIdListWhereUserId(userId: string) {
+    const reactions = await this.postReactionModel
+      .find({ userId }, { _id: 0, id: 1 })
+      .exec();
+    return reactions.map((reaction) => ({ id: reaction.id }));
+  }
 }

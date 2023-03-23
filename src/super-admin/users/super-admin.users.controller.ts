@@ -36,7 +36,9 @@ export class SuperAdminUsersController {
     @Param('userId') userId: string,
     @Body() dto: AdminBanOrUnbanUserDto,
   ) {
-    await this.commandBus.execute(new AdminBanOrUnbanUserCommand(userId, dto));
+    return await this.commandBus.execute(
+      new AdminBanOrUnbanUserCommand(userId, dto),
+    );
   }
 
   @UseGuards(BasicAuthGuard)

@@ -48,4 +48,11 @@ export class CommentReactionsRepository {
       { $set: { isBanned } },
     );
   }
+
+  async getCommentIdListWhereUserId(userId: string) {
+    const reactions = await this.commentReactionModel
+      .find({ userId }, { _id: 0, id: 1 })
+      .exec();
+    return reactions.map((reaction) => ({ id: reaction.id }));
+  }
 }
