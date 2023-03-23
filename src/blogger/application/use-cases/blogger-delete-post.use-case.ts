@@ -1,6 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../posts/posts.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { BlogsRepository } from '../../../blogs/blogs.repository';
 
 export class BloggerDeletePostCommand {
   constructor(
@@ -13,9 +14,17 @@ export class BloggerDeletePostCommand {
 @CommandHandler(BloggerDeletePostCommand)
 export class BloggerDeletePostUseCase {
   constructor(
-    private postsRepository: PostsRepository, //TODO inject here necessary services
+    private postsRepository: PostsRepository,
+    private blogsRepository: BlogsRepository,
   ) {}
   async execute(command: BloggerDeletePostCommand) {
+    const blog = await this.blogsRepository.getById(command.blogId);
+    if (blog.blogOwnerInfo.userId !== command.userId) {
+      throw new UnauthorizedActionException(
+        'Unauthorized delete. This blog belongs to another user.',
+      );
+    }
+
     const post = await this.postsRepository.getById(command.postId);
     if (post.postOwnerInfo.userId !== command.userId) {
       throw new UnauthorizedActionException(
