@@ -23,7 +23,7 @@ export class UsersQueryRepository {
       pageNumber,
     } = dto;
 
-    const filter = { 'banInfo.isBanned': false };
+    const filter = {};
     if (dto.banStatus === 'banned') {
       filter['banInfo.isBanned'] = true;
     }

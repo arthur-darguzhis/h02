@@ -22,6 +22,7 @@ import { AdminAddNewUserCommand } from './use-cases/admin-add-new-user.use-case'
 import { mapUserToViewModel } from '../../users/user.mapper';
 import { AdminDeleteUserByIdCommand } from './use-cases/admin-delete-user-by-id.use-case';
 
+@UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class SuperAdminUsersController {
   constructor(
@@ -29,7 +30,6 @@ export class SuperAdminUsersController {
     private usersQueryRepository: UsersQueryRepository,
   ) {}
 
-  @UseGuards(BasicAuthGuard)
   @Put(':userId/ban')
   @HttpCode(HttpStatus.NO_CONTENT)
   async adminBanOrUnbanUser(
@@ -41,14 +41,12 @@ export class SuperAdminUsersController {
     );
   }
 
-  @UseGuards(BasicAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async getPaginatedUserList(@Query() dto: PaginatedUserListDto) {
     return await this.usersQueryRepository.getPaginatedUsersList(dto);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async adminAddNewUser(@Body() dto: CreateUserDto) {
@@ -56,7 +54,6 @@ export class SuperAdminUsersController {
     return mapUserToViewModel(user);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Delete(':userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async adminDeleteUser(@Param('userId') userId: string) {
