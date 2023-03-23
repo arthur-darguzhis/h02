@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { Trim } from '../../../../common/crutches/class-transformer/trim.decorator';
 
 export class AdminBanOrUnbanUserDto {
@@ -7,7 +7,7 @@ export class AdminBanOrUnbanUserDto {
   @IsNotEmpty()
   isBanned: boolean;
 
-  @Length(1, 30)
+  @MinLength(20)
   @Trim()
   @IsString()
   banReason: string;
