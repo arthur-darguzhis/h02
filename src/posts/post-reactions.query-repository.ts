@@ -24,6 +24,7 @@ export class PostReactionsQueryRepository {
       .findOne({
         postId: postId,
         userId: userId,
+        isBanned: false,
       })
       .lean();
   }

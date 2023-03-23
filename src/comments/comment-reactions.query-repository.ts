@@ -31,6 +31,7 @@ export class CommentReactionsQueryRepository {
       .findOne({
         commentId: commentId,
         userId: userId,
+        isBanned: false,
       })
       .lean();
   }
