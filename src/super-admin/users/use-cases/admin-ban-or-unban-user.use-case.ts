@@ -42,13 +42,17 @@ export class AdminBanOrUnbanUserUseCase {
     }
 
     user.banInfo.isBanned = command.dto.isBanned;
-    user.banInfo.banDate = new Date().toISOString();
-    user.banInfo.banReason = command.dto.banReason;
 
     if (command.dto.isBanned) {
+      user.banInfo.banDate = new Date().toISOString();
+      user.banInfo.banReason = command.dto.banReason;
+
       await this.userSessionsRepository.deleteAllSessionsByUserId(
         command.userId,
       );
+    } else {
+      user.banInfo.banDate = null;
+      user.banInfo.banReason = null;
     }
 
     await Promise.allSettled([
