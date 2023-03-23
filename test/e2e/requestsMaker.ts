@@ -2,6 +2,7 @@ import { CreateUserDto } from '../../src/users/api/dto/createUser.dto';
 import request, { Response } from 'supertest';
 import { LoginDto } from '../../src/auth/dto/login.dto';
 import { HttpStatus } from '@nestjs/common';
+import { PostReaction } from '../../src/posts/post-reaction-schema';
 
 /**
  * RequestMaker is an object that collects arrow functions to make HTTP requests, such as "create user" or "create blog".
@@ -133,6 +134,35 @@ export const RequestsMaker = {
       .auth('admin', 'qwerty', { type: 'basic' })
       .send(dto)
       .expect(HttpStatus.CREATED);
+    return response.body.id;
+  },
+
+  userAddCommentToPost: async (
+    app,
+    accessToken,
+    postId,
+    dto = {
+      content: 'this is a sample of a correct comment that can be saved',
+    },
+  ) => {
+    const response = await request(app)
+      .post(`/posts/${postId}/comments`)
+      .auth(accessToken, { type: 'bearer' })
+      .send(dto)
+      .expect(HttpStatus.CREATED);
+
+    return response.body.id;
+  },
+
+  userLikeComment: async (app, accessToken, postId) => {
+    const response = await request(app)
+      .put(`/posts/${postId}/like-status`)
+      .auth(accessToken, { type: 'bearer' })
+      .send({
+        likeStatus: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+      })
+      .expect(HttpStatus.NO_CONTENT);
+
     return response.body.id;
   },
 };

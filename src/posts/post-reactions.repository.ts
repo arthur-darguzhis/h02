@@ -60,8 +60,9 @@ export class PostReactionsRepository {
 
   async getPostIdListWhereUserId(userId: string) {
     const reactions = await this.postReactionModel
-      .find({ 'postOwnerInfo.userId': userId }, { _id: 0, id: 1 })
-      .exec();
-    return reactions.map((reaction) => ({ id: reaction.id }));
+      .find({ userId: userId })
+      .select('postId')
+      .lean();
+    return reactions.map((reaction) => ({ id: reaction.postId }));
   }
 }

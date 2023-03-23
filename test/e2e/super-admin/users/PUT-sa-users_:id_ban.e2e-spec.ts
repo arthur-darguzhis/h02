@@ -12,6 +12,8 @@ describe(`PUT /sa/users/:userId/ban (e2e)`, () => {
   let token: any;
   let blogId: string;
   let postId: string;
+  let commentId: string;
+  let commentLikeId: string;
 
   beforeEach(async () => {
     configuredTestApp = await setConfigTestApp();
@@ -53,6 +55,19 @@ describe(`PUT /sa/users/:userId/ban (e2e)`, () => {
       HttpStatus.CREATED,
     );
 
+    commentId = await RequestsMaker.userAddCommentToPost(
+      app,
+      token.accessToken,
+      postId,
+      { content: 'this is a sample of a correct comment that can be saved' },
+    );
+
+    commentLikeId = await RequestsMaker.userLikeComment(
+      app,
+      token.accessToken,
+      postId,
+    );
+
     await RequestsMaker.users.createUser(app, {
       login: 'user2',
       password: '123456',
@@ -71,11 +86,28 @@ describe(`PUT /sa/users/:userId/ban (e2e)`, () => {
       .expect(HttpStatus.UNAUTHORIZED);
   });
 
-  it('Should "****". Status 201', async () => {
+  it('Should ban user by Id. Status 204', async () => {
+    const response1 = await request(app)
+      .get(`/sa/users`)
+      .auth('admin', 'qwerty', { type: 'basic' })
+      .send();
+
     await request(app)
       .put(`/sa/users/${userId}/ban`)
       .auth('admin', 'qwerty', { type: 'basic' })
       .send({ isBanned: true, banReason: 'stringstringstringst' })
       .expect(HttpStatus.NO_CONTENT);
+
+    const response = await request(app)
+      .get(`/sa/users`)
+      .auth('admin', 'qwerty', { type: 'basic' })
+      .send();
+
+    const response2 = await request(app)
+      .get(`/sa/users`)
+      .auth('admin', 'qwerty', { type: 'basic' })
+      .send();
+
+    const b = 10;
   });
 });

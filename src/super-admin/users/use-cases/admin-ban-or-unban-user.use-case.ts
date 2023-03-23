@@ -86,13 +86,13 @@ export class AdminBanOrUnbanUserUseCase {
     const postIdListToRecalculateLikes =
       await this.postReactionsRepository.getPostIdListWhereUserId(userId);
 
-    const commentIdListToRecalculateLikes =
-      await this.commentReactionsRepository.getCommentIdListWhereUserId(userId);
-
     const promisesToRecalculatePostsReactions =
       postIdListToRecalculateLikes.map((post) => {
         return this.postsService.updatePostReactionsCount(post.id);
       });
+
+    const commentIdListToRecalculateLikes =
+      await this.commentReactionsRepository.getCommentIdListWhereUserId(userId);
 
     const promisesToRecalculateCommentsReactions =
       commentIdListToRecalculateLikes.map((comment) => {

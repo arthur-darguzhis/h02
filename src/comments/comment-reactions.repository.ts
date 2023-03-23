@@ -51,8 +51,9 @@ export class CommentReactionsRepository {
 
   async getCommentIdListWhereUserId(userId: string) {
     const reactions = await this.commentReactionModel
-      .find({ 'commentatorInfo.userId': userId }, { _id: 0, id: 1 })
-      .exec();
-    return reactions.map((reaction) => ({ id: reaction.id }));
+      .find({ 'commentatorInfo.userId': userId })
+      .select('commentId')
+      .lean();
+    return reactions.map((reaction) => ({ id: reaction.commentId }));
   }
 }
