@@ -27,6 +27,7 @@ export class PostReactionsRepository {
     return this.postReactionModel.countDocuments({
       postId: postId,
       status: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+      isBanned: false,
     });
   }
 
@@ -34,6 +35,7 @@ export class PostReactionsRepository {
     return this.postReactionModel.countDocuments({
       postId: postId,
       status: PostReaction.LIKE_STATUS_OPTIONS.DISLIKE,
+      isBanned: false,
     });
   }
 
