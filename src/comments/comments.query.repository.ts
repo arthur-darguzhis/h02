@@ -84,7 +84,7 @@ export class CommentsQueryRepository {
     };
   }
 
-  async getByIdForCurrentUser(commentId: string, userId) {
+  async getByIdForCurrentUser(commentId: string, userId: string) {
     const comment = await this.commentModel.findById(commentId);
     if (!comment || comment.isBanned)
       throw new EntityNotFoundException(
@@ -92,16 +92,15 @@ export class CommentsQueryRepository {
       );
 
     let myStatus = CommentReaction.LIKE_STATUS_OPTIONS.NONE;
-    if (userId) {
-      const myReaction =
-        await this.commentReactionsQueryRepository.findUserReaction(
-          commentId,
-          userId,
-        );
-      if (myReaction) {
-        myStatus = myReaction.status;
-      }
+    const myReaction =
+      await this.commentReactionsQueryRepository.findUserReaction(
+        commentId,
+        userId,
+      );
+    if (myReaction) {
+      myStatus = myReaction.status;
     }
+
     return mapCommentToViewModel(comment, myStatus);
   }
 }

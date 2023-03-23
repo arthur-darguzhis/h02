@@ -154,7 +154,17 @@ export const RequestsMaker = {
     return response.body.id;
   },
 
-  userLikeComment: async (app, accessToken, postId) => {
+  userLikeComment: async (app, accessToken, commentId) => {
+    const response = await request(app)
+      .put(`/comments/${commentId}/like-status`)
+      .auth(accessToken, { type: 'bearer' })
+      .send({
+        likeStatus: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+      })
+      .expect(HttpStatus.NO_CONTENT);
+    return response.body.id;
+  },
+  userLikePost: async (app, accessToken, postId) => {
     const response = await request(app)
       .put(`/posts/${postId}/like-status`)
       .auth(accessToken, { type: 'bearer' })
