@@ -44,6 +44,7 @@ export class PostReactionsRepository {
       .find({
         postId: postId,
         status: PostReaction.LIKE_STATUS_OPTIONS.LIKE,
+        isBanned: false,
       })
       .select('-_id addedAt userId login')
       .sort({ addedAt: 'desc' })
