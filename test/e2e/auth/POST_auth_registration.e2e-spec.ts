@@ -1,12 +1,19 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import { setConfigTestApp } from '../appConfigurations';
+import { HttpStatus } from '@nestjs/common';
 import { Given } from '../../xxx/testEntities/Given';
 import { checkFieldsInErrorMessage } from '../responseChecker';
 import request, { Response } from 'supertest';
 
 describe('POST /auth/registration (e2e)', () => {
-  let configuredTestApp: INestApplication;
   let given: Given;
+
+  beforeEach(async () => {
+    given = await Given.bootstrapTestApp();
+    await given.clearDb();
+  });
+
+  afterEach(async () => {
+    await given.closeApp();
+  });
 
   const validDto = {
     login: 'user1',
@@ -14,29 +21,12 @@ describe('POST /auth/registration (e2e)', () => {
     email: 'user1@test.test',
   };
 
-  /**
-   * Here we check registration process that End-point is working correct.
-   * @param dto
-   * @param status
-   */
   const testRequest = async (dto, status: HttpStatus): Promise<Response> => {
-    return request(configuredTestApp.getHttpServer())
+    return request(given.app)
       .post('/auth/registration')
       .send(dto)
       .expect(status);
   };
-
-  beforeEach(async () => {
-    configuredTestApp = await setConfigTestApp();
-    await configuredTestApp.init();
-
-    given = new Given(configuredTestApp.getHttpServer());
-    await given.clearDb();
-  });
-
-  afterEach(async () => {
-    await configuredTestApp.close();
-  });
 
   describe('Invalid input data in DTO. Status: 400.', () => {
     describe('login', () => {
@@ -46,7 +36,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['login']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'login',
+            message: 'login must be longer than or equal to 3 characters',
+          },
+        ]);
       });
 
       it('Should throw an error if login is less than 3 characters', async () => {
@@ -55,7 +50,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['login']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'login',
+            message: 'login must be longer than or equal to 3 characters',
+          },
+        ]);
       });
 
       it('Should throw an error if login is more than 10 characters', async () => {
@@ -64,7 +64,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['login']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'login',
+            message: 'login must be shorter than or equal to 10 characters',
+          },
+        ]);
       });
 
       it('Should throw an error if login contains invalid characters', async () => {
@@ -73,7 +78,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['login']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'login',
+            message: 'login must match /^[a-zA-Z0-9_-]*$/ regular expression',
+          },
+        ]);
       });
     });
 
@@ -84,7 +94,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['password']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'password',
+            message: 'password must be longer than or equal to 6 characters',
+          },
+        ]);
       });
 
       it('Should throw an error if password is less than 6 characters', async () => {
@@ -93,7 +108,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['password']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'password',
+            message: 'password must be longer than or equal to 6 characters',
+          },
+        ]);
       });
 
       it('Should throw an error if password is more than 20 characters', async () => {
@@ -102,7 +122,12 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['password']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'password',
+            message: 'password must be shorter than or equal to 20 characters',
+          },
+        ]);
       });
     });
 
@@ -113,7 +138,13 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['email']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'email',
+            message:
+              'email must match /^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/ regular expression',
+          },
+        ]);
       });
 
       it('Should throw an error if email is not valid', async () => {
@@ -122,7 +153,32 @@ describe('POST /auth/registration (e2e)', () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['email']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'email',
+            message:
+              'email must match /^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/ regular expression',
+          },
+        ]);
+      });
+
+      it('Should throw an error if email is not valid', async () => {
+        const response = await testRequest({}, HttpStatus.BAD_REQUEST);
+
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'login',
+            message: 'login must be a string',
+          },
+          {
+            field: 'password',
+            message: 'password must be a string',
+          },
+          {
+            field: 'email',
+            message: 'email must be a string',
+          },
+        ]);
       });
     });
   });
@@ -135,7 +191,12 @@ describe('POST /auth/registration (e2e)', () => {
         HttpStatus.BAD_REQUEST,
       );
 
-      checkFieldsInErrorMessage(response, ['login']);
+      checkFieldsInErrorMessage(response, [
+        {
+          field: 'login',
+          message: `User with login: ${validDto.login} already exists`,
+        },
+      ]);
     });
 
     it('Should throw an error if "email" already in use', async () => {
@@ -145,7 +206,12 @@ describe('POST /auth/registration (e2e)', () => {
         HttpStatus.BAD_REQUEST,
       );
 
-      checkFieldsInErrorMessage(response, ['email']);
+      checkFieldsInErrorMessage(response, [
+        {
+          field: 'email',
+          message: `User with email: ${validDto.email} already exists`,
+        },
+      ]);
     });
   });
 
