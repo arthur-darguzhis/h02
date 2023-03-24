@@ -39,7 +39,7 @@ describe('POST /auth/registration (e2e)', () => {
         checkFieldsInErrorMessage(response, [
           {
             field: 'login',
-            message: 'login must be longer than or equal to 3 characters',
+            message: 'login should not be empty',
           },
         ]);
       });
@@ -97,7 +97,7 @@ describe('POST /auth/registration (e2e)', () => {
         checkFieldsInErrorMessage(response, [
           {
             field: 'password',
-            message: 'password must be longer than or equal to 6 characters',
+            message: 'password should not be empty',
           },
         ]);
       });
@@ -141,8 +141,7 @@ describe('POST /auth/registration (e2e)', () => {
         checkFieldsInErrorMessage(response, [
           {
             field: 'email',
-            message:
-              'email must match /^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/ regular expression',
+            message: 'email should not be empty',
           },
         ]);
       });
@@ -168,15 +167,15 @@ describe('POST /auth/registration (e2e)', () => {
         checkFieldsInErrorMessage(response, [
           {
             field: 'login',
-            message: 'login must be a string',
+            message: 'login should not be empty',
           },
           {
             field: 'password',
-            message: 'password must be a string',
+            message: 'password should not be empty',
           },
           {
             field: 'email',
-            message: 'email must be a string',
+            message: 'email should not be empty',
           },
         ]);
       });
