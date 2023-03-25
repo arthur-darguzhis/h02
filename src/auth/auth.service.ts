@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSessionsFactory } from '../security/user-sessions.factory';
 import { UserSessionsService } from '../security/user-sessions.service';
+import * as process from 'process';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,9 @@ export class AuthService {
 
   public async registration(dto: RegistrationDto): Promise<void | never> {
     const newUser = await this.usersFactory.registerNewUser(dto);
-    await this.emailSenderService.sendRegistrationConfirmationEmail(newUser);
+    if (process.env.NODE_ENV !== 'test') {
+      await this.emailSenderService.sendRegistrationConfirmationEmail(newUser);
+    }
   }
 
   public async confirmRegistration(dto: ConfirmRegistrationDto) {
@@ -54,8 +57,10 @@ export class AuthService {
         'email',
       );
     }
-    user.generateEmailConfirmationInfo();
-    await this.emailSenderService.sendRegistrationConfirmationEmail(user);
+    if (process.env.NODE_ENV !== 'test') {
+      user.generateEmailConfirmationInfo();
+      await this.emailSenderService.sendRegistrationConfirmationEmail(user);
+    }
     await this.usersRepository.save(user);
   }
 
