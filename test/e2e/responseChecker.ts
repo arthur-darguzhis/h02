@@ -1,11 +1,14 @@
-export const checkFieldsInErrorMessage = (response, fields: string[]) => {
-  expect(response.body.errorsMessages.length).toBe(fields.length);
+export const checkFieldsInErrorMessage = (
+  response,
+  errors: Array<{ field: string; message: string }>,
+) => {
+  expect(response.body.errorsMessages.length).toBe(errors.length);
 
   expect(response.body).toEqual({
-    errorsMessages: fields.map((fieldName) => {
+    errorsMessages: errors.map((error) => {
       return {
-        field: fieldName,
-        message: expect.any(String),
+        field: error.field,
+        message: error.message,
       };
     }),
   });
