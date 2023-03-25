@@ -2,6 +2,7 @@ import { setConfigTestApp } from '../appConfigurations';
 import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { RequestsMaker } from '../requestsMaker';
+import { Given } from '../../xxx/testEntities/Given';
 
 describe('POST /auth/login', () => {
   let configuredTestApp: INestApplication;
@@ -12,7 +13,11 @@ describe('POST /auth/login', () => {
     await configuredTestApp.init();
     app = configuredTestApp.getHttpServer();
 
-    await request(app).delete('/testing/all-data');
+    const given = new Given(app);
+    await given.clearDb();
+
+    const user1 = await given.adminAddUserToSystem('user1');
+    await user1.authLogin();
 
     await RequestsMaker.users.createUser(app, {
       login: 'user1',
