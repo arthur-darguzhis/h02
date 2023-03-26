@@ -25,8 +25,6 @@ export class Given {
 
   public async clearDb() {
     await request(this.app).delete('/testing/all-data');
-    TestUser.storage.clear();
-    TestBlog.storage.clear();
   }
 
   public async adminAddUserToSystem(login: string): Promise<Response> {

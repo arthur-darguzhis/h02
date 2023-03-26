@@ -6,7 +6,7 @@ import {
   HttpExceptionFilters,
 } from './exception.filters';
 import { validationPipe } from './validation.pipe';
-import { unhandledRejectionHandler } from './common/unhandled-rejection.handler';
+import { addUnhandledRejectionListener } from './common/add-unhandled-rejection.listener';
 import cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
@@ -21,7 +21,7 @@ export function configureApp(app: INestApplication): void {
     new HttpExceptionFilters(),
     new DomainExceptionFilter(),
   );
-  unhandledRejectionHandler();
+  addUnhandledRejectionListener();
   app.use(cookieParser());
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 }
