@@ -80,6 +80,7 @@ import { SuperAdminUsersController } from './super-admin/users/super-admin.users
 import { AdminBanOrUnbanUserUseCase } from './super-admin/users/use-cases/admin-ban-or-unban-user.use-case';
 import { AdminAddNewUserUseCase } from './super-admin/users/use-cases/admin-add-new-user.use-case';
 import { AdminDeleteUserByIdUseCase } from './super-admin/users/use-cases/admin-delete-user-by-id.use-case';
+import { UserAddCommentUseCase } from './posts/application/use-cases/user-add-comment.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -94,6 +95,7 @@ const bloggerUseCases = [
   AdminBanOrUnbanUserUseCase,
   AdminAddNewUserUseCase,
   AdminDeleteUserByIdUseCase,
+  UserAddCommentUseCase,
 ];
 
 @Module({

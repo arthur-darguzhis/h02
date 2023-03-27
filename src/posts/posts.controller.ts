@@ -29,10 +29,13 @@ import { CommentsService } from '../comments/comments.service';
 import { mapCommentToViewModel } from '../comments/comments.mapper';
 import { CommentReactionsDto } from '../comments/dto/comment-reactions.dto';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
+import { CommandBus } from '@nestjs/cqrs';
+import { UserAddCommentCommand } from './application/use-cases/user-add-comment.use-case';
 
 @Controller('posts')
 export class PostsController {
   constructor(
+    private commandBus: CommandBus,
     private postsService: PostsService,
     private commentsService: CommentsService,
     private postsQueryRepository: PostsQueryRepository,
@@ -88,10 +91,8 @@ export class PostsController {
     @Body() dto: AddCommentToPostDto,
     @CurrentUserId() currentUserId,
   ) {
-    const comment = await this.commentsService.addCommentToPost(
-      postId,
-      currentUserId,
-      dto,
+    const comment = await this.commandBus.execute(
+      new UserAddCommentCommand(dto.content, postId, currentUserId),
     );
     return mapCommentToViewModel(comment);
   }

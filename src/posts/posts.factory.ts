@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './posts-schema';
 import { Model } from 'mongoose';
 import { BlogsRepository } from '../blogs/blogs.repository';
-import { CreatePostWithoutBlogIdDto } from './dto/createPostWithoutBlogId.dto';
 import { UnauthorizedActionException } from '../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { BloggerCreatePostCommand } from '../blogger/application/use-cases/blogger-create-post';
 
 @Injectable()
 export class PostsFactory {
@@ -14,7 +14,7 @@ export class PostsFactory {
     private blogsRepository: BlogsRepository,
   ) {}
 
-  async createNewPost(dto: CreatePostDto): Promise<PostDocument | never> {
+  async adminCreatePost(dto: CreatePostDto): Promise<PostDocument | never> {
     const blog = await this.blogsRepository.getById(dto.blogId);
 
     return await this.postModel.create({
@@ -32,14 +32,12 @@ export class PostsFactory {
     });
   }
 
-  async bloggerCreateNewPost(
-    blogId: string,
-    dto: CreatePostWithoutBlogIdDto,
-    userId: string,
+  async bloggerCreatePost(
+    dto: BloggerCreatePostCommand,
   ): Promise<PostDocument | never> {
-    const blog = await this.blogsRepository.getById(blogId);
+    const blog = await this.blogsRepository.getById(dto.blogId);
 
-    if (blog.blogOwnerInfo.userId !== userId) {
+    if (blog.blogOwnerInfo.userId !== dto.userId) {
       throw new UnauthorizedActionException(
         'Unauthorized creating post. This blog belongs to another user.',
       );
@@ -49,7 +47,7 @@ export class PostsFactory {
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,
-      blogId: blogId,
+      blogId: dto.blogId,
       blogName: blog.name,
       extendedLikesInfo: {
         likesCount: 0,
@@ -57,7 +55,7 @@ export class PostsFactory {
         newestLikes: [],
       },
       postOwnerInfo: {
-        userId: userId,
+        userId: dto.userId,
       },
       createdAt: new Date().toISOString(),
     });

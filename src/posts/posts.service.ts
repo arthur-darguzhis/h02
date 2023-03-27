@@ -17,7 +17,7 @@ export class PostsService {
   ) {}
 
   async createPost(dto: CreatePostDto) {
-    const newPost = await this.postsFactory.createNewPost(dto);
+    const newPost = await this.postsFactory.adminCreatePost(dto);
     return this.postsRepository.save(newPost);
   }
 

@@ -87,17 +87,4 @@ export class CommentsService {
       dislikesCount,
     );
   }
-
-  async addCommentToPost(
-    postId: string,
-    currentUserId,
-    dto: AddCommentToPostDto,
-  ) {
-    await this.postsRepository.throwIfNotExists(postId);
-    return await this.commentsFactory.createNewComment(
-      postId,
-      currentUserId,
-      dto,
-    );
-  }
 }

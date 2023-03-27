@@ -12,15 +12,11 @@ export class CommentsFactory {
     private usersRepository: UsersRepository,
   ) {}
 
-  async createNewComment(
-    postId: string,
-    userId: string,
-    dto: AddCommentToPostDto,
-  ) {
+  async createNewComment(postId: string, userId: string, content: string) {
     const user = await this.usersRepository.getById(userId);
 
     return this.commentModel.create({
-      content: dto.content,
+      content: content,
       commentatorInfo: {
         userId: userId,
         userLogin: user.login,
