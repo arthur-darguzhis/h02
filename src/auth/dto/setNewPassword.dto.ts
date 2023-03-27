@@ -5,10 +5,11 @@ export class SetNewPasswordDto {
   @Length(6, 20)
   @Trim()
   @IsString()
+  @IsNotEmpty()
   newPassword: string;
 
-  @IsNotEmpty()
   @Trim()
   @IsString()
+  @IsNotEmpty()
   recoveryCode: string;
 }
