@@ -28,8 +28,10 @@ import { mapPostToViewModel } from '../../posts/posts.mapper';
 import { BloggerUpdatePostCommand } from '../application/use-cases/blogger-update-post';
 import { UpdatePostWithoutBlogIdDto } from '../../posts/dto/updatePostWithoutBlogId.dto';
 import { BloggerDeletePostCommand } from '../application/use-cases/blogger-delete-post.use-case';
+import { BloggerBanUserDto } from './dto/blogger-ban-user.dto';
+import { BloggerBanUserCommand } from '../application/use-cases/blogger-ban-user.use-case';
 
-@Controller('blogger/blogs')
+@Controller('blogger')
 export class BloggerController {
   constructor(
     private commandBus: CommandBus,
@@ -37,20 +39,25 @@ export class BloggerController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('blogs')
   @HttpCode(HttpStatus.CREATED)
   async createBlog(
     @Body() dto: CreateBlogDto,
     @CurrentUserId() currentUserId: string,
   ) {
     const blog = await this.commandBus.execute(
-      new BloggerCreateBlogCommand(dto, currentUserId),
+      new BloggerCreateBlogCommand(
+        dto.name,
+        dto.description,
+        dto.websiteUrl,
+        currentUserId,
+      ),
     );
     return mapBlogToViewModel(blog);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('blogs')
   async getBlogs(
     @Query() dto: PaginationBlogListDto,
     @CurrentUserId() currentUserId: string,
@@ -62,7 +69,7 @@ export class BloggerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':blogId')
+  @Put('blogs/:blogId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(
     @Body() dto: UpdateBlogDto,
@@ -75,7 +82,7 @@ export class BloggerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':blogId')
+  @Delete('blogs/:blogId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(
     @Param('blogId') blogId: string,
@@ -87,7 +94,7 @@ export class BloggerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(':blogId/posts')
+  @Post('blogs/:blogId/posts')
   @HttpCode(HttpStatus.CREATED)
   async createPost(
     @Param('blogId') blogId: string,
@@ -95,13 +102,19 @@ export class BloggerController {
     @CurrentUserId() currentUserId: string,
   ) {
     const post = await this.commandBus.execute(
-      new BloggerCreatePostCommand(dto, blogId, currentUserId),
+      new BloggerCreatePostCommand(
+        dto.title,
+        dto.shortDescription,
+        dto.content,
+        blogId,
+        currentUserId,
+      ),
     );
     return mapPostToViewModel(post);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':blogId/posts/:postId')
+  @Put('blogs/:blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(
     @Param('blogId') blogId: string,
@@ -115,7 +128,7 @@ export class BloggerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':blogId/posts/:postId')
+  @Delete('blogs/:blogId/posts/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(
     @Param('blogId') blogId: string,
@@ -124,6 +137,25 @@ export class BloggerController {
   ) {
     await this.commandBus.execute(
       new BloggerDeletePostCommand(blogId, postId, currentUserId),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('users/:userId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async bloggerBanOrUnbanUserForBlog(
+    @Param('userId') userId: string,
+    @Body() dto: BloggerBanUserDto,
+    @CurrentUserId() currentUserId: string,
+  ) {
+    await this.commandBus.execute(
+      new BloggerBanUserCommand(
+        currentUserId,
+        dto.blogId,
+        userId,
+        dto.isBanned,
+        dto.banReason,
+      ),
     );
   }
 }

@@ -81,6 +81,12 @@ import { AdminBanOrUnbanUserUseCase } from './super-admin/users/use-cases/admin-
 import { AdminAddNewUserUseCase } from './super-admin/users/use-cases/admin-add-new-user.use-case';
 import { AdminDeleteUserByIdUseCase } from './super-admin/users/use-cases/admin-delete-user-by-id.use-case';
 import { UserAddCommentUseCase } from './posts/application/use-cases/user-add-comment.use-case';
+import { BloggerBanUserUseCase } from './blogger/application/use-cases/blogger-ban-user.use-case';
+import {
+  BlogUserBans,
+  BlogUserBansSchema,
+} from './blogs/blog-user-bans-schema';
+import { BlogUserBansRepository } from './blogs/blog-user-bans.repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -95,6 +101,7 @@ const bloggerUseCases = [
   AdminBanOrUnbanUserUseCase,
   AdminAddNewUserUseCase,
   AdminDeleteUserByIdUseCase,
+  BloggerBanUserUseCase,
   UserAddCommentUseCase,
 ];
 
@@ -113,6 +120,7 @@ const bloggerUseCases = [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
+      { name: BlogUserBans.name, schema: BlogUserBansSchema },
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: CommentReaction.name, schema: CommentReactionSchema },
@@ -171,6 +179,7 @@ const bloggerUseCases = [
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,
+    BlogUserBansRepository,
     // RefreshTokenStrategy,
     BlogExists,
     UserSessionsService,

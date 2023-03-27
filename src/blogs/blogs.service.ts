@@ -12,8 +12,8 @@ export class BlogsService {
     private blogsRepository: BlogsRepository,
   ) {}
 
-  async createBlog(dto: CreateBlogDto): Promise<BlogDocument> {
-    const newBlog = await this.blogsFactory.createNewBlog(dto);
+  async adminCreateBlog(dto: CreateBlogDto): Promise<BlogDocument> {
+    const newBlog = await this.blogsFactory.adminCreateBlog(dto);
     return this.blogsRepository.save(newBlog);
   }
 

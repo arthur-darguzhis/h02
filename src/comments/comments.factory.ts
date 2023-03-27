@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Comment, CommentDocument } from './comments-schema';
-import { AddCommentToPostDto } from '../posts/dto/add-comment-to-post.dto';
 import { UsersRepository } from '../users/users.repository';
 
 @Injectable()

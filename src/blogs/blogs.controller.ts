@@ -60,7 +60,7 @@ export class BlogsController {
   @UseGuards(BasicAuthGuard)
   @Post()
   async createBlog(@Body() dto: CreateBlogDto) {
-    const blog = await this.blogsService.createBlog(dto);
+    const blog = await this.blogsService.adminCreateBlog(dto);
     return mapBlogToViewModel(blog);
   }
 

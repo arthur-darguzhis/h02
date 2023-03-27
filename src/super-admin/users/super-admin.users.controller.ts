@@ -50,7 +50,9 @@ export class SuperAdminUsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async adminAddNewUser(@Body() dto: CreateUserDto) {
-    const user = await this.commandBus.execute(new AdminAddNewUserCommand(dto));
+    const user = await this.commandBus.execute(
+      new AdminAddNewUserCommand(dto.login, dto.password, dto.email),
+    );
     return mapUserToViewModel(user);
   }
 
