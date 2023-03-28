@@ -1,6 +1,6 @@
-import { PaginationQueryParametersDto } from '../../common/dto/PaginationQueryParametersDto';
+import { PaginationQueryParametersDto } from '../../../common/dto/PaginationQueryParametersDto';
 import { IsIn, IsString } from 'class-validator';
-import { Trim } from '../../common/crutches/class-transformer/trim.decorator';
+import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
 
 export class PaginatedPostListDto extends PaginationQueryParametersDto {
   @IsIn([

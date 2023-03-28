@@ -5,7 +5,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentReactionsDto } from './dto/comment-reactions.dto';
 import { CommentReactionsRepository } from './comment-reactions.repository';
 import { CommentReactionsFactory } from './comment-reactions.factory';
-import { AddCommentToPostDto } from '../posts/dto/add-comment-to-post.dto';
+import { AddCommentToPostDto } from '../posts/api/dto/add-comment-to-post.dto';
 import { PostsRepository } from '../posts/posts.repository';
 import { CommentsFactory } from './comments.factory';
 

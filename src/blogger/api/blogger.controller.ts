@@ -23,10 +23,10 @@ import { BloggerUpdateBlogCommand } from '../application/use-cases/blogger-updat
 import { UpdateBlogDto } from '../../blogs/dto/updateBlog.dto';
 import { BloggerDeleteBlogCommand } from '../application/use-cases/blogger-delete-blog.use-case';
 import { BloggerCreatePostCommand } from '../application/use-cases/blogger-create-post';
-import { CreatePostWithoutBlogIdDto } from '../../posts/dto/createPostWithoutBlogId.dto';
+import { CreatePostWithoutBlogIdDto } from '../../posts/api/dto/createPostWithoutBlogId.dto';
 import { mapPostToViewModel } from '../../posts/posts.mapper';
 import { BloggerUpdatePostCommand } from '../application/use-cases/blogger-update-post';
-import { UpdatePostWithoutBlogIdDto } from '../../posts/dto/updatePostWithoutBlogId.dto';
+import { UpdatePostWithoutBlogIdDto } from '../../posts/api/dto/updatePostWithoutBlogId.dto';
 import { BloggerDeletePostCommand } from '../application/use-cases/blogger-delete-post.use-case';
 import { BloggerBanUserDto } from './dto/blogger-ban-user.dto';
 import { BloggerBanUserCommand } from '../application/use-cases/blogger-ban-user.use-case';

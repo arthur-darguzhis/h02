@@ -19,11 +19,13 @@ import { UpdateBlogDto } from './dto/updateBlog.dto';
 import { PaginationBlogListDto } from './dto/paginationBlogList.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PaginationQueryParametersDto } from '../common/dto/PaginationQueryParametersDto';
-import { CreatePostWithoutBlogIdDto } from '../posts/dto/createPostWithoutBlogId.dto';
+import { CreatePostWithoutBlogIdDto } from '../posts/api/dto/createPostWithoutBlogId.dto';
 import { PostsService } from '../posts/posts.service';
 import { mapPostToViewModel } from '../posts/posts.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 import { OptionalCurrentUserId } from '../global-services/decorators/current-user-id.decorator';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetPaginatedPostsListByBlogIdQuery } from '../posts/application/query/get-paginated-posts-list-by-blog-id.query';
 
 @Controller('blogs')
 export class BlogsController {
@@ -32,6 +34,7 @@ export class BlogsController {
     private postsService: PostsService,
     private blogsQueryRepository: BlogsQueryRepository,
     private postsQueryRepository: PostsQueryRepository,
+    private queryBus: QueryBus,
   ) {}
 
   @Get()
@@ -50,10 +53,15 @@ export class BlogsController {
     @Query() dto: PaginationQueryParametersDto,
     @OptionalCurrentUserId() currentUserId,
   ) {
-    return await this.postsQueryRepository.getPaginatedPostsListByBlogId(
-      blogId,
-      dto,
-      currentUserId,
+    return await this.queryBus.execute(
+      new GetPaginatedPostsListByBlogIdQuery(
+        blogId,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+        currentUserId,
+      ),
     );
   }
 

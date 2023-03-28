@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/createPost.dto';
+import { CreatePostDto } from './api/dto/createPost.dto';
 import { PostsFactory } from './posts.factory';
 import { PostsRepository } from './posts.repository';
-import { UpdatePostDto } from './dto/updatePost.dto';
+import { UpdatePostDto } from './api/dto/updatePost.dto';
 import { CommentReactionsDto } from '../comments/dto/comment-reactions.dto';
 import { PostReactionsRepository } from './post-reactions.repository';
 import { PostReactionsFactory } from './post-reaction.factory';

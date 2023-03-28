@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UsersRepository } from '../users/users.repository';
 import { PostReaction, PostReactionDocument } from './post-reaction-schema';
-import { PostReactionsDto } from './dto/post-reactions.dto';
+import { PostReactionsDto } from './api/dto/post-reactions.dto';
 
 @Injectable()
 export class PostReactionsFactory {

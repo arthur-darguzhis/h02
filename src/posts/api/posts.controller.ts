@@ -14,23 +14,23 @@ import {
 import { PaginatedPostListDto } from './dto/paginatedPostList.dto';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
-import { PostsService } from './posts.service';
-import { PostsQueryRepository } from './posts.query.repository';
-import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { PaginatedCommentListDto } from '../comments/dto/paginated-comment-list.dto';
-import { mapPostToViewModel } from './posts.mapper';
+import { PostsService } from '../posts.service';
+import { PostsQueryRepository } from '../posts.query.repository';
+import { CommentsQueryRepository } from '../../comments/comments.query.repository';
+import { PaginatedCommentListDto } from '../../comments/dto/paginated-comment-list.dto';
+import { mapPostToViewModel } from '../posts.mapper';
 import { AddCommentToPostDto } from './dto/add-comment-to-post.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import {
   CurrentUserId,
   OptionalCurrentUserId,
-} from '../global-services/decorators/current-user-id.decorator';
-import { CommentsService } from '../comments/comments.service';
-import { mapCommentToViewModel } from '../comments/comments.mapper';
-import { CommentReactionsDto } from '../comments/dto/comment-reactions.dto';
-import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
+} from '../../global-services/decorators/current-user-id.decorator';
+import { CommentsService } from '../../comments/comments.service';
+import { mapCommentToViewModel } from '../../comments/comments.mapper';
+import { CommentReactionsDto } from '../../comments/dto/comment-reactions.dto';
+import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserAddCommentCommand } from './application/use-cases/user-add-comment.use-case';
+import { UserAddCommentCommand } from '../application/use-cases/user-add-comment.use-case';
 
 @Controller('posts')
 export class PostsController {

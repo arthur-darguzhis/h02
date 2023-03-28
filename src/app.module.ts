@@ -19,7 +19,7 @@ import { PostsQueryRepository } from './posts/posts.query.repository';
 import { Blog, BlogSchema } from './blogs/blogs-schema';
 import { Post, PostSchema } from './posts/posts-schema';
 import { BlogsController } from './blogs/blogs.controller';
-import { PostsController } from './posts/posts.controller';
+import { PostsController } from './posts/api/posts.controller';
 import { BlogsFactory } from './blogs/blogs.factory';
 import { BlogsService } from './blogs/blogs.service';
 import { BlogsRepository } from './blogs/blogs.repository';
@@ -90,6 +90,7 @@ import { BlogUserBansRepository } from './blogs/blog-user-bans.repository';
 import { BloggerGetListOfBannedUsersForBlogHandler } from './blogger/application/queries/blogger-get-list-of-banned-users-in-blog.query';
 import { BloggerGetCommentsListInBlogHandler } from './blogger/application/queries/blogger-get-comments-for-current-user-blogs.query';
 import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-ban-or-unban-blog';
+import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/get-paginated-posts-list-by-blog-id.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -116,6 +117,8 @@ const bloggerQueries = [
   BloggerGetListOfBannedUsersForBlogHandler,
   BloggerGetCommentsListInBlogHandler,
 ];
+
+const postsQueries = [GetPaginatedPostsListByBlogIdHandler];
 
 @Module({
   imports: [
@@ -202,6 +205,7 @@ const bloggerQueries = [
     ...bloggerUseCases,
     ...superAdminUseCases,
     ...bloggerQueries,
+    ...postsQueries,
   ],
 })
 export class AppModule {}

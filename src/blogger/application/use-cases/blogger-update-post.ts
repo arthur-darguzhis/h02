@@ -1,7 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../posts/posts.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { UpdatePostWithoutBlogIdDto } from '../../../posts/dto/updatePostWithoutBlogId.dto';
+import { UpdatePostWithoutBlogIdDto } from '../../../posts/api/dto/updatePostWithoutBlogId.dto';
 import { BlogsRepository } from '../../../blogs/blogs.repository';
 
 export class BloggerUpdatePostCommand {
