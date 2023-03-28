@@ -43,7 +43,7 @@ export class BloggerBanUserUseCase {
       command.userId,
     );
 
-    if (blogUserBan && command.isBanned) {
+    if (blogUserBan && blogUserBan.banInfo.isBanned === command.isBanned) {
       throw new UnauthorizedActionException(
         'User is already banned for this blog',
       );
@@ -53,10 +53,18 @@ export class BloggerBanUserUseCase {
       await this.blogUserBansDocument.create({
         blogId: blog.id,
         userId: user.id,
-        banReason: command.banReason,
+        login: user.login,
+        banInfo: {
+          isBanned: true,
+          banDate: new Date().toISOString(),
+          banReason: command.banReason,
+        },
       });
     } else {
-      await this.blogUserBansRepository.delete(blogUserBan);
+      blogUserBan.banInfo.isBanned = false;
+      blogUserBan.banInfo.banDate = null;
+      blogUserBan.banInfo.banReason = null;
+      await this.blogUserBansRepository.save(blogUserBan);
     }
   }
 

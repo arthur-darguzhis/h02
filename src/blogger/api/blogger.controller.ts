@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { BloggerCreateBlogCommand } from '../application/use-cases/blogger-create-blog.use-case';
 import { mapBlogToViewModel } from '../../blogs/blog.mapper';
 import { CreateBlogDto } from '../../blogs/dto/createBlog.dto';
@@ -30,11 +30,14 @@ import { UpdatePostWithoutBlogIdDto } from '../../posts/dto/updatePostWithoutBlo
 import { BloggerDeletePostCommand } from '../application/use-cases/blogger-delete-post.use-case';
 import { BloggerBanUserDto } from './dto/blogger-ban-user.dto';
 import { BloggerBanUserCommand } from '../application/use-cases/blogger-ban-user.use-case';
+import { BannedUsersInBlog } from './dto/banned-users-in-blog.dto';
+import { BloggerGetListOfBannedUsersInBlogQuery } from '../application/queries/blogger-get-list-of-banned-users-in-blog.query';
 
 @Controller('blogger')
 export class BloggerController {
   constructor(
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
     private blogsQueryRepository: BlogsQueryRepository,
   ) {}
 
@@ -155,6 +158,27 @@ export class BloggerController {
         userId,
         dto.isBanned,
         dto.banReason,
+      ),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('users/blog/:blogId')
+  @HttpCode(HttpStatus.OK)
+  async returnPaginatedListOfBannedUsersForBlog(
+    @CurrentUserId() currentUserId: string,
+    @Param('blogId') blogId: string,
+    @Query() dto: BannedUsersInBlog,
+  ) {
+    await this.queryBus.execute(
+      new BloggerGetListOfBannedUsersInBlogQuery(
+        blogId,
+        currentUserId,
+        dto.searchLoginTerm,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageNumber,
+        dto.pageSize,
       ),
     );
   }

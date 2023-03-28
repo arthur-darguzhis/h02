@@ -1,4 +1,4 @@
-import { CommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsFactory } from '../../../blogs/blogs.factory';
 import { BlogDocument } from '../../../blogs/blogs-schema';
 
@@ -12,7 +12,7 @@ export class BloggerCreateBlogCommand {
 }
 
 @CommandHandler(BloggerCreateBlogCommand)
-export class BloggerCreateBlogUseCase {
+export class BloggerCreateBlogUseCase implements ICommandHandler {
   constructor(private blogsFactory: BlogsFactory) {}
 
   async execute(command: BloggerCreateBlogCommand): Promise<BlogDocument> {
