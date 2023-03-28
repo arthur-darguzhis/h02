@@ -88,6 +88,7 @@ import {
 } from './blogs/blog-user-bans-schema';
 import { BlogUserBansRepository } from './blogs/blog-user-bans.repository';
 import { BloggerGetListOfBannedUsersForBlogHandler } from './blogger/application/queries/blogger-get-list-of-banned-users-in-blog.query';
+import { BloggerGetCommentsListInBlogHandler } from './blogger/application/queries/blogger-get-comments-for-current-user-blogs.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -106,7 +107,10 @@ const bloggerUseCases = [
   UserAddCommentUseCase,
 ];
 
-const bloggerQueries = [BloggerGetListOfBannedUsersForBlogHandler];
+const bloggerQueries = [
+  BloggerGetListOfBannedUsersForBlogHandler,
+  BloggerGetCommentsListInBlogHandler,
+];
 
 @Module({
   imports: [

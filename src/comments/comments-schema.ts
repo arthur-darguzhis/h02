@@ -14,8 +14,27 @@ export class CommentatorInfo {
 export class CommentLikeInfo {
   @Prop({ required: true })
   likesCount: number;
+
   @Prop({ required: true })
   dislikesCount: number;
+}
+
+@Schema()
+export class PostInfo {
+  @Prop({ required: true })
+  id: string;
+
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
+  blogId: string;
+
+  @Prop({ required: true })
+  blogName: string;
+
+  @Prop({ required: true })
+  postOwnerId: string;
 }
 
 @Schema()
@@ -28,6 +47,9 @@ export class Comment {
 
   @Prop({ required: true })
   postId: string;
+
+  @Prop({ type: PostInfo })
+  postInfo: PostInfo;
 
   @Prop({ required: true, default: false })
   isBanned: boolean;

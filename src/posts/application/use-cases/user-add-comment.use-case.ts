@@ -33,6 +33,7 @@ export class UserAddCommentUseCase {
 
     return await this.commentsFactory.createNewComment(
       command.postId,
+      post.postOwnerInfo.userId,
       command.currentUserId,
       command.content,
     );

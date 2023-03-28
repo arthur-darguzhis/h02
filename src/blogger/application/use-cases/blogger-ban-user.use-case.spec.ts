@@ -81,7 +81,7 @@ describe('POST blogger ban user (e2e)', () => {
         'First Blog',
         'the first blog description',
         'https://habr.com/ru/users/AlekDikarev/',
-        userAsBlogger._id.toString(),
+        userAsBlogger.id,
       ),
     );
 
@@ -90,8 +90,8 @@ describe('POST blogger ban user (e2e)', () => {
         'test post title',
         'test post short description',
         'test post content',
-        firstBlog._id.toString(),
-        userAsBlogger._id.toString(),
+        firstBlog.id,
+        userAsBlogger.id,
       ),
     );
 
@@ -100,7 +100,7 @@ describe('POST blogger ban user (e2e)', () => {
         'Second Blog',
         'the second blog description',
         'https://habr.com/ru/users/AlekDikarev/',
-        userAsBlogger._id.toString(),
+        userAsBlogger.id,
       ),
     );
 
@@ -109,8 +109,8 @@ describe('POST blogger ban user (e2e)', () => {
         'test post title',
         'test post short description',
         'test post content',
-        secondBlog._id.toString(),
-        userAsBlogger._id.toString(),
+        secondBlog.id,
+        userAsBlogger.id,
       ),
     );
 
