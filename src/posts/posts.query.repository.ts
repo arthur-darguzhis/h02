@@ -25,56 +25,6 @@ export class PostsQueryRepository {
     return mapPostToViewModel(post);
   }
 
-  async getPaginatedPostsList(dto: PaginatedPostListDto, userId = null) {
-    const { sortBy, sortDirection, pageNumber, pageSize } = dto;
-
-    const count = await this.postModel.countDocuments({});
-    const direction = sortDirection === 'asc' ? 1 : -1;
-    const howManySkip = (pageNumber - 1) * pageSize;
-    const posts = await this.postModel
-      .find({ isBanned: false })
-      .sort({ [sortBy]: direction })
-      .skip(howManySkip)
-      .limit(pageSize)
-      .lean();
-
-    let items: PostViewModel[];
-    if (userId) {
-      const postsIdList: Array<string> = posts.map((post) =>
-        post._id.toString(),
-      );
-      const userReactionsOnComments =
-        await this.postReactionsQueryRepository.getUserReactionOnPostBatch(
-          postsIdList,
-          userId,
-        );
-
-      const postsIdAndReactionsList: any = [];
-      userReactionsOnComments.forEach((likeData) => {
-        postsIdAndReactionsList[likeData.postId] = likeData.status;
-      });
-
-      items = posts.map((post) => {
-        const likeStatus =
-          postsIdAndReactionsList[post._id.toString()] ||
-          PostReaction.LIKE_STATUS_OPTIONS.NONE;
-        return mapPostToViewModel(post, likeStatus);
-      });
-    } else {
-      items = posts.map((post) => {
-        return mapPostToViewModel(post);
-      });
-    }
-
-    return {
-      pagesCount: Math.ceil(count / pageSize),
-      page: pageNumber,
-      pageSize: pageSize,
-      totalCount: count,
-      items: items,
-    };
-  }
-
   async getByIdForCurrentUser(postId: string, currentUserId = null) {
     const post = await this.postModel.findById(postId);
     if (!post || post.isBanned) {

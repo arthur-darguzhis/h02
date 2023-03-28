@@ -91,6 +91,7 @@ import { BloggerGetListOfBannedUsersForBlogHandler } from './blogger/application
 import { BloggerGetCommentsListInBlogHandler } from './blogger/application/queries/blogger-get-comments-for-current-user-blogs.query';
 import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-ban-or-unban-blog';
 import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/get-paginated-posts-list-by-blog-id.query';
+import { GetPaginatedPostsListHandler } from './posts/application/query/get-paginated-posts-list';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -118,7 +119,10 @@ const bloggerQueries = [
   BloggerGetCommentsListInBlogHandler,
 ];
 
-const postsQueries = [GetPaginatedPostsListByBlogIdHandler];
+const postsQueries = [
+  GetPaginatedPostsListByBlogIdHandler,
+  GetPaginatedPostsListHandler,
+];
 
 @Module({
   imports: [

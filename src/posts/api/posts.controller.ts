@@ -29,13 +29,15 @@ import { CommentsService } from '../../comments/comments.service';
 import { mapCommentToViewModel } from '../../comments/comments.mapper';
 import { CommentReactionsDto } from '../../comments/dto/comment-reactions.dto';
 import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserAddCommentCommand } from '../application/use-cases/user-add-comment.use-case';
+import { GetPaginatedPostsListQuery } from '../application/query/get-paginated-posts-list';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
     private postsService: PostsService,
     private commentsService: CommentsService,
     private postsQueryRepository: PostsQueryRepository,
@@ -47,9 +49,14 @@ export class PostsController {
     @Query() dto: PaginatedPostListDto,
     @OptionalCurrentUserId() currentUserId,
   ) {
-    return await this.postsQueryRepository.getPaginatedPostsList(
-      dto,
-      currentUserId,
+    return await this.queryBus.execute(
+      new GetPaginatedPostsListQuery(
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+        currentUserId,
+      ),
     );
   }
 
