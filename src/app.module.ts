@@ -89,6 +89,7 @@ import {
 import { BlogUserBansRepository } from './blogs/blog-user-bans.repository';
 import { BloggerGetListOfBannedUsersForBlogHandler } from './blogger/application/queries/blogger-get-list-of-banned-users-in-blog.query';
 import { BloggerGetCommentsListInBlogHandler } from './blogger/application/queries/blogger-get-comments-for-current-user-blogs.query';
+import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-ban-or-unban-blog';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -99,12 +100,16 @@ const bloggerUseCases = [
   BloggerCreatePostUseCase,
   BloggerUpdatePostUseCase,
   BloggerDeletePostUseCase,
-  AdminSetOwnerToOrphanBlogUseCase,
   AdminBanOrUnbanUserUseCase,
   AdminAddNewUserUseCase,
   AdminDeleteUserByIdUseCase,
   BloggerBanUserUseCase,
   UserAddCommentUseCase,
+];
+
+const superAdminUseCases = [
+  AdminSetOwnerToOrphanBlogUseCase,
+  AdminBanOrUnbanBlogUseCase,
 ];
 
 const bloggerQueries = [
@@ -195,6 +200,7 @@ const bloggerQueries = [
     UserSessionsFactory,
     ...userUseCases,
     ...bloggerUseCases,
+    ...superAdminUseCases,
     ...bloggerQueries,
   ],
 })

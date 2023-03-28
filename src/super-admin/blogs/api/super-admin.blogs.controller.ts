@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -13,6 +14,8 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AdminSetOwnerToOrphanBlogCommand } from '../use-cases/admin-set-owner-to-orphan-blog.use-case';
 import { BlogsQueryRepository } from '../../../blogs/blogs.query.repository';
 import { PaginationBlogListDto } from '../../../blogs/dto/paginationBlogList.dto';
+import { AdminBanOrUnbanBlogCommand } from '../use-cases/admin-ban-or-unban-blog';
+import { AdminBanOrUnbanBlogDto } from './dto/admin-ban-or-unban-blog.dto';
 
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
@@ -30,6 +33,18 @@ export class SuperAdminBlogsController {
   ) {
     await this.commandBus.execute(
       new AdminSetOwnerToOrphanBlogCommand(blogId, userId),
+    );
+  }
+
+  @UseGuards(BasicAuthGuard)
+  @Put(':blogId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async banOrUnbanBlog(
+    @Param('blogId') blogId: string,
+    @Body() dto: AdminBanOrUnbanBlogDto,
+  ) {
+    await this.commandBus.execute(
+      new AdminBanOrUnbanBlogCommand(blogId, dto.isBanned),
     );
   }
 

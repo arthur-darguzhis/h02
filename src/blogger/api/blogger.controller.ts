@@ -32,6 +32,8 @@ import { BloggerBanUserDto } from './dto/blogger-ban-user.dto';
 import { BloggerBanUserCommand } from '../application/use-cases/blogger-ban-user.use-case';
 import { BannedUsersInBlog } from './dto/banned-users-in-blog.dto';
 import { BloggerGetListOfBannedUsersInBlogQuery } from '../application/queries/blogger-get-list-of-banned-users-in-blog.query';
+import { ReturnAllCommentsInCurrentUserBlogsDto } from './dto/return-all-comments-in-current-user-blogs.dto';
+import { BloggerGetCommentsForCurrentUserBlogsQuery } from '../application/queries/blogger-get-comments-for-current-user-blogs.query';
 
 @Controller('blogger')
 export class BloggerController {
@@ -175,6 +177,24 @@ export class BloggerController {
         blogId,
         currentUserId,
         dto.searchLoginTerm,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageNumber,
+        dto.pageSize,
+      ),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('blogs/comments')
+  @HttpCode(HttpStatus.OK)
+  async returnAllCommentsForAllPostsInsideAllCurrentUserBlogs(
+    @CurrentUserId() currentUserId: string,
+    @Query() dto: ReturnAllCommentsInCurrentUserBlogsDto,
+  ) {
+    await this.queryBus.execute(
+      new BloggerGetCommentsForCurrentUserBlogsQuery(
+        currentUserId,
         dto.sortBy,
         dto.sortDirection,
         dto.pageNumber,
