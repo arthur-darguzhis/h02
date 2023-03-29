@@ -33,8 +33,8 @@ export class Blog {
   @Prop({ required: true, default: false })
   isBanned: boolean;
 
-  @Prop({ required: true, default: null })
-  banDate: string;
+  @Prop({ required: false, default: null })
+  banDate: string | null;
 
   @Prop({ type: BlogOwnerInfo })
   blogOwnerInfo: BlogOwnerInfo;
