@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { Blog, BlogDocument } from '../../../blogs/blogs-schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 export class BloggerGetListOfBannedUsersInBlogQuery {
   constructor(
@@ -32,6 +33,12 @@ export class BloggerGetListOfBannedUsersForBlogHandler
 
   async execute(query: BloggerGetListOfBannedUsersInBlogQuery) {
     const blog: BlogDocument = await this.blogModel.findById(query.blogId);
+
+    if (!blog) {
+      throw new EntityNotFoundException(
+        `Blog with id: ${query.blogId} is not found`,
+      );
+    }
 
     if (blog?.blogOwnerInfo?.userId !== query.bloggerId) {
       throw new UnauthorizedActionException(
