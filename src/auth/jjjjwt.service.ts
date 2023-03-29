@@ -11,7 +11,7 @@ import { UnprocessableEntityException } from '../common/exceptions/domain.except
 export class JjjjwtService {
   private authSecret = process.env.JWT_SECRET;
   private refreshSecret = process.env.JWT_REFRESH_SECRET;
-
+  //
   generateAuthToken(user: UserDocument) {
     return jwt.sign({ userId: user._id.toString() }, this.authSecret, {
       expiresIn: '10m',
