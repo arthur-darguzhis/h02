@@ -31,6 +31,7 @@ export type BlogViewModelWithOwnerInfo = {
     userId: string;
     userLogin: string;
   };
+  banInfo: { isBanned: boolean; banDate: string | null };
 };
 
 export const mapBlogToViewModelWithOwnerInfo = (
@@ -44,5 +45,9 @@ export const mapBlogToViewModelWithOwnerInfo = (
     isMembership: blog.isMembership,
     createdAt: blog.createdAt,
     blogOwnerInfo: blog.blogOwnerInfo,
+    banInfo: {
+      isBanned: blog.isBanned,
+      banDate: blog.banDate,
+    },
   };
 };

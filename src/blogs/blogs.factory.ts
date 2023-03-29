@@ -35,6 +35,8 @@ export class BlogsFactory {
         userId: dto.userId,
         userLogin: user.login,
       },
+      isBanned: false,
+      banDate: null,
     });
   }
 }
