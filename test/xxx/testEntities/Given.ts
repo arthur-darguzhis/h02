@@ -3,7 +3,6 @@ import request, { Response } from 'supertest';
 import { superAdminLogin, superAdminPassword } from '../testVariables';
 import { TestUser } from './TestUser';
 import { Error } from 'mongoose';
-import { TestBlog } from './TestBlog';
 import { setConfigTestApp } from '../../e2e/appConfigurations';
 
 export class Given {
