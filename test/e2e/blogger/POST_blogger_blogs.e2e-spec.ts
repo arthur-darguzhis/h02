@@ -64,7 +64,9 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['name']);
+        checkFieldsInErrorMessage(response, [
+          { field: 'name', message: 'name should not be empty' },
+        ]);
       });
 
       it('should throw an error if "name" is more than 15 characters', async () => {
@@ -73,7 +75,12 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['name']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'name',
+            message: 'name must be shorter than or equal to 15 characters',
+          },
+        ]);
       });
     });
 
@@ -84,7 +91,9 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['description']);
+        checkFieldsInErrorMessage(response, [
+          { field: 'description', message: 'description should not be empty' },
+        ]);
       });
 
       it('should throw an error if "description" is more than 20 characters', async () => {
@@ -93,7 +102,13 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['description']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'description',
+            message:
+              'description must be shorter than or equal to 500 characters',
+          },
+        ]);
       });
     });
 
@@ -104,7 +119,9 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['websiteUrl']);
+        checkFieldsInErrorMessage(response, [
+          { field: 'websiteUrl', message: 'websiteUrl should not be empty' },
+        ]);
       });
 
       it('should throw an error if "websiteUrl" is more than 20 characters', async () => {
@@ -113,7 +130,13 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
           HttpStatus.BAD_REQUEST,
         );
 
-        checkFieldsInErrorMessage(response, ['websiteUrl']);
+        checkFieldsInErrorMessage(response, [
+          {
+            field: 'websiteUrl',
+            message:
+              'websiteUrl must be shorter than or equal to 100 characters',
+          },
+        ]);
       });
     });
 
@@ -129,9 +152,9 @@ describe(`POST ${endPointUrl} (e2e)`, () => {
         );
 
         checkFieldsInErrorMessage(response, [
-          'name',
-          'description',
-          'websiteUrl',
+          { field: 'name', message: 'name should not be empty' },
+          { field: 'description', message: 'description should not be empty' },
+          { field: 'websiteUrl', message: 'websiteUrl should not be empty' },
         ]);
       });
     });
