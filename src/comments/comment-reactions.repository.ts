@@ -32,6 +32,7 @@ export class CommentReactionsRepository {
       status: CommentReaction.LIKE_STATUS_OPTIONS.LIKE,
       isBanned: false,
     });
+    //as
   }
 
   async calculateCountOfDislikes(commentId: string) {
