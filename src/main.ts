@@ -28,9 +28,8 @@ export function configureApp(app: INestApplication): void {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  configureApp(app);
-
   const configService = app.get(ConfigService<ConfigType>);
+  configureApp(app);
   await app.listen(configService.get('PORT'));
 }
 
