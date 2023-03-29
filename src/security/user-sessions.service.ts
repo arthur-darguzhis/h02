@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserSessionsRepository } from './user-sessions.repository';
 import { UnauthorizedActionException } from '../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import jwt from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()

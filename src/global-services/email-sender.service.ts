@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import * as process from 'process';
 import * as nodemailer from 'nodemailer';
 import { MailOptions } from 'nodemailer/lib/smtp-transport';
 import { UserDocument } from '../users/users-schema';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { ConfigService } from '@nestjs/config';
-import { ConfigType } from '../configuration';
 import { AppConfigService } from '../app-config.service';
 
 //TODO может мейлер как то улучшить надо? может есть какой то по nestJs подход или модуль обертка?

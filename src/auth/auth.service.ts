@@ -14,7 +14,6 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSessionsFactory } from '../security/user-sessions.factory';
 import { UserSessionsService } from '../security/user-sessions.service';
-import * as process from 'process';
 
 @Injectable()
 export class AuthService {
