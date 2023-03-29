@@ -21,10 +21,20 @@ export class BlogUserBansRepository {
     return blogUserBansModel.deleteOne();
   }
 
-  async getOne(
+  async findOne(
     blogId: string,
     userId: string,
   ): Promise<BlogUserBansDocument | null> {
+    return this.blogUserBansModel.findOne({
+      blogId,
+      userId,
+    });
+  }
+
+  async getOne(
+    blogId: string,
+    userId: string,
+  ): Promise<BlogUserBansDocument | never> {
     const blogUserBan = await this.blogUserBansModel.findOne({
       blogId,
       userId,

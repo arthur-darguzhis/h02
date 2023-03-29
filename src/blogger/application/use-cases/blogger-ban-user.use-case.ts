@@ -38,7 +38,7 @@ export class BloggerBanUserUseCase {
       );
     }
 
-    const blogUserBan = await this.blogUserBansRepository.getOne(
+    const blogUserBan = await this.blogUserBansRepository.findOne(
       command.blogId,
       command.userId,
     );
@@ -48,8 +48,12 @@ export class BloggerBanUserUseCase {
         'User is already banned for this blog',
       );
     }
-
-    if (command.isBanned) {
+    if (blogUserBan && !command.isBanned) {
+      blogUserBan.banInfo.isBanned = false;
+      blogUserBan.banInfo.banDate = null;
+      blogUserBan.banInfo.banReason = null;
+      await this.blogUserBansRepository.save(blogUserBan);
+    } else {
       await this.blogUserBansDocument.create({
         blogId: blog.id,
         userId: user.id,
@@ -60,11 +64,6 @@ export class BloggerBanUserUseCase {
           banReason: command.banReason,
         },
       });
-    } else {
-      blogUserBan.banInfo.isBanned = false;
-      blogUserBan.banInfo.banDate = null;
-      blogUserBan.banInfo.banReason = null;
-      await this.blogUserBansRepository.save(blogUserBan);
     }
   }
 }
