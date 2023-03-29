@@ -172,7 +172,7 @@ export class BloggerController {
     @Param('blogId') blogId: string,
     @Query() dto: BannedUsersInBlog,
   ) {
-    await this.queryBus.execute(
+    return await this.queryBus.execute(
       new BloggerGetListOfBannedUsersInBlogQuery(
         blogId,
         currentUserId,
@@ -192,7 +192,7 @@ export class BloggerController {
     @CurrentUserId() currentUserId: string,
     @Query() dto: ReturnAllCommentsInCurrentUserBlogsDto,
   ) {
-    await this.queryBus.execute(
+    return await this.queryBus.execute(
       new BloggerGetCommentsForCurrentUserBlogsQuery(
         currentUserId,
         dto.sortBy,
