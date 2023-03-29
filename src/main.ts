@@ -34,4 +34,8 @@ async function bootstrap() {
   // await app.listen(configService.get('PORT'));
 }
 
-bootstrap();
+try {
+  bootstrap();
+} catch (e) {
+  console.log('bootstrap Error' + e.message);
+}
