@@ -21,6 +21,8 @@ export class HttpExceptionFilters implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
+    console.log(exception.message);
+
     if (status === HttpStatus.BAD_REQUEST) {
       const errorResponse = {
         errorsMessages: [],
@@ -45,6 +47,8 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    console.log(exception.message);
 
     let statusCode = HttpStatus.BAD_REQUEST;
     switch (true) {
@@ -81,10 +85,12 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     if (process.env.NODE_ENV !== 'production') {
+      console.log(exception.message);
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ error: exception.toString(), stack: exception.stack });
     } else {
+      console.log(exception.message);
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send('Some error occurred');
