@@ -1,6 +1,6 @@
 export const addUnhandledRejectionListener = (): void => {
   if (
-    process.listeners('unhandledRejection').includes(handleUnhandledRejection)
+    !process.listeners('unhandledRejection').includes(handleUnhandledRejection)
   ) {
     process.on('unhandledRejection', handleUnhandledRejection);
   }

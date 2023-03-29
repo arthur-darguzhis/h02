@@ -19,8 +19,8 @@ export class SecurityController {
     private securityService: UserSessionsService,
   ) {}
 
-  @Get('devices')
   @UseGuards(RefreshTokenInCookieGuard)
+  @Get('devices')
   async getAllUserSessions(
     @RefreshTokenPayload()
     refreshTokenPayload: {
