@@ -33,6 +33,7 @@ describe('POST /auth/registration (e2e)', () => {
           errorsMessages: expect.any(Array),
         });
       });
+      //
 
       it('should throw an error if login is less than 3 characters', async () => {
         const response = await request(app)
