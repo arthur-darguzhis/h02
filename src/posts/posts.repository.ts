@@ -4,10 +4,14 @@ import { Post, PostDocument } from './posts-schema';
 import { Model } from 'mongoose';
 import { UpdatePostDto } from './api/dto/updatePost.dto';
 import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { BlogsRepository } from '../blogs/blogs.repository';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    private blogsRepository: BlogsRepository,
+  ) {}
 
   async getById(postId: string): Promise<PostDocument> {
     const post = await this.postModel.findById(postId);
@@ -74,6 +78,9 @@ export class PostsRepository {
   }
 
   async setBanStatusByBlogId(blogId: string, isBanned: boolean) {
+    const blog = await this.blogsRepository.getById(blogId);
+    blog.isBanned = isBanned;
+    await this.blogsRepository.save(blog);
     await this.postModel.updateMany({ blogId: blogId }, { $set: { isBanned } });
   }
 }

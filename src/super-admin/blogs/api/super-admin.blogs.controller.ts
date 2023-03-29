@@ -43,7 +43,7 @@ export class SuperAdminBlogsController {
     @Param('blogId') blogId: string,
     @Body() dto: AdminBanOrUnbanBlogDto,
   ) {
-    await this.commandBus.execute(
+    return await this.commandBus.execute(
       new AdminBanOrUnbanBlogCommand(blogId, dto.isBanned),
     );
   }
