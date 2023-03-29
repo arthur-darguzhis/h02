@@ -7,6 +7,10 @@ export type BlogViewModel = {
   websiteUrl: string;
   isMembership: boolean;
   createdAt: string;
+  banInfo: {
+    isBanned: boolean;
+    banDate: string;
+  };
 };
 
 export const mapBlogToViewModel = (blog: BlogDocument): BlogViewModel => {
@@ -17,6 +21,10 @@ export const mapBlogToViewModel = (blog: BlogDocument): BlogViewModel => {
     websiteUrl: blog.websiteUrl,
     isMembership: blog.isMembership,
     createdAt: blog.createdAt,
+    banInfo: {
+      isBanned: blog.isBanned,
+      banDate: blog.banDate,
+    },
   };
 };
 

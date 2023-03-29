@@ -14,7 +14,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AdminSetOwnerToOrphanBlogCommand } from '../use-cases/admin-set-owner-to-orphan-blog.use-case';
 import { BlogsQueryRepository } from '../../../blogs/blogs.query.repository';
 import { PaginationBlogListDto } from '../../../blogs/dto/paginationBlogList.dto';
-import { AdminBanOrUnbanBlogCommand } from '../use-cases/admin-ban-or-unban-blog';
+import { AdminBanOrUnbanBlogCommand } from '../use-cases/admin-ban-or-unban-blog.use-case';
 import { AdminBanOrUnbanBlogDto } from './dto/admin-ban-or-unban-blog.dto';
 
 @Controller('sa/blogs')

@@ -89,7 +89,7 @@ import { BlogUserBansRepository } from './blogs/blog-user-bans.repository';
 import { BloggerGetListOfBannedUsersForBlogHandler } from './blogger/application/queries/blogger-get-list-of-banned-users-in-blog.query';
 import { BloggerGetCommentsListInBlogHandler } from './blogger/application/queries/blogger-get-comments-for-current-user-blogs.query';
 
-import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-ban-or-unban-blog';
+import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-ban-or-unban-blog.use-case';
 import { GetPaginatedPostsListHandler } from './posts/application/query/get-paginated-posts-list';
 import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/get-paginated-posts-list-by-blog-id.query';
 import { PostsController } from './posts/api/posts.controller';

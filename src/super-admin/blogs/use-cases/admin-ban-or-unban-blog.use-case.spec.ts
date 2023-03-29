@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../users/use-cases/admin-add-new-user.use-case';
-import { AdminBanOrUnbanBlogCommand } from './admin-ban-or-unban-blog';
+import { AdminBanOrUnbanBlogCommand } from './admin-ban-or-unban-blog.use-case';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post';
 import { GetPaginatedPostsListByBlogIdQuery } from '../../../posts/application/query/get-paginated-posts-list-by-blog-id.query';
