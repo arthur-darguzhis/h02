@@ -67,9 +67,4 @@ export class BloggerBanUserUseCase {
       await this.blogUserBansRepository.save(blogUserBan);
     }
   }
-
-  async banOrUnbanUserReactionsInBlog(blogId: string, userId: string) {
-    //Maybe we need to hide all user activities related with this blog? all comments in posts related to the blog?
-    //all likes to the post and commens related to the post? but now do not do it.
-  }
 }
