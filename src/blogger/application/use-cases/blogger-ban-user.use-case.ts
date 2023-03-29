@@ -38,7 +38,7 @@ export class BloggerBanUserUseCase {
       );
     }
 
-    const blogUserBan = await this.blogUserBansRepository.findOne(
+    const blogUserBan = await this.blogUserBansRepository.getOne(
       command.blogId,
       command.userId,
     );
