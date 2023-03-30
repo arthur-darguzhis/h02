@@ -48,7 +48,12 @@ export class BloggerBanUserUseCase {
         'User is already banned for this blog',
       );
     }
-    if (blogUserBan && !command.isBanned) {
+
+    if (!blogUserBan && !command.isBanned) {
+      return;
+    }
+
+    if (blogUserBan) {
       blogUserBan.banInfo.isBanned = false;
       blogUserBan.banInfo.banDate = null;
       blogUserBan.banInfo.banReason = null;
