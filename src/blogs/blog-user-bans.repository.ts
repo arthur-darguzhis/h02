@@ -31,19 +31,19 @@ export class BlogUserBansRepository {
     });
   }
 
-  async getOne(
-    blogId: string,
-    userId: string,
-  ): Promise<BlogUserBansDocument | never> {
-    const blogUserBan = await this.blogUserBansModel.findOne({
-      blogId,
-      userId,
-    });
-    if (!blogUserBan) {
-      throw new EntityNotFoundException(
-        `There is no user with id: ${userId} banned for blog with id: ${blogId} `,
-      );
-    }
-    return blogUserBan;
-  }
+  // async getOne(
+  //   blogId: string,
+  //   userId: string,
+  // ): Promise<BlogUserBansDocument | never> {
+  //   const blogUserBan = await this.blogUserBansModel.findOne({
+  //     blogId,
+  //     userId,
+  //   });
+  //   if (!blogUserBan) {
+  //     throw new EntityNotFoundException(
+  //       `There is no user with id: ${userId} banned for blog with id: ${blogId} `,
+  //     );
+  //   }
+  //   return blogUserBan;
+  // }
 }
