@@ -16,7 +16,7 @@ export class BlogsQueryRepository {
 
   async getById(blogId: string): Promise<BlogViewModel | never> {
     const blog = await this.blogModel.findById(blogId);
-    if (!blog) {
+    if (!blog || blog.isBanned) {
       throw new EntityNotFoundException(`Blog with id: ${blogId} is not found`);
     }
     return mapBlogToViewModel(blog);
