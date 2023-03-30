@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../posts/posts.repository';
+import { BlogsRepository } from '../../../blogs/blogs.repository';
 
 export class AdminBanOrUnbanBlogCommand {
   constructor(
@@ -11,12 +12,11 @@ export class AdminBanOrUnbanBlogCommand {
 @CommandHandler(AdminBanOrUnbanBlogCommand)
 export class AdminBanOrUnbanBlogUseCase implements ICommandHandler {
   constructor(
-    private postsRepository: PostsRepository, //TODO inject here necessary services
+    private postsRepository: PostsRepository,
+    private blogsRepository: BlogsRepository,
   ) {}
   async execute(command: AdminBanOrUnbanBlogCommand) {
-    await this.postsRepository.setBanStatusByBlogId(
-      command.blogId,
-      command.isBanned,
-    );
+    const blog = await this.blogsRepository.getById(command.blogId);
+    await this.postsRepository.setBanStatusByBlogId(blog.id, command.isBanned);
   }
 }
