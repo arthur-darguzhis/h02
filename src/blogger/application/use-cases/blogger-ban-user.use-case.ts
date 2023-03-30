@@ -49,7 +49,7 @@ export class BloggerBanUserUseCase {
       );
     }
 
-    if (!blogUserBan && !command.isBanned) {
+    if (!command.isBanned && !blogUserBan) {
       return;
     }
 
