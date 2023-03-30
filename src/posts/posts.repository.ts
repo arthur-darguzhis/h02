@@ -80,6 +80,11 @@ export class PostsRepository {
   async setBanStatusByBlogId(blogId: string, isBanned: boolean) {
     const blog = await this.blogsRepository.getById(blogId);
     blog.isBanned = isBanned;
+    if (isBanned) {
+      blog.banDate = new Date().toISOString();
+    } else {
+      blog.banDate = null;
+    }
     await this.blogsRepository.save(blog);
     await this.postModel.updateMany({ blogId: blogId }, { $set: { isBanned } });
   }
