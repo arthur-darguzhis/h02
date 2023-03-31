@@ -7,7 +7,7 @@ on:
 
 jobs:
   tests_and_deploy:
-    name: Tests # название конктретной работы в pipelinek
+    name: Tests and deploy # название конктретной работы в pipelinek
     runs-on: ubuntu-latest
 
     env:
