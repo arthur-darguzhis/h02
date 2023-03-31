@@ -6,7 +6,7 @@ on:
       - h16 # указываем название ветки в которую хотим пушить и запускать наш деплой обычно это staging
 
 jobs:
-  tests and deploy:
+  tests_and_deploy:
     name: Tests # название конктретной работы в pipelinek
     runs-on: ubuntu-latest
 
