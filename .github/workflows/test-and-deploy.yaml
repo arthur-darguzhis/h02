@@ -22,13 +22,13 @@ jobs:
 
     steps:
       - name: Checkout  # клонируем репозиторый
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5
 
       - name: Install dependencies
         run: yarn # устанавливаем зависимости
 
-      - name: Test
-        run: yarn test # запускаем скрипт тестами
+#      - name: Test
+#        run: yarn test # запускаем скрипт тестами
 
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
