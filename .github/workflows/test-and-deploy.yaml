@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout  # клонируем репозиторый
-        uses: actions/checkout@v3.5
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: yarn # устанавливаем зависимости
