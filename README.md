@@ -22,6 +22,16 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+My instruction to start mongoDb
+```bash
+mongod --dbpath ~/WebstormProjects/back-end/course/mongoDb/db
+```
+
+We can find and kill the process running on port tcp:3000 with the command:
+```bash
+lsof -t -i tcp:3000 | xargs kill
+```
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.

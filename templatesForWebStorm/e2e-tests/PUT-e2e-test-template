@@ -1,0 +1,168 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import { setConfigTestApp } from '../appConfigurations';
+import request from 'supertest';
+import { RequestsMaker } from '../requestsMaker';
+import { checkFieldsInErrorMessage } from '../responseChecker';
+
+//TODO 1. START: Place here url of endPoint (after making this step replace "TODO" to "STEP")
+const endPointUrl = '/blogger/blogs';
+//STEP 1. END
+
+describe(`PUT ${endPointUrl} (e2e)`, () => {
+  let configuredTestApp: INestApplication;
+  let app: any;
+
+  let tokensUser1: any;
+  let tokensUser2: any;
+  let blogIdOfUser1: string;
+  let blogIdOfUser2: string;
+
+  let sendTestRequest: (
+    accessToken: string,
+    dto: any,
+    entityId: string,
+    status: (typeof HttpStatus)[keyof typeof HttpStatus],
+  ) => Promise<request.Response>;
+
+  beforeEach(async () => {
+    configuredTestApp = await setConfigTestApp();
+    await configuredTestApp.init();
+    app = configuredTestApp.getHttpServer();
+
+    //TODO 2. START: Prepare background for test, use "RequestsMaker" (after making this step replace "TODO" to "STEP")
+    await RequestsMaker.testing.clearDb(app);
+    await RequestsMaker.users.createUser(app, {
+      login: 'user1',
+      password: '123456',
+      email: 'user1-test@test.test',
+    });
+
+    tokensUser1 = await RequestsMaker.users.login(app, {
+      loginOrEmail: 'user1',
+      password: '123456',
+    });
+
+    blogIdOfUser1 = await RequestsMaker.blogger.createNewBlog(
+      app,
+      tokensUser1.accessToken,
+      {
+        name: 'first blog',
+        description: 'first blog description',
+        websiteUrl: 'https://habr.com/ru/users/3Dvideo/',
+      },
+      HttpStatus.CREATED,
+    );
+
+    await RequestsMaker.users.createUser(app, {
+      login: 'user2',
+      password: '123456',
+      email: 'user2-test@test.test',
+    });
+
+    tokensUser2 = await RequestsMaker.users.login(app, {
+      loginOrEmail: 'user2',
+      password: '123456',
+    });
+
+    blogIdOfUser2 = await RequestsMaker.blogger.createNewBlog(
+      app,
+      tokensUser2.accessToken,
+      {
+        name: 'second blog',
+        description: 'second blog description',
+        websiteUrl: 'https://habr.com/ru/users/3Dvideo/',
+      },
+      HttpStatus.CREATED,
+    );
+    //STEP 2. END
+
+    //TODO 3. START: Prepare "sendTestRequest" function that send the main test request; (after making this step replace "TODO" to "STEP")
+    sendTestRequest = async (
+      accessToken,
+      dto,
+      entityId,
+      status,
+    ): Promise<request.Response> => {
+      return request(app)
+        .put(endPointUrl + '/' + entityId)
+        .auth(accessToken, { type: 'bearer' })
+        .send(dto)
+        .expect(status);
+    };
+    //STEP 3. END
+  });
+
+  afterEach(async () => {
+    await configuredTestApp.close();
+  });
+
+  //TODO 4. START: case(s) of unauthorized. Status code 401. (after making this step replace "TODO" to "STEP")
+  it('Should return error if auth credentials are incorrect. Status 401', async () => {
+    await request(app).put(endPointUrl).send().expect(HttpStatus.UNAUTHORIZED);
+  });
+  //STEP 4. END
+
+  //TODO 5. START: case(s) incoming DTO data is invalid. Status 400 (after making this step replace "TODO" to "STEP")
+  describe('Invalid input data in DTO. Status: 400.', () => {
+    const dto = {
+      //TODO define fields that have to be validated with corrected data
+    };
+
+    //TODO change "fieldName" to field name that has some validation rules
+    describe('fieldName', () => {
+      //TODO Press "CMD + J" and type "checkValidation" choose necessary rules for checking validation
+    });
+
+    describe('All fields are empty', () => {
+      it('should throw an error with "number" of errors', async () => {
+        const response = await sendTestRequest(
+          tokensUser1.accessToken,
+          {
+            //TODO put here dto structure with empty fields ''
+          },
+          blogIdOfUser1,
+          HttpStatus.BAD_REQUEST,
+        );
+
+        checkFieldsInErrorMessage(response, [
+          //TODO put here all field names
+        ]);
+      });
+    });
+  });
+  //STEP 5. END
+
+  //TODO 6. START: case(s) if user try to update that does not belong to him.
+  it('Should return error if user try to update a "Entity" that is not it`s own', async () => {
+    const response = await sendTestRequest(
+      tokensUser1.accessToken,
+      {
+        name: 'updated name',
+        description: 'updated first blog description',
+        websiteUrl: 'https://habr.com/ru/users/3Dvideo/',
+      },
+      blogIdOfUser2,
+      HttpStatus.FORBIDDEN,
+    );
+  });
+  //STEP 6. END
+
+  //TODO 7. START: case(s) of success Status code 200, 201, 204. (after making this step replace "TODO" to "STEP")
+  //TODO 9. change description of this test (remove this TODO after implementation)
+  it('Should "****". Status 201', async () => {
+    const dto = {
+      //TODO 10 here put a DTO structure with valid values
+    };
+
+    const response = await sendTestRequest(
+      tokensUser1.accessToken,
+      {
+        name: 'updated name',
+        description: 'updated first blog description',
+        websiteUrl: 'https://habr.com/ru/users/3Dvideo/',
+      },
+      blogIdOfUser1,
+      HttpStatus.NO_CONTENT,
+    );
+  });
+});

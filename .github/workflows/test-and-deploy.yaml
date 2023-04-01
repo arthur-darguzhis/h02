@@ -1,0 +1,37 @@
+name: Test & Deploy #Название pipeline который будет выполнять github actions
+
+on:
+  push:
+    branches:
+      - h16 # указываем название ветки в которую хотим пушить и запускать наш деплой обычно это staging
+
+jobs:
+  tests_and_deploy:
+    name: Tests and deploy # название конктретной работы в pipelinek
+    runs-on: ubuntu-latest
+
+    env:
+      PORT: 3000
+      GMAIL_APP_LOGIN: ${{secrets.GMAIL_APP_LOGIN}}
+      GMAIL_APP_PASSWORD: ${{secrets.GMAIL_APP_PASSWORD}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      LOGIN_FOR_ADMIN_BASIC_AUTH: ${{secrets.LOGIN_FOR_ADMIN_BASIC_AUTH}}
+      PASSWORD_FOR_ADMIN_BASIC_AUTH: ${{secrets.PASSWORD_FOR_ADMIN_BASIC_AUTH}}
+      LOGTAIL_SOURCE_TOKEN: ${{secrets.LOGTAIL_SOURCE_TOKEN}}
+      MONGO_URI: ${{secrets.MONGO_URI}}
+
+    steps:
+      - name: Checkout  # клонируем репозиторый
+        uses: actions/checkout@v3.5.0
+
+      - name: Install dependencies
+        run: yarn # устанавливаем зависимости
+
+#      - name: Test
+#        run: yarn test # запускаем скрипт тестами
+
+      - uses: akhileshns/heroku-deploy@v3.12.13 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}

@@ -6,7 +6,12 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  testRejectedPromiseAfterSendingResponse() {
+    // const myPromise = new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     reject('Promise resolved after 5 seconds');
+    //   }, 5000);
+    // });
+    return 'Hello World!';
   }
 }
