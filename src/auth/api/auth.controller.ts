@@ -12,21 +12,21 @@ import {
   Headers,
   Ip,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { PasswordRecoveryDto } from './dto/passwordRecovery.dto';
 import { SetNewPasswordDto } from './dto/setNewPassword.dto';
 import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
 import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { Response } from 'express';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUserId } from '../global-services/decorators/current-user-id.decorator';
-import { UsersQueryRepository } from '../users/users.query.repository';
-import { RefreshTokenPayload } from '../global-services/decorators/get-refresh-token-from-cookie.decorator';
-import { UserSessionsService } from '../security/user-sessions.service';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUserId } from '../../global-services/decorators/current-user-id.decorator';
+import { UsersQueryRepository } from '../../users/users.query.repository';
+import { RefreshTokenPayload } from '../../global-services/decorators/get-refresh-token-from-cookie.decorator';
+import { UserSessionsService } from '../../security/user-sessions.service';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { RefreshTokenInCookieGuard } from './guards/refresh-token-in-cookie';
+import { RefreshTokenInCookieGuard } from '../guards/refresh-token-in-cookie';
 
 @Controller('auth')
 export class AuthController {

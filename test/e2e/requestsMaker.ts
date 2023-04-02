@@ -1,6 +1,6 @@
 import { CreateUserDto } from '../../src/users/api/dto/createUser.dto';
 import request, { Response } from 'supertest';
-import { LoginDto } from '../../src/auth/dto/login.dto';
+import { LoginDto } from '../../src/auth/api/dto/login.dto';
 import { HttpStatus } from '@nestjs/common';
 import { PostReaction } from '../../src/posts/post-reaction-schema';
 

@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegistrationDto } from './dto/registration.dto';
+import { RegistrationDto } from './api/dto/registration.dto';
 import { UsersRepository } from '../users/users.repository';
 import { UsersFactory } from '../users/users.factory';
 import { EmailSenderService } from '../global-services/email-sender.service';
-import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
+import { ConfirmRegistrationDto } from './api/dto/confirmRegistration.dto';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UserDocument } from '../users/users-schema';
-import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
+import { ResendRegistrationEmailDto } from './api/dto/resendRegistrationEmail.dto';
 import * as bcrypt from 'bcrypt';
 import { InvalidValueException } from '../common/exceptions/domain.exceptions/invalid-value-exception';
 import { DomainException } from '../common/exceptions/domain.exceptions/domain.exception';

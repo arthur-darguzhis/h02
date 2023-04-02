@@ -27,7 +27,7 @@ import { PostsService } from './posts/posts.service';
 import { PostsRepository } from './posts/posts.repository';
 import { BlogsQueryRepository } from './blogs/blogs.query.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthController } from './auth/auth.controller';
+import { AuthController } from './auth/api/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
@@ -37,6 +37,7 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   CommentReaction,
   CommentReactionSchema,
@@ -93,6 +94,7 @@ import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/use-cases/admin-
 import { GetPaginatedPostsListHandler } from './posts/application/query/get-paginated-posts-list';
 import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/get-paginated-posts-list-by-blog-id.query';
 import { PostsController } from './posts/api/posts.controller';
+import { UsersPgRepository } from './users/users.pg-repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
@@ -132,6 +134,17 @@ const postsQueries = [
       load: [getConfiguration],
       isGlobal: true,
     }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: '1111',
+      database: 'h03',
+      autoLoadEntities: false,
+      synchronize: false,
+    }),
+    TypeOrmModule.forFeature([]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
       limit: 5, // Request limit
@@ -174,6 +187,7 @@ const postsQueries = [
     UsersFactory,
     UsersRepository,
     UsersQueryRepository,
+    UsersPgRepository,
     AuthService,
     AuthConfigService,
     AppConfigService,

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Trim } from '../../common/crutches/class-transformer/trim.decorator';
+import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
 
 export class ConfirmRegistrationDto {
   @Trim()
