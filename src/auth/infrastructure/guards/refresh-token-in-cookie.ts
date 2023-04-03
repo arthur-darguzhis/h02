@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import { UserSessionsRepository } from '../../security/user-sessions.repository';
+import { UserSessionsRepository } from '../../../security/user-sessions.repository';
 import { AuthConfigService } from '../auth-config.service';
 
 @Injectable()

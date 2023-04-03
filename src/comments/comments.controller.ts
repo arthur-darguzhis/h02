@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentsQueryRepository } from './comments.query.repository';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard';
 import {
   CurrentUserId,
   OptionalCurrentUserId,

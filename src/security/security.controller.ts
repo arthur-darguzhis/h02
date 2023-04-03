@@ -10,7 +10,7 @@ import {
 import { UserSessionsQueryRepository } from './user-sessions.query-repository';
 import { UserSessionsService } from './user-sessions.service';
 import { RefreshTokenPayload } from '../global-services/decorators/get-refresh-token-from-cookie.decorator';
-import { RefreshTokenInCookieGuard } from '../auth/guards/refresh-token-in-cookie';
+import { RefreshTokenInCookieGuard } from '../auth/infrastructure/guards/refresh-token-in-cookie';
 
 @Controller('security')
 export class SecurityController {

@@ -20,7 +20,7 @@ import { CommentsQueryRepository } from '../../comments/comments.query.repositor
 import { PaginatedCommentListDto } from '../../comments/dto/paginated-comment-list.dto';
 import { mapPostToViewModel } from '../posts.mapper';
 import { AddCommentToPostDto } from './dto/add-comment-to-post.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import {
   CurrentUserId,
   OptionalCurrentUserId,
@@ -28,7 +28,7 @@ import {
 import { CommentsService } from '../../comments/comments.service';
 import { mapCommentToViewModel } from '../../comments/comments.mapper';
 import { CommentReactionsDto } from '../../comments/dto/comment-reactions.dto';
-import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../../auth/infrastructure/guards/basic.auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserAddCommentCommand } from '../application/use-cases/user-add-comment.use-case';
 import { GetPaginatedPostsListQuery } from '../application/query/get-paginated-posts-list';

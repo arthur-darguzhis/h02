@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
-import { UserDocument } from '../users/users-schema';
+import { UserDocument } from '../../users/users-schema';
 import * as process from 'process';
 import { v4 as uuidv4 } from 'uuid';
-import { InvalidValueException } from '../common/exceptions/domain.exceptions/invalid-value-exception';
-import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { InvalidValueException } from '../../common/exceptions/domain.exceptions/invalid-value-exception';
+import { UnprocessableEntityException } from '../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 
 @Injectable()
 //TODO удалить, сейчас используется сервис из родного для nest jwt-module

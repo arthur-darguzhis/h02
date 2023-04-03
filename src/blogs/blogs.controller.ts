@@ -22,7 +22,7 @@ import { PaginationQueryParametersDto } from '../common/dto/PaginationQueryParam
 import { CreatePostWithoutBlogIdDto } from '../posts/api/dto/createPostWithoutBlogId.dto';
 import { PostsService } from '../posts/posts.service';
 import { mapPostToViewModel } from '../posts/posts.mapper';
-import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../auth/infrastructure/guards/basic.auth.guard';
 import { OptionalCurrentUserId } from '../global-services/decorators/current-user-id.decorator';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetPaginatedPostsListByBlogIdQuery } from '../posts/application/query/get-paginated-posts-list-by-blog-id.query';

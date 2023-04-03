@@ -12,25 +12,28 @@ import {
   Headers,
   Ip,
 } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../infrastructure/auth.service';
 import { PasswordRecoveryDto } from './dto/passwordRecovery.dto';
 import { SetNewPasswordDto } from './dto/setNewPassword.dto';
 import { ResendRegistrationEmailDto } from './dto/resendRegistrationEmail.dto';
 import { ConfirmRegistrationDto } from './dto/confirmRegistration.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { Response } from 'express';
-import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../infrastructure/guards/local-auth.guard';
+import { JwtAuthGuard } from '../infrastructure/guards/jwt-auth.guard';
 import { CurrentUserId } from '../../global-services/decorators/current-user-id.decorator';
 import { UsersQueryRepository } from '../../users/users.query.repository';
 import { RefreshTokenPayload } from '../../global-services/decorators/get-refresh-token-from-cookie.decorator';
 import { UserSessionsService } from '../../security/user-sessions.service';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { RefreshTokenInCookieGuard } from '../guards/refresh-token-in-cookie';
+import { RefreshTokenInCookieGuard } from '../infrastructure/guards/refresh-token-in-cookie';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegistrationCommand } from '../application/use-cases/registration.use-case';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private commandBus: CommandBus,
     private authService: AuthService,
     private usersQueryRepository: UsersQueryRepository,
     private userSessionsService: UserSessionsService,
@@ -40,7 +43,9 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() dto: RegistrationDto) {
-    return this.authService.registration(dto);
+    await this.commandBus.execute(
+      new RegistrationCommand(dto.login, dto.password, dto.email),
+    );
   }
 
   @Post('registration-confirmation')

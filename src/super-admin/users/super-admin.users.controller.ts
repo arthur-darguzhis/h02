@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../../auth/infrastructure/guards/basic.auth.guard';
 import { AdminBanOrUnbanUserDto } from './api/dto/admin-ban-or-unban-user.dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminBanOrUnbanUserCommand } from './use-cases/admin-ban-or-unban-user.use-case';

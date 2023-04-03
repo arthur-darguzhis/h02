@@ -13,6 +13,10 @@ export class AdminAddNewUserCommand {
 export class AdminAddNewUserUseCase {
   constructor(private usersFactory: UsersFactory) {}
   async execute(command: AdminAddNewUserCommand) {
-    return this.usersFactory.adminAddNewUser(command);
+    return this.usersFactory.adminAddNewUser(
+      command.login,
+      command.password,
+      command.email,
+    );
   }
 }

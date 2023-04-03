@@ -28,12 +28,12 @@ import { PostsRepository } from './posts/posts.repository';
 import { BlogsQueryRepository } from './blogs/blogs.query.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth/api/auth.controller';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth/infrastructure/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
-import { BasicStrategy } from './auth/strategies/basic.strategy';
-import { LocalStrategy } from './auth/strategies/local.strategy';
-import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { BasicStrategy } from './auth/infrastructure/strategies/basic.strategy';
+import { LocalStrategy } from './auth/infrastructure/strategies/local.strategy';
+import { JwtStrategy } from './auth/infrastructure/strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
@@ -58,11 +58,11 @@ import { UserSessionsRepository } from './security/user-sessions.repository';
 import { UserSessionsQueryRepository } from './security/user-sessions.query-repository';
 import { UserSessionsService } from './security/user-sessions.service';
 import { SecurityController } from './security/security.controller';
-import { RefreshTokenStrategy } from './auth/strategies/refresh-token.strategy';
+import { RefreshTokenStrategy } from './auth/infrastructure/strategies/refresh-token.strategy';
 import { UserSessionsFactory } from './security/user-sessions.factory';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { getConfiguration } from './configuration';
-import { AuthConfigService } from './auth/auth-config.service';
+import { AuthConfigService } from './auth/infrastructure/auth-config.service';
 import { AppConfigService } from './app-config.service';
 import { AddNewUserUseCase } from './users/application/use-cases/add-new-user.use-case';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
@@ -95,9 +95,14 @@ import { GetPaginatedPostsListHandler } from './posts/application/query/get-pagi
 import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/get-paginated-posts-list-by-blog-id.query';
 import { PostsController } from './posts/api/posts.controller';
 import { UsersPgRepository } from './users/users.pg-repository';
+import { RegistrationUseCase } from './auth/application/use-cases/registration.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
-const userUseCases = [AddNewUserUseCase, DeleteUserUseCase];
+const userUseCases = [
+  AddNewUserUseCase,
+  DeleteUserUseCase,
+  RegistrationUseCase,
+];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
   BloggerUpdateBlogUseCase,

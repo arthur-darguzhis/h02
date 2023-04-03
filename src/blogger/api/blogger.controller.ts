@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { BloggerCreateBlogCommand } from '../application/use-cases/blogger-create-blog.use-case';
 import { mapBlogToViewModel } from '../../blogs/blog.mapper';

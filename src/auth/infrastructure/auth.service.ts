@@ -1,19 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegistrationDto } from './api/dto/registration.dto';
-import { UsersRepository } from '../users/users.repository';
-import { UsersFactory } from '../users/users.factory';
-import { EmailSenderService } from '../global-services/email-sender.service';
-import { ConfirmRegistrationDto } from './api/dto/confirmRegistration.dto';
-import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { UserDocument } from '../users/users-schema';
-import { ResendRegistrationEmailDto } from './api/dto/resendRegistrationEmail.dto';
+import { UsersRepository } from '../../users/users.repository';
+import { UsersFactory } from '../../users/users.factory';
+import { EmailSenderService } from '../../global-services/email-sender.service';
+import { ConfirmRegistrationDto } from '../api/dto/confirmRegistration.dto';
+import { UnprocessableEntityException } from '../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { UserDocument } from '../../users/users-schema';
+import { ResendRegistrationEmailDto } from '../api/dto/resendRegistrationEmail.dto';
 import * as bcrypt from 'bcrypt';
-import { InvalidValueException } from '../common/exceptions/domain.exceptions/invalid-value-exception';
-import { DomainException } from '../common/exceptions/domain.exceptions/domain.exception';
+import { InvalidValueException } from '../../common/exceptions/domain.exceptions/invalid-value-exception';
+import { DomainException } from '../../common/exceptions/domain.exceptions/domain.exception';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
-import { UserSessionsFactory } from '../security/user-sessions.factory';
-import { UserSessionsService } from '../security/user-sessions.service';
+import { UserSessionsFactory } from '../../security/user-sessions.factory';
+import { UserSessionsService } from '../../security/user-sessions.service';
 
 @Injectable()
 export class AuthService {
@@ -25,13 +24,6 @@ export class AuthService {
     private userSessionsFactory: UserSessionsFactory,
     private userSessionsService: UserSessionsService,
   ) {}
-
-  public async registration(dto: RegistrationDto): Promise<void | never> {
-    const newUser = await this.usersFactory.registerNewUser(dto);
-    // if (process.env.NODE_ENV !== 'test') {
-    await this.emailSenderService.sendRegistrationConfirmationEmail(newUser);
-    // }
-  }
 
   public async confirmRegistration(dto: ConfirmRegistrationDto) {
     try {
@@ -58,7 +50,10 @@ export class AuthService {
     }
     // if (process.env.NODE_ENV !== 'test') {
     user.generateEmailConfirmationInfo();
-    await this.emailSenderService.sendRegistrationConfirmationEmail(user);
+    await this.emailSenderService.sendRegistrationConfirmationEmail(
+      user.email,
+      user.emailConfirmationInfo.confirmationCode,
+    );
     // }
     await this.usersRepository.save(user);
   }

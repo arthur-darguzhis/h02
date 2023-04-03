@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BasicAuthGuard } from '../../../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../../../auth/infrastructure/guards/basic.auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminSetOwnerToOrphanBlogCommand } from '../use-cases/admin-set-owner-to-orphan-blog.use-case';
 import { BlogsQueryRepository } from '../../../blogs/blogs.query.repository';
