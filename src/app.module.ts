@@ -133,7 +133,7 @@ const postsQueries = [
       isGlobal: true,
     }),
     ThrottlerModule.forRoot({
-      ttl: 10, // Time to live (seconds)
+      ttl: 9, // Time to live (seconds)
       limit: 5, // Request limit
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),

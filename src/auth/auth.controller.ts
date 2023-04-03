@@ -58,8 +58,8 @@ export class AuthController {
   }
 
   @Post('login')
-  @UseGuards(LocalAuthGuard)
   @UseGuards(ThrottlerGuard)
+  @UseGuards(LocalAuthGuard)
   async login(
     @Request() req,
     @Ip() ip: string,
