@@ -1,48 +1,46 @@
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './users-schema';
-import { Model } from 'mongoose';
-import { CreateUserDto } from './api/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { RegistrationDto } from '../auth/api/dto/registration.dto';
-import { UsersRepository } from './users.repository';
+import { UsersPgRepository } from './infrastructure/users.pg-repository';
+import { v4 as uuidv4 } from 'uuid';
+import { add } from 'date-fns';
 
 @Injectable()
 export class UsersFactory {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private usersRepository: UsersRepository,
-  ) {}
+  constructor(private usersPgRepository: UsersPgRepository) {}
 
-  private async createUser(
-    dto: CreateUserDto | RegistrationDto,
-    isActive: boolean,
-  ): Promise<UserDocument> {
-    await this.usersRepository.throwIfEmailInUse(dto.email);
-    await this.usersRepository.throwIfLoginInUse(dto.login);
+  public async adminAddNewUserPg(login, password, email) {
+    await this.usersPgRepository.throwIfLoginInUse(login);
+    await this.usersPgRepository.throwIfEmailInUse(email);
 
-    const user = await this.userModel.create({
-      passwordHash: await bcrypt.hash(dto.password, 10),
-      isActive: isActive,
-      login: dto.login,
-      email: dto.email,
-      banInfo: { isBanned: false, banDate: null, banReason: null },
-      createdAt: new Date().toISOString(),
-    });
-
-    if (!isActive) {
-      user.generateEmailConfirmationInfo();
-    }
-
-    await this.usersRepository.save(user);
-    return user;
+    return {
+      passwordHash: await bcrypt.hash(password, 10),
+      login: login,
+      email: email,
+      createdAt: new Date(),
+      confirmationCode: null,
+      expirationDate: null,
+      isConfirmed: true,
+      isBanned: false,
+      banDate: null,
+      banReason: null,
+    };
   }
 
-  public async adminAddNewUser(dto: CreateUserDto): Promise<UserDocument> {
-    return this.createUser(dto, true);
-  }
+  public async registerNewUserPg(login, password, email) {
+    await this.usersPgRepository.throwIfLoginInUse(login);
+    await this.usersPgRepository.throwIfEmailInUse(email);
 
-  public async registerNewUser(dto: RegistrationDto): Promise<UserDocument> {
-    return this.createUser(dto, false);
+    return {
+      passwordHash: await bcrypt.hash(password, 10),
+      login: login,
+      email: email,
+      createdAt: new Date(),
+      confirmationCode: uuidv4(),
+      expirationDate: add(Date.now(), { hours: 24 }),
+      isConfirmed: false,
+      isBanned: false,
+      banDate: null,
+      banReason: null,
+    };
   }
 }

@@ -11,21 +11,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { BloggerCreateBlogCommand } from '../application/use-cases/blogger-create-blog.use-case';
-import { mapBlogToViewModel } from '../../blogs/blog.mapper';
-import { CreateBlogDto } from '../../blogs/dto/createBlog.dto';
+import { CreateBlogDto } from '../../blogs/api/dto/createBlog.dto';
 import { CurrentUserId } from '../../global-services/decorators/current-user-id.decorator';
-import { PaginationBlogListDto } from '../../blogs/dto/paginationBlogList.dto';
-import { BlogsQueryRepository } from '../../blogs/blogs.query.repository';
+import { PaginationBlogListDto } from '../../blogs/api/dto/paginationBlogList.dto';
 import { BloggerUpdateBlogCommand } from '../application/use-cases/blogger-update-blog.use-case';
-import { UpdateBlogDto } from '../../blogs/dto/updateBlog.dto';
+import { UpdateBlogDto } from '../../blogs/api/dto/updateBlog.dto';
 import { BloggerDeleteBlogCommand } from '../application/use-cases/blogger-delete-blog.use-case';
-import { BloggerCreatePostCommand } from '../application/use-cases/blogger-create-post';
+import { BloggerCreatePostCommand } from '../application/use-cases/blogger-create-post.use-case';
 import { CreatePostWithoutBlogIdDto } from '../../posts/api/dto/createPostWithoutBlogId.dto';
-import { mapPostToViewModel } from '../../posts/posts.mapper';
-import { BloggerUpdatePostCommand } from '../application/use-cases/blogger-update-post';
+import { BloggerUpdatePostCommand } from '../application/use-cases/blogger-update-post.use-case';
 import { UpdatePostWithoutBlogIdDto } from '../../posts/api/dto/updatePostWithoutBlogId.dto';
 import { BloggerDeletePostCommand } from '../application/use-cases/blogger-delete-post.use-case';
 import { BloggerBanUserDto } from './dto/blogger-ban-user.dto';
@@ -33,15 +30,14 @@ import { BloggerBanUserCommand } from '../application/use-cases/blogger-ban-user
 import { BannedUsersInBlog } from './dto/banned-users-in-blog.dto';
 import { BloggerGetListOfBannedUsersInBlogQuery } from '../application/queries/blogger-get-list-of-banned-users-in-blog.query';
 import { ReturnAllCommentsInCurrentUserBlogsDto } from './dto/return-all-comments-in-current-user-blogs.dto';
-import { BloggerGetCommentsForCurrentUserBlogsQuery } from '../application/queries/blogger-get-comments-for-current-user-blogs.query';
+import { BloggerGetCommentsFromCurrentUserBlogsQuery } from '../application/queries/blogger-get-comments-from-current-user-blogs.query';
+import { GetListOfBlogsByOwnerQuery } from '../application/queries/get-list-of-blogs-by-owner.query';
+import { GetBlogInfoQuery } from '../../blogs/application/query/get-blog-info.query';
+import { GetPostQuery } from '../../posts/application/query/get-post.query';
 
 @Controller('blogger')
 export class BloggerController {
-  constructor(
-    private commandBus: CommandBus,
-    private queryBus: QueryBus,
-    private blogsQueryRepository: BlogsQueryRepository,
-  ) {}
+  constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('blogs')
@@ -50,7 +46,7 @@ export class BloggerController {
     @Body() dto: CreateBlogDto,
     @CurrentUserId() currentUserId: string,
   ) {
-    const blog = await this.commandBus.execute(
+    const blogId = await this.commandBus.execute(
       new BloggerCreateBlogCommand(
         dto.name,
         dto.description,
@@ -58,7 +54,8 @@ export class BloggerController {
         currentUserId,
       ),
     );
-    return mapBlogToViewModel(blog);
+
+    return await this.queryBus.execute(new GetBlogInfoQuery(blogId));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -67,9 +64,15 @@ export class BloggerController {
     @Query() dto: PaginationBlogListDto,
     @CurrentUserId() currentUserId: string,
   ) {
-    return await this.blogsQueryRepository.getPaginatedBlogsListByOwner(
-      dto,
-      currentUserId,
+    return await this.queryBus.execute(
+      new GetListOfBlogsByOwnerQuery(
+        currentUserId,
+        dto.searchNameTerm,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+      ),
     );
   }
 
@@ -82,7 +85,13 @@ export class BloggerController {
     @CurrentUserId() currentUserId: string,
   ) {
     await this.commandBus.execute(
-      new BloggerUpdateBlogCommand(dto, blogId, currentUserId),
+      new BloggerUpdateBlogCommand(
+        dto.name,
+        dto.description,
+        dto.websiteUrl,
+        blogId,
+        currentUserId,
+      ),
     );
   }
 
@@ -106,7 +115,7 @@ export class BloggerController {
     @Body() dto: CreatePostWithoutBlogIdDto,
     @CurrentUserId() currentUserId: string,
   ) {
-    const post = await this.commandBus.execute(
+    const postId = await this.commandBus.execute(
       new BloggerCreatePostCommand(
         dto.title,
         dto.shortDescription,
@@ -115,7 +124,8 @@ export class BloggerController {
         currentUserId,
       ),
     );
-    return mapPostToViewModel(post);
+
+    return await this.queryBus.execute(new GetPostQuery(postId, currentUserId));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -128,7 +138,14 @@ export class BloggerController {
     @CurrentUserId() currentUserId: string,
   ) {
     await this.commandBus.execute(
-      new BloggerUpdatePostCommand(blogId, postId, currentUserId, dto),
+      new BloggerUpdatePostCommand(
+        blogId,
+        postId,
+        currentUserId,
+        dto.title,
+        dto.shortDescription,
+        dto.content,
+      ),
     );
   }
 
@@ -193,7 +210,7 @@ export class BloggerController {
     @Query() dto: ReturnAllCommentsInCurrentUserBlogsDto,
   ) {
     return await this.queryBus.execute(
-      new BloggerGetCommentsForCurrentUserBlogsQuery(
+      new BloggerGetCommentsFromCurrentUserBlogsQuery(
         currentUserId,
         dto.sortBy,
         dto.sortDirection,

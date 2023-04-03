@@ -1,11 +1,12 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UpdateBlogDto } from '../../../blogs/dto/updateBlog.dto';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class BloggerUpdateBlogCommand {
   constructor(
-    public dto: UpdateBlogDto,
+    public name: string,
+    public description: string,
+    public websiteUrl: string,
     public blogId: string,
     public userId: string,
   ) {}
@@ -13,18 +14,19 @@ export class BloggerUpdateBlogCommand {
 
 @CommandHandler(BloggerUpdateBlogCommand)
 export class BloggerUpdateBlogUseCase {
-  constructor(private blogsRepository: BlogsRepository) {}
+  constructor(private blogsPgRepository: BlogsPgRepository) {}
 
   async execute(command: BloggerUpdateBlogCommand) {
-    const blog = await this.blogsRepository.getById(command.blogId);
-    if (blog.blogOwnerInfo.userId !== command.userId) {
+    console.log(command);
+    const blog = await this.blogsPgRepository.getById(command.blogId);
+    if (blog.userId !== command.userId) {
       throw new UnauthorizedActionException(
         'Unauthorized updating. This blog belongs to another user.',
       );
     }
-    blog.name = command.dto.name;
-    blog.description = command.dto.description;
-    blog.websiteUrl = command.dto.websiteUrl;
-    await this.blogsRepository.save(blog);
+    blog.name = command.name;
+    blog.description = command.description;
+    blog.websiteUrl = command.websiteUrl;
+    await this.blogsPgRepository.update(blog);
   }
 }

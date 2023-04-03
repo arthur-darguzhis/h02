@@ -3,11 +3,6 @@ import { Trim } from '../crutches/class-transformer/trim.decorator';
 import { Type } from 'class-transformer';
 
 export class PaginationQueryParametersDto {
-  @IsIn(['createdAt'])
-  @Trim()
-  @IsString()
-  sortBy = 'createdAt';
-
   @IsIn(['asc', 'desc'])
   @Trim()
   @IsString()

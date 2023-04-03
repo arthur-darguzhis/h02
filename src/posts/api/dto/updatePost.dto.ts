@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsString, Length, Validate } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
-import { BlogExists } from '../../../common/customValidations/blog-exists';
 
 export class UpdatePostDto {
   @Length(1, 30)
@@ -21,8 +20,6 @@ export class UpdatePostDto {
   @IsNotEmpty()
   content: string;
 
-  //TODO chink is it correct name BlogExists for validation, and should I put this kind of validation to other places?
-  @Validate(BlogExists)
   @Trim()
   @IsString()
   @IsNotEmpty()

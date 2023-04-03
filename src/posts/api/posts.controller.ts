@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -12,37 +11,25 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PaginatedPostListDto } from './dto/paginatedPostList.dto';
-import { CreatePostDto } from './dto/createPost.dto';
-import { UpdatePostDto } from './dto/updatePost.dto';
-import { PostsService } from '../posts.service';
-import { PostsQueryRepository } from '../posts.query.repository';
-import { CommentsQueryRepository } from '../../comments/comments.query.repository';
-import { PaginatedCommentListDto } from '../../comments/dto/paginated-comment-list.dto';
-import { mapPostToViewModel } from '../posts.mapper';
+import { PaginatedCommentListDto } from '../../comments/api/dto/paginated-comment-list.dto';
 import { AddCommentToPostDto } from './dto/add-comment-to-post.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import {
   CurrentUserId,
   OptionalCurrentUserId,
 } from '../../global-services/decorators/current-user-id.decorator';
-import { CommentsService } from '../../comments/comments.service';
-import { mapCommentToViewModel } from '../../comments/comments.mapper';
-import { CommentReactionsDto } from '../../comments/dto/comment-reactions.dto';
-import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
+import { CommentReactionsDto } from '../../comments/api/dto/comment-reactions.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserAddCommentCommand } from '../application/use-cases/user-add-comment.use-case';
-import { GetPaginatedPostsListQuery } from '../application/query/get-paginated-posts-list';
+import { GetPostsListQuery } from '../application/query/get-posts-list.query';
+import { UserMakeReactionOnPostCommand } from '../application/use-cases/user-make-reaction-on-post.use-case';
+import { GetPostQuery } from '../application/query/get-post.query';
+import { GetCommentsListRelatedToPostQuery } from '../../comments/application/query/get-comments-list-related-to-post.query';
+import { GetCommentQuery } from '../../comments/application/query/get-comment.query';
 
 @Controller('posts')
 export class PostsController {
-  constructor(
-    private commandBus: CommandBus,
-    private queryBus: QueryBus,
-    private postsService: PostsService,
-    private commentsService: CommentsService,
-    private postsQueryRepository: PostsQueryRepository,
-    private commentsQueryRepository: CommentsQueryRepository,
-  ) {}
+  constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Get()
   async getPosts(
@@ -50,7 +37,7 @@ export class PostsController {
     @OptionalCurrentUserId() currentUserId,
   ) {
     return await this.queryBus.execute(
-      new GetPaginatedPostsListQuery(
+      new GetPostsListQuery(
         dto.sortBy,
         dto.sortDirection,
         dto.pageSize,
@@ -60,35 +47,30 @@ export class PostsController {
     );
   }
 
-  @Get(':id')
+  @Get(':postId')
   async getPost(
-    @Param('id') id: string,
+    @Param('postId') postId: string,
     @OptionalCurrentUserId() currentUserId,
   ) {
-    return await this.postsQueryRepository.getByIdForCurrentUser(
-      id,
-      currentUserId,
-    );
+    return await this.queryBus.execute(new GetPostQuery(postId, currentUserId));
   }
 
   @Get(':postId/comments')
   async getCommentsRelatedToPost(
     @Param('postId') postId: string,
-    @Query() paginatedCommentListDTO: PaginatedCommentListDto,
+    @Query() dto: PaginatedCommentListDto,
     @OptionalCurrentUserId() currentUserId,
   ) {
-    return await this.commentsQueryRepository.findByPostId(
-      postId,
-      paginatedCommentListDTO,
-      currentUserId,
+    return this.queryBus.execute(
+      new GetCommentsListRelatedToPostQuery(
+        postId,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+        currentUserId,
+      ),
     );
-  }
-
-  @UseGuards(BasicAuthGuard)
-  @Post()
-  async createPost(@Body() dto: CreatePostDto) {
-    const post = await this.postsService.createPost(dto);
-    return mapPostToViewModel(post);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -98,17 +80,12 @@ export class PostsController {
     @Body() dto: AddCommentToPostDto,
     @CurrentUserId() currentUserId,
   ) {
-    const comment = await this.commandBus.execute(
+    const commentId = await this.commandBus.execute(
       new UserAddCommentCommand(dto.content, postId, currentUserId),
     );
-    return mapCommentToViewModel(comment);
-  }
-
-  @UseGuards(BasicAuthGuard)
-  @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async putPost(@Param('id') id: string, @Body() dto: UpdatePostDto) {
-    return await this.postsService.updatePost(id, dto);
+    return await this.queryBus.execute(
+      new GetCommentQuery(commentId, currentUserId),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -119,13 +96,8 @@ export class PostsController {
     @CurrentUserId() currentUserId: string,
     @Body() dto: CommentReactionsDto,
   ) {
-    await this.postsService.addReaction(postId, currentUserId, dto);
-  }
-
-  @UseGuards(BasicAuthGuard)
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async deletePost(@Param('id') id: string) {
-    await this.postsService.deletePost(id);
+    await this.commandBus.execute(
+      new UserMakeReactionOnPostCommand(postId, currentUserId, dto.likeStatus),
+    );
   }
 }

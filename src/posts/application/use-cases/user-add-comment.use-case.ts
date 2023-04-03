@@ -1,9 +1,10 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../posts.repository';
 import { CommentsFactory } from '../../../comments/comments.factory';
-import { BlogUserBansRepository } from '../../../blogs/blog-user-bans.repository';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { CommentsPgRepository } from '../../../comments/infrastructure/comments-pg.repository';
+import { BlogUserBanRepository } from '../../../blogs/infrastructure/blog-user-ban.repository';
 
 export class UserAddCommentCommand {
   constructor(
@@ -16,14 +17,16 @@ export class UserAddCommentCommand {
 @CommandHandler(UserAddCommentCommand)
 export class UserAddCommentUseCase {
   constructor(
-    private postsRepository: PostsRepository,
+    private postsPgRepository: PostsPgRepository,
+    private blogsPgRepository: BlogsPgRepository,
+    private commentsPgRepository: CommentsPgRepository,
     private commentsFactory: CommentsFactory,
-    private blogsRepository: BlogsRepository,
-    private blogUserBansRepository: BlogUserBansRepository,
+    private blogUserBanRepository: BlogUserBanRepository,
   ) {}
   async execute(command: UserAddCommentCommand) {
-    const post = await this.postsRepository.getById(command.postId);
-    const blog = await this.blogsRepository.getById(post.blogId);
+    console.log(command);
+    const post = await this.postsPgRepository.getById(command.postId);
+    const blog = await this.blogsPgRepository.getById(post.blogId);
 
     if (await this.isUserBannedForBlog(blog.id, command.currentUserId)) {
       throw new UnauthorizedActionException(
@@ -31,15 +34,16 @@ export class UserAddCommentUseCase {
       );
     }
 
-    return await this.commentsFactory.createNewComment(
+    const comment = this.commentsFactory.createNewCommentPg(
       command.postId,
-      post.postOwnerInfo.userId,
       command.currentUserId,
       command.content,
     );
+
+    return await this.commentsPgRepository.saveNewComment(comment);
   }
 
   private async isUserBannedForBlog(blogId: string, userId: string) {
-    return this.blogUserBansRepository.findOne(blogId, userId);
+    return this.blogUserBanRepository.findOne(blogId, userId);
   }
 }

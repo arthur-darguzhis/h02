@@ -10,6 +10,7 @@ export const getConfiguration = () => ({
   GMAIL_APP_LOGIN: process.env.GMAIL_APP_LOGIN,
   GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD,
   PORT: process.env.PORT,
+  COOKIE_MAX_AGE: process.env.COOKIE_MAX_AGE,
 });
 
 export type ConfigType = ReturnType<typeof getConfiguration>;

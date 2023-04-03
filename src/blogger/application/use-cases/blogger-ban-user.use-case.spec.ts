@@ -1,19 +1,26 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
-import { UsersRepository } from '../../../users/users.repository';
 import { CommandBus } from '@nestjs/cqrs';
-import { AdminAddNewUserCommand } from '../../../super-admin/users/use-cases/admin-add-new-user.use-case';
+import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { BloggerCreateBlogCommand } from './blogger-create-blog.use-case';
-import { BloggerCreatePostCommand } from './blogger-create-post';
+import { BloggerCreatePostCommand } from './blogger-create-post.use-case';
 import { UserAddCommentCommand } from '../../../posts/application/use-cases/user-add-comment.use-case';
 import { BloggerBanUserCommand } from './blogger-ban-user.use-case';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';
+import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
 
-describe('POST blogger ban user (e2e)', () => {
+describe('Blogger ban user', () => {
   let given: Given;
-  let usersRepository: UsersRepository;
+  let usersPgRepository: UsersPgRepository;
+  let blogsPgRepository: BlogsPgRepository;
+  let postsPgRepository: PostsPgRepository;
   let commandBus: CommandBus;
 
   let userAsBlogger;
+  let userAsSecondBlogger;
   let firstBlog;
   let postInFirstBlog;
   let secondBlog;
@@ -23,7 +30,9 @@ describe('POST blogger ban user (e2e)', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersRepository = given.configuredTestApp.get(UsersRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
 
     /** Arrange
@@ -37,6 +46,25 @@ describe('POST blogger ban user (e2e)', () => {
 
   afterEach(async () => {
     await given.closeApp();
+  });
+
+  it(`Throw error if userId is an id of not exists user`, async () => {
+    await expect(
+      commandBus.execute(
+        new BloggerBanUserCommand(
+          userAsBlogger.id,
+          firstBlog.id,
+          UUID_THAT_IS_NOT_EXISTS,
+          true,
+          'abusive behavior',
+        ),
+      ),
+    ).rejects.toThrow(
+      new EntityNotFoundException(
+        `User with id: ${UUID_THAT_IS_NOT_EXISTS} is not exists`,
+        'login',
+      ),
+    );
   });
 
   it(`Given: User as reader send comment to a post. 
@@ -72,11 +100,22 @@ describe('POST blogger ban user (e2e)', () => {
   });
 
   async function prepareData() {
-    userAsBlogger = await commandBus.execute(
+    await commandBus.execute(
       new AdminAddNewUserCommand('blogger', '123456', 'blogger@test.test'),
     );
 
-    firstBlog = await commandBus.execute(
+    await commandBus.execute(
+      new AdminAddNewUserCommand(
+        'secondBlogger',
+        '123456',
+        'secondBlogger@test.test',
+      ),
+    );
+
+    userAsBlogger = await usersPgRepository.findByLogin('blogger');
+    userAsSecondBlogger = await usersPgRepository.findByLogin('secondBlogger');
+
+    await commandBus.execute(
       new BloggerCreateBlogCommand(
         'First Blog',
         'the first blog description',
@@ -85,7 +124,9 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
-    postInFirstBlog = await commandBus.execute(
+    firstBlog = await blogsPgRepository.findByName('First Blog');
+
+    await commandBus.execute(
       new BloggerCreatePostCommand(
         'test post title',
         'test post short description',
@@ -95,7 +136,12 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
-    secondBlog = await commandBus.execute(
+    postInFirstBlog = await postsPgRepository.findByTitleAndBlog(
+      'test post title',
+      firstBlog.id,
+    );
+
+    await commandBus.execute(
       new BloggerCreateBlogCommand(
         'Second Blog',
         'the second blog description',
@@ -104,7 +150,9 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
-    postInSecondBlog = await commandBus.execute(
+    secondBlog = await blogsPgRepository.findByName('Second Blog');
+
+    await commandBus.execute(
       new BloggerCreatePostCommand(
         'test post title',
         'test post short description',
@@ -114,8 +162,15 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
-    userAsReader = await commandBus.execute(
+    postInSecondBlog = await postsPgRepository.findByTitleAndBlog(
+      'test post title',
+      secondBlog.id,
+    );
+
+    await commandBus.execute(
       new AdminAddNewUserCommand('reader', '123456', 'reader@test.test'),
     );
+
+    userAsReader = await usersPgRepository.findByLogin('reader');
   }
 });

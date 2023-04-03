@@ -28,6 +28,11 @@ export class HttpExceptionFilters implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
       responseBody.message.forEach((m) => errorResponse.errorsMessages.push(m));
       response.status(status).json(errorResponse);
+
+      console.log('=>>> params:' + JSON.stringify(request.params));
+      console.log('=>>> body:' + JSON.stringify(request.body));
+      console.log('=>>> query:' + JSON.stringify(request.query));
+      console.log(`=>>> ${status}` + JSON.stringify(errorResponse));
       return;
     }
 
@@ -79,7 +84,8 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-
+    console.log('=>>> ' + exception.toString());
+    console.log('=>>> ' + exception.stack);
     if (process.env.NODE_ENV !== 'production') {
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)

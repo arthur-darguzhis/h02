@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsString, Length, Validate } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
-import { BlogExists } from '../../../common/customValidations/blog-exists';
 
 export class CreatePostDto {
   @Length(1, 30)
@@ -21,7 +20,6 @@ export class CreatePostDto {
   @IsNotEmpty()
   content: string;
 
-  @Validate(BlogExists)
   @IsNotEmpty()
   @Trim()
   @IsString()

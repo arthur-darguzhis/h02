@@ -1,21 +1,16 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { UsersRepository } from '../../../users/users.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  BlogUserBans,
-  BlogUserBansDocument,
-} from '../../../blogs/blog-user-bans-schema';
-import { BlogUserBansRepository } from '../../../blogs/blog-user-bans.repository';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogUserBanRepository } from '../../../blogs/infrastructure/blog-user-ban.repository';
+import { BlogUsersBanFactory } from '../../../users/blog-users-ban.factory';
 
 export class BloggerBanUserCommand {
   constructor(
     public bloggerId: string,
     public blogId: string,
     public userId: string,
-    public isBanned: boolean,
+    public isBanned: boolean = false,
     public banReason: string,
   ) {}
 }
@@ -23,52 +18,45 @@ export class BloggerBanUserCommand {
 @CommandHandler(BloggerBanUserCommand)
 export class BloggerBanUserUseCase {
   constructor(
-    @InjectModel(BlogUserBans.name)
-    private blogUserBansDocument: Model<BlogUserBansDocument>,
-    private blogUserBansRepository: BlogUserBansRepository,
-    private blogsRepository: BlogsRepository,
-    private usersRepository: UsersRepository,
+    private blogsPgRepository: BlogsPgRepository,
+    private usersPgRepository: UsersPgRepository,
+    private blogUserBanRepository: BlogUserBanRepository,
+    private blogUsersBanFactory: BlogUsersBanFactory,
   ) {}
   async execute(command: BloggerBanUserCommand): Promise<void | never> {
-    const blog = await this.blogsRepository.getById(command.blogId);
-    const user = await this.usersRepository.getById(command.userId);
-    if (blog.blogOwnerInfo.userId !== command.bloggerId) {
+    console.log(command);
+    await this.usersPgRepository.throwIfUserIsNotExists(command.userId);
+    const blog = await this.blogsPgRepository.getById(command.blogId);
+    if (blog.userId !== command.bloggerId) {
       throw new UnauthorizedActionException(
         'Unauthorized action. This blog belongs to another blogger.',
       );
     }
 
-    const blogUserBan = await this.blogUserBansRepository.findOne(
+    const blogUserBan = await this.blogUserBanRepository.findOne(
       command.blogId,
       command.userId,
     );
 
-    if (blogUserBan && blogUserBan.banInfo.isBanned === command.isBanned) {
+    if (blogUserBan && blogUserBan.isBanned === command.isBanned) {
       throw new UnauthorizedActionException(
         'User is already banned for this blog',
       );
     }
 
-    if (!command.isBanned && !blogUserBan) {
+    if (command.isBanned == false && !blogUserBan) {
       return;
     }
 
     if (blogUserBan) {
-      blogUserBan.banInfo.isBanned = false;
-      blogUserBan.banInfo.banDate = null;
-      blogUserBan.banInfo.banReason = null;
-      await this.blogUserBansRepository.save(blogUserBan);
+      await this.blogUserBanRepository.banOrUnban(blogUserBan);
     } else {
-      await this.blogUserBansDocument.create({
-        blogId: blog.id,
-        userId: user.id,
-        login: user.login,
-        banInfo: {
-          isBanned: true,
-          banDate: new Date().toISOString(),
-          banReason: command.banReason,
-        },
-      });
+      const newUserBan = this.blogUsersBanFactory.createBlogUserBan(
+        command.blogId,
+        command.userId,
+        command.banReason,
+      );
+      await this.blogUserBanRepository.save(newUserBan);
     }
   }
 }

@@ -2,6 +2,7 @@ import { setConfigTestApp } from '../appConfigurations';
 import request from 'supertest';
 import { RequestsMaker } from '../requestsMaker';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { wait } from '../../../src/testing/wait';
 
 describe('POST /auth/refresh-token (e2e)', () => {
   let configuredTestApp: INestApplication;
@@ -51,6 +52,8 @@ describe('POST /auth/refresh-token (e2e)', () => {
   });
 
   it('An error should occur if the user attempts to refresh their token twice, with the second attempt using the same old token. Status 401', async () => {
+    await wait(2000);
+
     await request(app)
       .post('/auth/refresh-token')
       .set('Cookie', [...cookie])

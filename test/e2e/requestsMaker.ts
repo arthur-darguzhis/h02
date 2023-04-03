@@ -30,7 +30,7 @@ export const RequestsMaker = {
   users: {
     createUser: async (app, dto: CreateUserDto) => {
       const newUser = await request(app)
-        .post('/users')
+        .post('/sa/users')
         .auth('admin', 'qwerty', { type: 'basic' })
         .send(dto)
         .expect(HttpStatus.CREATED);

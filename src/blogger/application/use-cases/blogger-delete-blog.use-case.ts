@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class BloggerDeleteBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -8,15 +8,16 @@ export class BloggerDeleteBlogCommand {
 
 @CommandHandler(BloggerDeleteBlogCommand)
 export class BloggerDeleteBlogUseCase {
-  constructor(private blogsRepository: BlogsRepository) {}
+  constructor(private blogsPgRepository: BlogsPgRepository) {}
 
   async execute(command: BloggerDeleteBlogCommand) {
-    const blog = await this.blogsRepository.getById(command.blogId);
-    if (blog.blogOwnerInfo.userId !== command.userId) {
+    console.log(command);
+    const blog = await this.blogsPgRepository.getById(command.blogId);
+    if (blog.userId !== command.userId) {
       throw new UnauthorizedActionException(
         'Unauthorized delete. This blog belongs to another user.',
       );
     }
-    await this.blogsRepository.deleteById(command.blogId);
+    await this.blogsPgRepository.delete(command.blogId, command.userId);
   }
 }

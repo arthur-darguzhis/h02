@@ -8,8 +8,8 @@ export class BannedUsersInBlog extends PaginationQueryParametersDto {
   @IsOptional()
   searchLoginTerm: string;
 
-  @IsIn(['login', 'banInfo.banDate', 'banInfo.banReason'])
+  @IsIn(['login', 'banDate', 'banReason'])
   @Trim()
   @IsString()
-  sortBy = 'banInfo.banDate';
+  sortBy = 'banDate';
 }
