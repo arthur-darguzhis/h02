@@ -14,7 +14,7 @@ export class JjjjwtService {
   //
   generateAuthToken(user: UserDocument) {
     return jwt.sign({ userId: user._id.toString() }, this.authSecret, {
-      expiresIn: '10m',
+      expiresIn: '10s',
     });
   }
 
