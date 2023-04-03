@@ -2,15 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { EntityAlreadyExistsException } from '../common/exceptions/domain.exceptions/entity-already-exists.exception';
+import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { use } from 'passport';
 
 @Injectable()
 export class UsersPgRepository {
   constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
   async findByLogin(login: string) {
-    return this.dataSource.query('SELECT * FROM users WHERE login = $1', [
-      login,
-    ]);
+    const result = await this.dataSource.query(
+      `SELECT id,
+               login,
+               email,
+               password_hash                        as "passwordHash",
+               created_at                           as "createdAt",
+               confirmation_code                    as "confirmationCode",
+               expiration_date_of_confirmation_code as "expirationDate",
+               is_confirmed                         as "isConfirmed",
+               is_banned                            as "isBanned",
+               ban_date                             as "banDate",
+               ban_reason                           as "banReason" 
+            FROM users 
+                WHERE login = $1`,
+      [login],
+    );
+
+    return result[0] || null;
   }
 
   async throwIfEmailInUse(email: string): Promise<void | never> {
@@ -37,6 +54,34 @@ export class UsersPgRepository {
         'login',
       );
     }
+  }
+
+  async getByConfirmationCode(confirmationCode): Promise<any | never> {
+    const result = await this.dataSource.query(
+      `
+    SELECT id,
+           login,
+           email,
+           password_hash                        as "passwordHash",
+           created_at                           as "createdAt",
+           confirmation_code                    as "confirmationCode",
+           expiration_date_of_confirmation_code as "expirationDate",
+           is_confirmed                         as "isConfirmed",
+           is_banned                            as "isBanned",
+           ban_date                             as "banDate",
+           ban_reason                           as "banReason"
+    FROM users
+    WHERE confirmation_code = $1`,
+      [confirmationCode],
+    );
+
+    if (result.length === 0) {
+      throw new UnprocessableEntityException(
+        `User with confirmationCode: ${confirmationCode} is not found`,
+      );
+    }
+
+    return result[0] || null;
   }
 
   async saveNewUser(newUser: any): Promise<void> {
@@ -68,5 +113,21 @@ export class UsersPgRepository {
       newUser.banDate,
       newUser.banReason,
     ]);
+  }
+
+  async confirmEmailAndActivateAccount(userId: string) {
+    await this.dataSource.query(
+      'UPDATE users SET is_confirmed = true WHERE id = $1',
+      [userId],
+    );
+  }
+
+  async forTest_resetExpirationDateOfConfirmationCodeToCurrentDate(
+    userId: string,
+  ) {
+    await this.dataSource.query(
+      'UPDATE users SET expiration_date_of_confirmation_code = $1 WHERE id = $2',
+      [new Date(), userId],
+    );
   }
 }

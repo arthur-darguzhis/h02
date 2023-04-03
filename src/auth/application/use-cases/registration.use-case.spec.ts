@@ -16,8 +16,7 @@ describe('User registration use-case', () => {
     usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
 
     /** Arrange
-     * //TODO add here description of prepared environment
-     * Given: There is a user as with login "firstUser"
+     * Given: There is a user with login "firstUser"
      */
     await prepareData();
   });

@@ -96,12 +96,14 @@ import { GetPaginatedPostsListByBlogIdHandler } from './posts/application/query/
 import { PostsController } from './posts/api/posts.controller';
 import { UsersPgRepository } from './users/users.pg-repository';
 import { RegistrationUseCase } from './auth/application/use-cases/registration.use-case';
+import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
   AddNewUserUseCase,
   DeleteUserUseCase,
   RegistrationUseCase,
+  ConfirmRegistrationUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
