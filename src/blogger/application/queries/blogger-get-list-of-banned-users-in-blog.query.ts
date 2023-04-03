@@ -1,23 +1,18 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import {
-  BlogUserBans,
-  BlogUserBansDocument,
-} from '../../../blogs/blog-user-bans-schema';
-import { Model } from 'mongoose';
-import { Blog, BlogDocument } from '../../../blogs/blogs-schema';
-import { InjectModel } from '@nestjs/mongoose';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class BloggerGetListOfBannedUsersInBlogQuery {
   constructor(
-    public readonly blogId,
-    public readonly bloggerId,
-    public readonly searchLoginTerm,
-    public readonly sortBy,
-    public readonly sortDirection,
-    public readonly pageNumber,
-    public readonly pageSize,
+    public readonly blogId: string,
+    public readonly bloggerId: string,
+    public readonly searchLoginTerm: string = null,
+    public readonly sortBy: string = 'banDate',
+    public readonly sortDirection: string = 'desc',
+    public readonly pageNumber: number = 1,
+    public readonly pageSize: number = 10,
   ) {}
 }
 
@@ -26,62 +21,68 @@ export class BloggerGetListOfBannedUsersForBlogHandler
   implements IQueryHandler
 {
   constructor(
-    @InjectModel(BlogUserBans.name)
-    private blogUserBansModel: Model<BlogUserBansDocument>,
-    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @InjectDataSource() protected dataSource: DataSource,
+    private blogsPgRepository: BlogsPgRepository,
   ) {}
 
   async execute(query: BloggerGetListOfBannedUsersInBlogQuery) {
-    const blog: BlogDocument = await this.blogModel.findById(query.blogId);
+    console.log(query);
+    const blog = await this.blogsPgRepository.getById(query.blogId);
 
-    if (!blog) {
-      throw new EntityNotFoundException(
-        `Blog with id: ${query.blogId} is not found`,
-      );
-    }
-
-    if (blog?.blogOwnerInfo?.userId !== query.bloggerId) {
+    if (blog.userId !== query.bloggerId) {
       throw new UnauthorizedActionException(
         'Unauthorized action. This blog belongs to another blogger.',
       );
     }
 
-    const filter = { blogId: query.blogId, 'banInfo.isBanned': true };
-    if (query.searchLoginTerm) {
-      filter['searchLoginTerm'] = {
-        $regex: query.searchLoginTerm,
-        $options: 'i',
-      };
-    }
+    const searchLoginTerm = query.searchLoginTerm
+      ? `%${query.searchLoginTerm}%`
+      : null;
 
-    const count = await this.blogUserBansModel.countDocuments(filter);
-    const direction = query.sortDirection === 'asc' ? 1 : -1;
-    const howManySkip = (query.pageNumber - 1) * query.pageSize;
-    const users = await this.blogUserBansModel
-      .find(filter)
-      .sort({ [query.sortBy]: direction })
-      .skip(howManySkip)
-      .limit(query.pageSize)
-      .lean();
+    let count = await this.dataSource.query(
+      `SELECT count (*) as count 
+            FROM blog_user_ban
+                JOIN users ON blog_user_ban.user_id = users.id
+            WHERE blog_user_ban.is_banned = true 
+              AND blog_user_ban.blog_id = $1 
+              AND ($2::varchar is null or users.login ILIKE $2::varchar)`,
+      [query.blogId, searchLoginTerm],
+    );
+
+    count = Number(count[0].count);
+    const offset = (query.pageNumber - 1) * query.pageSize;
+
+    const sortFields = {
+      login: 'users.login',
+      isBanned: 'blog_user_ban.is_banned',
+      banDate: 'blog_user_ban.ban_date',
+      banReason: 'blog_user_ban.ban_reason',
+    };
+
+    const users = await this.dataSource.query(
+      `SELECT blog_user_ban.user_id as id,
+              users.login as "login",
+              json_build_object(
+                  'isBanned', blog_user_ban.is_banned,
+                  'banDate', to_char(blog_user_ban.ban_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), 
+                  'banReason', blog_user_ban.ban_reason
+                  ) as "banInfo"
+              FROM blog_user_ban
+                  JOIN users ON blog_user_ban.user_id = users.id
+              WHERE blog_user_ban.is_banned = true 
+                AND blog_user_ban.blog_id = $1 
+                AND ($2::varchar is null or users.login ILIKE $2::varchar)
+              ORDER BY ${sortFields[query.sortBy]} ${query.sortDirection}
+              LIMIT $3 OFFSET $4`,
+      [query.blogId, searchLoginTerm, query.pageSize, offset],
+    );
 
     return {
       pagesCount: Math.ceil(count / query.pageSize),
       page: query.pageNumber,
       pageSize: query.pageSize,
       totalCount: count,
-      items: users.map(this.mapper),
-    };
-  }
-
-  private mapper(blogUserBans: BlogUserBansDocument) {
-    return {
-      id: blogUserBans.userId,
-      login: blogUserBans.login,
-      banInfo: {
-        isBanned: blogUserBans.banInfo.isBanned,
-        banDate: blogUserBans.banInfo.banDate,
-        banReason: blogUserBans.banInfo.banReason,
-      },
+      items: users,
     };
   }
 }

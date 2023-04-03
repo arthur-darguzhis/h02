@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../../users/users.repository';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { BlogOwnerInfo } from '../../../blogs/blogs-schema';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 export class AdminSetOwnerToOrphanBlogCommand {
   constructor(public blogId: string, public userId: string) {}
 }
@@ -10,25 +9,22 @@ export class AdminSetOwnerToOrphanBlogCommand {
 @CommandHandler(AdminSetOwnerToOrphanBlogCommand)
 export class AdminSetOwnerToOrphanBlogUseCase {
   constructor(
-    private usersRepository: UsersRepository,
-    private blogsRepository: BlogsRepository,
+    private usersPgRepository: UsersPgRepository,
+    private blogsPgRepository: BlogsPgRepository,
   ) {}
   async execute(command: AdminSetOwnerToOrphanBlogCommand) {
+    console.log(command);
     const { blogId, userId } = command;
-    const blog = await this.blogsRepository.getById(blogId);
-    const user = await this.usersRepository.getById(userId);
+    const blog = await this.blogsPgRepository.getById(blogId);
+    await this.usersPgRepository.throwIfUserIsNotExists(userId);
 
-    if (blog.blogOwnerInfo?.userId) {
+    if (blog.userId !== null) {
       throw new UnprocessableEntityException(
         'Blog already has an owner. Unable to assign user as new owner.',
       );
     }
-    const blogOwnerInfo: BlogOwnerInfo = {
-      userId: userId,
-      userLogin: user.login,
-    };
-    blog.blogOwnerInfo = blogOwnerInfo;
+    blog.userId = userId;
 
-    await this.blogsRepository.save(blog);
+    await this.blogsPgRepository.updateOwner(userId, blog.id);
   }
 }

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UsersRepository } from '../users/users.repository';
 import { PostReaction, PostReactionDocument } from './post-reaction-schema';
-import { PostReactionsDto } from './api/dto/post-reactions.dto';
+import { UsersPgRepository } from '../users/infrastructure/users.pg-repository';
 
 @Injectable()
 export class PostReactionsFactory {
@@ -12,23 +12,24 @@ export class PostReactionsFactory {
     @InjectModel(PostReaction.name)
     private postReactionDocumentModel: Model<PostReactionDocument>,
     private usersRepository: UsersRepository,
+    private usersPgRepository: UsersPgRepository,
   ) {}
 
   async createNewPostReaction(
     postId: string,
     userId: string,
-    dto: PostReactionsDto,
-  ): Promise<PostReactionDocument | never> {
-    const user = await this.usersRepository.getById(userId);
-    this.throwIfReactionStatusIsNotCorrect(dto.likeStatus);
+    likeStatus: string,
+  ) {
+    await this.usersPgRepository.throwIfUserIsNotExists(userId);
+    this.throwIfReactionStatusIsNotCorrect(likeStatus);
 
-    return this.postReactionDocumentModel.create({
+    return {
       userId: userId,
       postId: postId,
-      login: user.login,
-      status: dto.likeStatus,
-      addedAt: new Date().toISOString(),
-    });
+      status: likeStatus,
+      createdAt: new Date(),
+      isBanned: false,
+    };
   }
 
   private throwIfReactionStatusIsNotCorrect(likeStatus: string) {

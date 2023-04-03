@@ -1,7 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../../posts/posts.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class BloggerDeletePostCommand {
   constructor(
@@ -14,23 +14,24 @@ export class BloggerDeletePostCommand {
 @CommandHandler(BloggerDeletePostCommand)
 export class BloggerDeletePostUseCase {
   constructor(
-    private postsRepository: PostsRepository,
-    private blogsRepository: BlogsRepository,
+    private postsPgRepository: PostsPgRepository,
+    private blogsPgRepository: BlogsPgRepository,
   ) {}
   async execute(command: BloggerDeletePostCommand) {
-    const blog = await this.blogsRepository.getById(command.blogId);
-    if (blog.blogOwnerInfo.userId !== command.userId) {
+    console.log(command);
+    const blog = await this.blogsPgRepository.getById(command.blogId);
+    if (blog.userId !== command.userId) {
       throw new UnauthorizedActionException(
         'Unauthorized delete. This blog belongs to another user.',
       );
     }
 
-    const post = await this.postsRepository.getById(command.postId);
-    if (post.postOwnerInfo.userId !== command.userId) {
+    const post = await this.postsPgRepository.getById(command.postId);
+    if (post.userId !== command.userId) {
       throw new UnauthorizedActionException(
         'Unauthorized delete. This post belongs to another user.',
       );
     }
-    await this.postsRepository.deleteById(command.postId);
+    await this.postsPgRepository.delete(command.postId);
   }
 }

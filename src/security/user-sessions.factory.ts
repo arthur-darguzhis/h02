@@ -3,6 +3,7 @@ import { UserSessions, UserSessionsDocument } from './user-sessions-schema';
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserSessionsPgRepository } from './user-sessions-pg.repository';
 
 @Injectable()
 export class UserSessionsFactory {
@@ -10,6 +11,7 @@ export class UserSessionsFactory {
     @InjectModel(UserSessions.name)
     private userSessionsModel: Model<UserSessionsDocument>,
     private jwtService: JwtService,
+    private userSessionsPgRepository: UserSessionsPgRepository,
   ) {}
 
   async createNewUserSession(
@@ -29,5 +31,24 @@ export class UserSessionsFactory {
       deviceName: userAgent || 'unknown',
       userId: decodedRefreshToken.userId,
     });
+  }
+
+  async createNewUserSessionPg(
+    refreshToken: string,
+    ip: string,
+    userAgent: string,
+  ) {
+    const decodedRefreshToken: any = this.jwtService.decode(refreshToken, {
+      json: true,
+    });
+
+    await this.userSessionsPgRepository.saveNewSession(
+      decodedRefreshToken.iat,
+      decodedRefreshToken.exp,
+      decodedRefreshToken.deviceId,
+      ip,
+      userAgent,
+      decodedRefreshToken.userId,
+    );
   }
 }

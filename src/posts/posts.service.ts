@@ -24,48 +24,4 @@ export class PostsService {
   async updatePost(postId: string, dto: UpdatePostDto) {
     return this.postsRepository.updatePost(postId, dto);
   }
-
-  async deletePost(postId: string) {
-    return this.postsRepository.deleteById(postId);
-  }
-
-  async addReaction(postId: string, userId: string, dto: CommentReactionsDto) {
-    await this.postsRepository.throwIfNotExists(postId);
-    const userReaction = await this.postReactionsRepository.findUserReaction(
-      postId,
-      userId,
-    );
-
-    if (!userReaction) {
-      await this.postReactionsFactory.createNewPostReaction(
-        postId,
-        userId,
-        dto,
-      );
-    } else {
-      if (userReaction.status === dto.likeStatus) {
-        return true;
-      }
-      userReaction.status = dto.likeStatus;
-      await this.postReactionsRepository.save(userReaction);
-    }
-
-    await this.updatePostReactionsCount(postId);
-  }
-
-  public async updatePostReactionsCount(postId: any) {
-    const likesCount = await this.postReactionsRepository.calculateCountOfLikes(
-      postId,
-    );
-    const dislikesCount =
-      await this.postReactionsRepository.calculateCountOfDislikes(postId);
-    const newestLikes =
-      await this.postReactionsRepository.getNewestLikesOnThePost(postId);
-    await this.postsRepository.updateLikesInfo(
-      postId,
-      likesCount,
-      dislikesCount,
-      newestLikes,
-    );
-  }
 }

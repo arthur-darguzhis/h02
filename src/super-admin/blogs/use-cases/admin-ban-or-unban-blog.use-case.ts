@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../../posts/posts.repository';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class AdminBanOrUnbanBlogCommand {
   constructor(
@@ -12,11 +12,15 @@ export class AdminBanOrUnbanBlogCommand {
 @CommandHandler(AdminBanOrUnbanBlogCommand)
 export class AdminBanOrUnbanBlogUseCase implements ICommandHandler {
   constructor(
-    private postsRepository: PostsRepository,
-    private blogsRepository: BlogsRepository,
+    private postsPgRepository: PostsPgRepository,
+    private blogsPgRepository: BlogsPgRepository,
   ) {}
   async execute(command: AdminBanOrUnbanBlogCommand) {
-    const blog = await this.blogsRepository.getById(command.blogId);
-    await this.postsRepository.setBanStatusByBlogId(blog.id, command.isBanned);
+    console.log(command);
+    await this.blogsPgRepository.throwIfNotExists(command.blogId);
+    await this.postsPgRepository.setBanStatusByBlogId(
+      command.blogId,
+      command.isBanned,
+    );
   }
 }

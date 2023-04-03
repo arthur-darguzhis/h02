@@ -1,107 +1,110 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { AdminBanOrUnbanUserDto } from '../api/dto/admin-ban-or-unban-user.dto';
-import { UsersRepository } from '../../../users/users.repository';
-import { BlogsRepository } from '../../../blogs/blogs.repository';
-import { PostsRepository } from '../../../posts/posts.repository';
-import { PostReactionsRepository } from '../../../posts/post-reactions.repository';
-import { CommentReactionsRepository } from '../../../comments/comment-reactions.repository';
-import { CommentsRepository } from '../../../comments/comments.repository';
-import { UserSessionsRepository } from '../../../security/user-sessions.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { PostsService } from '../../../posts/posts.service';
-import { CommentsService } from '../../../comments/comments.service';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UserSessionsPgRepository } from '../../../security/user-sessions-pg.repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { CommentsPgRepository } from '../../../comments/infrastructure/comments-pg.repository';
+import { PostsReactionsPgRepository } from '../../../posts/infrastructure/posts-reactions-pg.repository';
+import { CommentReactionsPgRepository } from '../../../comments/infrastructure/comment-reactions-pg.repository';
 
 export class AdminBanOrUnbanUserCommand {
   constructor(
-    public userId: string,
-    public dto: AdminBanOrUnbanUserDto, //TODO put here validated dto from HTTP request,
+    public readonly userId: string,
+    public readonly isBanned: boolean,
+    public readonly banReason: string,
   ) {}
 }
 
 @CommandHandler(AdminBanOrUnbanUserCommand)
 export class AdminBanOrUnbanUserUseCase {
   constructor(
-    private usersRepository: UsersRepository,
-    private userSessionsRepository: UserSessionsRepository,
-    private blogsRepository: BlogsRepository,
-    private postsRepository: PostsRepository,
-    private commentsRepository: CommentsRepository,
-    private postReactionsRepository: PostReactionsRepository,
-    private commentReactionsRepository: CommentReactionsRepository,
-    private postsService: PostsService,
-    private commentsService: CommentsService,
+    private usersPgRepository: UsersPgRepository,
+    private userSessionsPgRepository: UserSessionsPgRepository,
+    private blogsPgRepository: BlogsPgRepository,
+    private postsPgRepository: PostsPgRepository,
+    private commentsPgRepository: CommentsPgRepository,
+    private postsReactionsPgRepository: PostsReactionsPgRepository,
+    private commentReactionsPgRepository: CommentReactionsPgRepository,
   ) {}
   async execute(command: AdminBanOrUnbanUserCommand) {
-    const user = await this.usersRepository.getById(command.userId);
-    if (command.dto.isBanned === user.banInfo.isBanned) {
-      if (command.dto.isBanned) {
+    console.log(command);
+    const user = await this.usersPgRepository.getById(command.userId);
+    if (command.isBanned === user.isBanned) {
+      if (command.isBanned) {
         throw new UnprocessableEntityException('The user is already banned');
       } else {
         throw new UnprocessableEntityException('The user is already active');
       }
     }
 
-    user.banInfo.isBanned = command.dto.isBanned;
+    const banDate = command.isBanned ? new Date() : null;
+    const banReason = command.isBanned ? command.banReason : null;
 
-    if (command.dto.isBanned) {
-      user.banInfo.banDate = new Date().toISOString();
-      user.banInfo.banReason = command.dto.banReason;
-
-      await this.userSessionsRepository.deleteAllSessionsByUserId(
+    if (command.isBanned) {
+      await this.userSessionsPgRepository.deleteAllSessionsByUserId(
         command.userId,
       );
-    } else {
-      user.banInfo.banDate = null;
-      user.banInfo.banReason = null;
     }
 
     await Promise.allSettled([
-      this.usersRepository.save(user),
-      this.blogsRepository.setBanStatusByUserId(
+      this.usersPgRepository.banUnbanUser(
         command.userId,
-        command.dto.isBanned,
+        command.isBanned,
+        banDate,
+        banReason,
       ),
-      this.postsRepository.setBanStatusByUserId(
+      this.blogsPgRepository.setBanStatusByUserId(
         command.userId,
-        command.dto.isBanned,
+        command.isBanned,
       ),
-      this.commentsRepository.setBanStatusByUserId(
+      this.postsPgRepository.setBanStatusByUserId(
         command.userId,
-        command.dto.isBanned,
+        command.isBanned,
       ),
-      this.postReactionsRepository.setBanStatusByUserId(
+      this.commentsPgRepository.setBanStatusByUserId(
         command.userId,
-        command.dto.isBanned,
+        command.isBanned,
       ),
-      this.commentReactionsRepository.setBanStatusByUserId(
+      this.postsReactionsPgRepository.setBanStatusByUserId(
         command.userId,
-        command.dto.isBanned,
+        command.isBanned,
+      ),
+      this.commentReactionsPgRepository.setBanStatusByUserId(
+        command.userId,
+        command.isBanned,
       ),
     ]);
 
-    await this.recalculatePostsAndCommentsReactionWithUserId(command.userId);
+    await this.postsPgRepository.recalculatePostReactionsAfterUserBan(
+      command.userId,
+    );
+
+    await this.commentsPgRepository.recalculateCommentReactionsAfterUserBan(
+      command.userId,
+    );
   }
 
-  private async recalculatePostsAndCommentsReactionWithUserId(userId: string) {
-    const postIdListToRecalculateLikes =
-      await this.postReactionsRepository.getPostIdListWhereUserId(userId);
-
-    const promisesToRecalculatePostsReactions =
-      postIdListToRecalculateLikes.map((post) => {
-        return this.postsService.updatePostReactionsCount(post.id);
-      });
-
-    const commentIdListToRecalculateLikes =
-      await this.commentReactionsRepository.getCommentIdListWhereUserId(userId);
-
-    const promisesToRecalculateCommentsReactions =
-      commentIdListToRecalculateLikes.map((comment) => {
-        return this.commentsService.updateCommentReactionsCount(comment.id);
-      });
-
-    return await Promise.allSettled([
-      ...promisesToRecalculatePostsReactions,
-      ...promisesToRecalculateCommentsReactions,
-    ]);
-  }
+  // private async recalculatePostsAndCommentsReactionWithUserId(userId: string) {
+  //   const postIdListToRecalculateLikes =
+  //     await this.postReactionsRepository.getPostIdListWhereUserId(userId);
+  //
+  //   const promisesToRecalculatePostsReactions =
+  //     postIdListToRecalculateLikes.map((post) => {
+  //       return this.postsService.updatePostReactionsCount(post.id);
+  //     });
+  //
+  //   const commentIdListToRecalculateLikes =
+  //     await this.commentReactionsRepository.getCommentIdListWhereUserId(userId);
+  //
+  //   const promisesToRecalculateCommentsReactions =
+  //     commentIdListToRecalculateLikes.map((comment) => {
+  //       return this.commentsService.updateCommentReactionsCount(comment.id);
+  //     });
+  //
+  //   return await Promise.allSettled([
+  //     ...promisesToRecalculatePostsReactions,
+  //     ...promisesToRecalculateCommentsReactions,
+  //   ]);
+  // }
 }

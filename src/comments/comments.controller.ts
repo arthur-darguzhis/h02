@@ -10,42 +10,46 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CommentsQueryRepository } from './comments.query.repository';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard';
 import {
   CurrentUserId,
   OptionalCurrentUserId,
 } from '../global-services/decorators/current-user-id.decorator';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentReactionsDto } from './dto/comment-reactions.dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UserDeleteCommentCommand } from './application/use-cases/user-delete-comment.use-case';
+import { UserUpdateCommentCommand } from './application/use-cases/user-update-comment.use-case';
+import { UserMakeReactionOnCommentCommand } from './application/use-cases/user-make-reaction-on-comment.use-case';
+import { GetCommentQuery } from './application/query/get-comment.query';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
     private commentsService: CommentsService,
-    private commentsQueryRepository: CommentsQueryRepository,
+    private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
-  @Get(':id')
+  @Get(':commentId')
   async getComment(
-    @Param('id') id: string,
+    @Param('commentId') commentId: string,
     @OptionalCurrentUserId() currentUserId,
   ) {
-    return this.commentsQueryRepository.getByIdForCurrentUser(
-      id,
-      currentUserId,
-    );
+    return this.queryBus.execute(new GetCommentQuery(commentId, currentUserId));
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
+  @Put(':commentId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateComment(
-    @Param('id') id: string,
+    @Param('commentId') commentId: string,
     @CurrentUserId() currentUserId,
     @Body() dto: UpdateCommentDto,
   ) {
-    await this.commentsService.updateCommentByOwner(id, currentUserId, dto);
+    await this.commandBus.execute(
+      new UserUpdateCommentCommand(commentId, currentUserId, dto.content),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -56,13 +60,21 @@ export class CommentsController {
     @CurrentUserId() currentUserId: string,
     @Body() dto: CommentReactionsDto,
   ) {
-    await this.commentsService.addReaction(commentId, currentUserId, dto);
+    return await this.commandBus.execute(
+      new UserMakeReactionOnCommentCommand(
+        commentId,
+        currentUserId,
+        dto.likeStatus,
+      ),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteComment(@Param('id') id: string, @CurrentUserId() currentUserId) {
-    await this.commentsService.deleteCommentByOwner(id, currentUserId);
+    await this.commandBus.execute(
+      new UserDeleteCommentCommand(id, currentUserId),
+    );
   }
 }

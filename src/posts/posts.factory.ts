@@ -5,13 +5,15 @@ import { Post, PostDocument } from './posts-schema';
 import { Model } from 'mongoose';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { UnauthorizedActionException } from '../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { BloggerCreatePostCommand } from '../blogger/application/use-cases/blogger-create-post';
+import { BloggerCreatePostCommand } from '../blogger/application/use-cases/blogger-create-post.use-case';
+import { BlogsPgRepository } from '../blogs/infrastructure/blogs-pg.repository';
 
 @Injectable()
 export class PostsFactory {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private blogsRepository: BlogsRepository,
+    private blogsPgRepository: BlogsPgRepository,
   ) {}
 
   async adminCreatePost(dto: CreatePostDto): Promise<PostDocument | never> {
@@ -59,5 +61,29 @@ export class PostsFactory {
       },
       createdAt: new Date().toISOString(),
     });
+  }
+
+  async bloggerCreatePostPg(command: BloggerCreatePostCommand) {
+    const blog = await this.blogsPgRepository.getById(command.blogId);
+
+    if (blog.userId !== command.userId) {
+      throw new UnauthorizedActionException(
+        'Unauthorized creating post. This blog belongs to another user.',
+      );
+    }
+
+    return {
+      title: command.title,
+      shortDescription: command.shortDescription,
+      content: command.content,
+      blogId: command.blogId,
+      blogName: blog.name,
+      isBanned: false,
+      createdAt: new Date(),
+      likesCount: 0,
+      dislikesCount: 0,
+      newestLikes: [],
+      userId: command.userId,
+    };
   }
 }

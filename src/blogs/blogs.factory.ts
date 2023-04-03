@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Blog, BlogDocument } from './blogs-schema';
-import { CreateBlogDto } from './dto/createBlog.dto';
+import { CreateBlogDto } from './api/dto/createBlog.dto';
 import { UsersRepository } from '../users/users.repository';
 import { BloggerCreateBlogCommand } from '../blogger/application/use-cases/blogger-create-blog.use-case';
 
@@ -38,5 +38,36 @@ export class BlogsFactory {
       isBanned: false,
       banDate: null,
     });
+  }
+
+  public adminCreateBlogPg(name, description, websiteUrl) {
+    return {
+      name: name,
+      description: description,
+      websiteUrl: websiteUrl,
+      createdAt: new Date(),
+      isMembership: false,
+      userId: null,
+      isBanned: false,
+      banDate: null,
+    };
+  }
+
+  bloggerCreateBlogPg(
+    name: string,
+    description: string,
+    websiteUrl: string,
+    userId: string,
+  ) {
+    return {
+      name: name,
+      description: description,
+      websiteUrl: websiteUrl,
+      createdAt: new Date(),
+      isMembership: false,
+      userId: userId,
+      isBanned: false,
+      banDate: null,
+    };
   }
 }

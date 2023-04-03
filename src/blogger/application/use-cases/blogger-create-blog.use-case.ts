@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogsFactory } from '../../../blogs/blogs.factory';
-import { BlogDocument } from '../../../blogs/blogs-schema';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 export class BloggerCreateBlogCommand {
   constructor(
@@ -13,9 +13,19 @@ export class BloggerCreateBlogCommand {
 
 @CommandHandler(BloggerCreateBlogCommand)
 export class BloggerCreateBlogUseCase implements ICommandHandler {
-  constructor(private blogsFactory: BlogsFactory) {}
+  constructor(
+    private blogsFactory: BlogsFactory,
+    private blogsPgRepository: BlogsPgRepository,
+  ) {}
 
-  async execute(command: BloggerCreateBlogCommand): Promise<BlogDocument> {
-    return await this.blogsFactory.bloggerCreateBlog(command);
+  async execute(command: BloggerCreateBlogCommand) {
+    const blog = this.blogsFactory.bloggerCreateBlogPg(
+      command.name,
+      command.description,
+      command.websiteUrl,
+      command.userId,
+    );
+
+    return await this.blogsPgRepository.saveNewBlog(blog);
   }
 }

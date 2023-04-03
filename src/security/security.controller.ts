@@ -5,64 +5,52 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UserSessionsQueryRepository } from './user-sessions.query-repository';
 import { UserSessionsService } from './user-sessions.service';
-import { RefreshTokenPayload } from '../global-services/decorators/get-refresh-token-from-cookie.decorator';
-import { RefreshTokenInCookieGuard } from '../auth/guards/refresh-token-in-cookie';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UserPurgeOtherSessionsCommand } from './application/use-cases/user-purge-other-sessions.use-case';
+import { UserPurgeSessionCommand } from './application/use-cases/user-purge-session.use-case';
+import { UserSessionsListQuery } from './application/query/user-sessions-list.query';
+import { JwtRefreshTokenGuard } from '../auth/infrastructure/guards/jwt-refrest-token.guard';
 
 @Controller('security')
 export class SecurityController {
   constructor(
     private userSessionsQueryRepository: UserSessionsQueryRepository,
     private securityService: UserSessionsService,
+    private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
-  @UseGuards(RefreshTokenInCookieGuard)
+  @UseGuards(JwtRefreshTokenGuard)
   @Get('devices')
-  async getAllUserSessions(
-    @RefreshTokenPayload()
-    refreshTokenPayload: {
-      userId: string;
-      deviceId: string;
-    },
-  ) {
-    return await this.userSessionsQueryRepository.findByUserId(
-      refreshTokenPayload.userId,
+  async getAllUserSessions(@Request() req) {
+    return await this.queryBus.execute(
+      new UserSessionsListQuery(req.user.userId),
     );
   }
 
   @Delete('devices')
-  @UseGuards(RefreshTokenInCookieGuard)
+  @UseGuards(JwtRefreshTokenGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async purgeOtherSessions(
-    @RefreshTokenPayload()
-    refreshTokenPayload: {
-      userId: string;
-      deviceId: string;
-    },
-  ) {
-    await this.securityService.purgeOtherSessions(
-      refreshTokenPayload.deviceId,
-      refreshTokenPayload.userId,
+  async purgeOtherSessions(@Request() req) {
+    await this.commandBus.execute(
+      new UserPurgeOtherSessionsCommand(req.user.deviceId, req.user.userId),
     );
   }
 
   @Delete('devices/:deviceId')
-  @UseGuards(RefreshTokenInCookieGuard)
+  @UseGuards(JwtRefreshTokenGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async purgeSessionByDeviceId(
+    @Request() req,
     @Param('deviceId') deviceId: string,
-    @RefreshTokenPayload()
-    refreshTokenPayload: {
-      userId: string;
-      deviceId: string;
-    },
   ) {
-    await this.securityService.purgeSessionByDeviceId(
-      deviceId,
-      refreshTokenPayload.userId,
+    await this.commandBus.execute(
+      new UserPurgeSessionCommand(deviceId, req.user.userId),
     );
   }
 }

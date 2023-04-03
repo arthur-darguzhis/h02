@@ -7,7 +7,7 @@ import {
   mapBlogToViewModelWithOwnerInfo,
 } from './blog.mapper';
 import { Injectable } from '@nestjs/common';
-import { PaginationBlogListDto } from './dto/paginationBlogList.dto';
+import { PaginationBlogListDto } from './api/dto/paginationBlogList.dto';
 import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()

@@ -5,33 +5,32 @@ import {
   CommentReactionDocument,
 } from './comment-reaction-schema';
 import { Model } from 'mongoose';
-import { CommentReactionsDto } from './dto/comment-reactions.dto';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { UsersRepository } from '../users/users.repository';
+import { UsersPgRepository } from '../users/infrastructure/users.pg-repository';
 
 @Injectable()
 export class CommentReactionsFactory {
   constructor(
     @InjectModel(CommentReaction.name)
     private commentReactionDocumentModel: Model<CommentReactionDocument>,
-    private usersRepository: UsersRepository,
+    private usersPgRepository: UsersPgRepository,
   ) {}
 
   async createNewCommentReaction(
     commentId: string,
     userId: string,
-    dto: CommentReactionsDto,
-  ): Promise<CommentReactionDocument | never> {
-    const user = await this.usersRepository.getById(userId);
-    this.throwIfReactionStatusIsNotCorrect(dto.likeStatus);
+    likeStatus: string,
+  ) {
+    await this.usersPgRepository.throwIfUserIsNotExists(userId);
+    this.throwIfReactionStatusIsNotCorrect(likeStatus);
 
-    return this.commentReactionDocumentModel.create({
+    return {
       userId: userId,
       commentId: commentId,
-      login: user.login,
-      status: dto.likeStatus,
-      createdAt: new Date().toISOString(),
-    });
+      status: likeStatus,
+      createdAt: new Date(),
+      isBanned: false,
+    };
   }
 
   private throwIfReactionStatusIsNotCorrect(likeStatus: string) {

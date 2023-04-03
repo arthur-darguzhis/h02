@@ -24,18 +24,15 @@ export class EmailSenderService {
     await this.transporter.sendMail(preparedMail);
   }
 
-  public async sendRegistrationConfirmationEmail(user: UserDocument) {
-    if (!user.hasEmailConfirmationCode()) {
-      throw new UnprocessableEntityException(
-        'Missing confirmation code for email confirmation',
-      );
-    }
-
-    const confirmUrl = `${this.appConfigService.getAppHost} 'confirm-registration?code=${user.emailConfirmationInfo.confirmationCode}`;
+  public async sendRegistrationConfirmationEmail(
+    email: string,
+    confirmationCode: string,
+  ) {
+    const confirmUrl = `${this.appConfigService.getAppHost} 'confirm-registration?code=${confirmationCode}`;
 
     await this.sendMail({
       from: `"Artur Darguzhis" <${this.appConfigService.getGmailLogin}>`,
-      to: user.email,
+      to: email,
       subject: 'Thank for your registration',
       html: `<p>To finish registration please follow the link below:
                 <a href="${confirmUrl}">complete registration</a>
@@ -43,19 +40,22 @@ export class EmailSenderService {
     });
   }
 
-  // public async sendPasswordRecoveryEmail(user: UserDocument) {
-  //   const confirmUrl =
-  //     process.env.APP_HOST +
-  //     'password-recovery?recoveryCode=' +
-  //     passwordRecoveryCode.code;
-  //
-  //   await this.sendMail({
-  //     from: `"Artur Darguzhis" <${this.appConfigService.getGmailLogin}>`,
-  //     to: user.email,
-  //     subject: 'Password recovery',
-  //     html: `<p>To finish password recovery please follow the link below:
-  //               <a href='${confirmUrl}'>recovery password</a>
-  //            </p>`,
-  //   });
-  // }
+  public async sendPasswordRecoveryEmail(
+    userEmail: string,
+    passwordRecoveryCode: string,
+  ) {
+    const confirmUrl =
+      process.env.APP_HOST +
+      'password-recovery?recoveryCode=' +
+      passwordRecoveryCode;
+
+    await this.sendMail({
+      from: `"Artur Darguzhis" <${this.appConfigService.getGmailLogin}>`,
+      to: userEmail,
+      subject: 'Password recovery',
+      html: `<p>To finish password recovery please follow the link below:
+                <a href='${confirmUrl}'>recovery password</a>
+             </p>`,
+    });
+  }
 }

@@ -1,134 +1,218 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
-import { UsersRepository } from '../../../users/users.repository';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/use-cases/admin-add-new-user.use-case';
 import { BloggerCreateBlogCommand } from '../use-cases/blogger-create-blog.use-case';
 import { BloggerGetListOfBannedUsersInBlogQuery } from './blogger-get-list-of-banned-users-in-blog.query';
-import { BlogDocument } from '../../../blogs/blogs-schema';
-import { UserDocument } from '../../../users/users-schema';
 import { BloggerBanUserCommand } from '../use-cases/blogger-ban-user.use-case';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
-let given: Given;
-let usersRepository: UsersRepository;
-let commandBus: CommandBus;
-let queryBus: QueryBus;
+describe('Should return list of banned users in a blog', () => {
+  let given: Given;
+  let usersPgRepository: UsersPgRepository;
+  let blogsPgRepository: BlogsPgRepository;
+  let commandBus: CommandBus;
+  let queryBus: QueryBus;
 
-let userAsBlogger: UserDocument;
-let firstBlog: BlogDocument;
-let userAsReader: UserDocument;
+  let userAsBlogger;
+  let firstBlog;
+  let userAsReader1;
+  let userAsReader2;
+  let userAsReader3;
+  let userAsReader4;
+  let userAsReader5;
 
-beforeEach(async () => {
-  given = await Given.bootstrapTestApp();
-  await given.clearDb();
-  usersRepository = given.configuredTestApp.get(UsersRepository);
-  commandBus = given.configuredTestApp.get(CommandBus);
-  queryBus = given.configuredTestApp.get(QueryBus);
+  beforeEach(async () => {
+    given = await Given.bootstrapTestApp();
+    await given.clearDb();
+    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    commandBus = given.configuredTestApp.get(CommandBus);
+    queryBus = given.configuredTestApp.get(QueryBus);
 
-  /** Arrange
-   * Given: There is a user as blogger with login "blogger" and blog "First Blog";
-   * And: There is a user as reader
-   */
-  await prepareData();
-});
-
-afterEach(async () => {
-  await given.closeApp();
-});
-
-test(`Given: Blogger has empty list of banned users for his blog
-            When: Blogger ban user for his blog
-            Then: Blogger has one user in banned list
-            Then: Blogger unban user for his blog
-            And: Blogger has empty list of banned users for his blog`, async () => {
-  let bannedUserList;
-
-  bannedUserList = await queryBus.execute(
-    new BloggerGetListOfBannedUsersInBlogQuery(
-      firstBlog.id,
-      userAsBlogger.id,
-      null,
-      'banInfo.banDate',
-      'desc',
-      1,
-      10,
-    ),
-  );
-
-  expect(bannedUserList.items.length).toBe(0);
-
-  await commandBus.execute(
-    new BloggerBanUserCommand(
-      userAsBlogger.id,
-      firstBlog.id,
-      userAsReader.id,
-      true,
-      'abusive behavior',
-    ),
-  );
-
-  bannedUserList = await queryBus.execute(
-    new BloggerGetListOfBannedUsersInBlogQuery(
-      firstBlog.id,
-      userAsBlogger.id,
-      null,
-      'banInfo.banDate',
-      'desc',
-      1,
-      10,
-    ),
-  );
-
-  expect(bannedUserList.items.length).toBe(1);
-  expect(bannedUserList.items[0]).toEqual({
-    id: userAsReader.id,
-    login: userAsReader.login,
-    banInfo: {
-      banDate: expect.any(String),
-      banReason: 'abusive behavior',
-      isBanned: true,
-    },
+    /** Arrange
+     * Given: There is a user as blogger with login "blogger" and blog "First Blog";
+     * And: There are 5 banned users.
+     */
+    await prepareData();
   });
 
-  // await commandBus.execute(
-  //   new BloggerBanUserCommand(
-  //     userAsBlogger.id,
-  //     firstBlog.id,
-  //     userAsReader.id,
-  //     false,
-  //     '',
-  //   ),
-  // );
-  //
-  // bannedUserList = await queryBus.execute(
-  //   new BloggerGetListOfBannedUsersInBlogQuery(
-  //     firstBlog.id,
-  //     userAsBlogger.id,
-  //     null,
-  //     'banInfo.banDate',
-  //     'desc',
-  //     1,
-  //     10,
-  //   ),
-  // );
-  //
-  // expect(bannedUserList.items.length).toBe(0);
+  afterEach(async () => {
+    await given.closeApp();
+  });
+
+  it(`Get list of banned users in a blog`, async () => {
+    const data = await queryBus.execute(
+      new BloggerGetListOfBannedUsersInBlogQuery(
+        firstBlog.id,
+        userAsBlogger.id,
+        null,
+        'banDate',
+        'desc',
+        1,
+        10,
+      ),
+    );
+
+    expect(data.items.length).toBe(5);
+  });
+
+  it('Get list of blogs by owner where name contain "th re"', async () => {
+    const data = await queryBus.execute(
+      new BloggerGetListOfBannedUsersInBlogQuery(
+        firstBlog.id,
+        userAsBlogger.id,
+        'th re',
+        'banDate',
+        'desc',
+        1,
+        10,
+      ),
+    );
+
+    expect(data.items.length).toBe(2);
+  });
+
+  it('Check order', async () => {
+    const data = await queryBus.execute(
+      new BloggerGetListOfBannedUsersInBlogQuery(
+        firstBlog.id,
+        userAsBlogger.id,
+        null,
+        'banDate',
+        'asc',
+        1,
+        10,
+      ),
+    );
+
+    expect(data.items.length).toBe(5);
+    expect(data.items[0].login).toBe('first reader');
+    expect(data.items[4].login).toBe('fifth reader');
+  });
+
+  it('Check that pagination works', async () => {
+    const data = await queryBus.execute(
+      new BloggerGetListOfBannedUsersInBlogQuery(
+        firstBlog.id,
+        userAsBlogger.id,
+        null,
+        'banDate',
+        'asc',
+        3,
+        2,
+      ),
+    );
+
+    expect(data.page).toBe(3);
+    expect(data.items.length).toBe(1);
+    expect(data.items[0].login).toBe('fifth reader');
+  });
+
+  async function prepareData() {
+    await commandBus.execute(
+      new AdminAddNewUserCommand('blogger', '123456', 'blogger@test.test'),
+    );
+
+    userAsBlogger = await usersPgRepository.findByLogin('blogger');
+
+    await commandBus.execute(
+      new BloggerCreateBlogCommand(
+        'First Blog',
+        'the first blog description',
+        'https://habr.com/ru/users/AlekDikarev/',
+        userAsBlogger.id,
+      ),
+    );
+
+    firstBlog = await blogsPgRepository.findByName('First Blog');
+
+    await commandBus.execute(
+      new AdminAddNewUserCommand('first reader', '123456', 'reader1@test.test'),
+    );
+
+    userAsReader1 = await usersPgRepository.findByLogin('first reader');
+
+    await commandBus.execute(
+      new AdminAddNewUserCommand(
+        'second reader',
+        '123456',
+        'reader2@test.test',
+      ),
+    );
+
+    userAsReader2 = await usersPgRepository.findByLogin('second reader');
+
+    await commandBus.execute(
+      new AdminAddNewUserCommand('third reader', '123456', 'reader3@test.test'),
+    );
+
+    userAsReader3 = await usersPgRepository.findByLogin('third reader');
+
+    await commandBus.execute(
+      new AdminAddNewUserCommand(
+        'fourth reader',
+        '123456',
+        'reader4@test.test',
+      ),
+    );
+
+    userAsReader4 = await usersPgRepository.findByLogin('fourth reader');
+
+    await commandBus.execute(
+      new AdminAddNewUserCommand('fifth reader', '123456', 'reader5@test.test'),
+    );
+
+    userAsReader5 = await usersPgRepository.findByLogin('fifth reader');
+
+    await commandBus.execute(
+      new BloggerBanUserCommand(
+        userAsBlogger.id,
+        firstBlog.id,
+        userAsReader1.id,
+        true,
+        'abuse behaviour',
+      ),
+    );
+
+    await commandBus.execute(
+      new BloggerBanUserCommand(
+        userAsBlogger.id,
+        firstBlog.id,
+        userAsReader2.id,
+        true,
+        'abuse behaviour',
+      ),
+    );
+
+    await commandBus.execute(
+      new BloggerBanUserCommand(
+        userAsBlogger.id,
+        firstBlog.id,
+        userAsReader3.id,
+        true,
+        'abuse behaviour',
+      ),
+    );
+
+    await commandBus.execute(
+      new BloggerBanUserCommand(
+        userAsBlogger.id,
+        firstBlog.id,
+        userAsReader4.id,
+        true,
+        'abuse behaviour',
+      ),
+    );
+
+    await commandBus.execute(
+      new BloggerBanUserCommand(
+        userAsBlogger.id,
+        firstBlog.id,
+        userAsReader5.id,
+        true,
+        'abuse behaviour',
+      ),
+    );
+  }
 });
-
-async function prepareData() {
-  userAsBlogger = await commandBus.execute(
-    new AdminAddNewUserCommand('blogger', '123456', 'blogger@test.test'),
-  );
-
-  firstBlog = await commandBus.execute(
-    new BloggerCreateBlogCommand(
-      'First Blog',
-      'the first blog description',
-      'https://habr.com/ru/users/AlekDikarev/',
-      userAsBlogger._id.toString(),
-    ),
-  );
-
-  userAsReader = await commandBus.execute(
-    new AdminAddNewUserCommand('reader', '123456', 'reader@test.test'),
-  );
-}

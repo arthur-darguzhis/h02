@@ -3,13 +3,18 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../users/use-cases/admin-add-new-user.use-case';
 import { AdminBanOrUnbanBlogCommand } from './admin-ban-or-unban-blog.use-case';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
-import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post';
-import { GetPaginatedPostsListByBlogIdQuery } from '../../../posts/application/query/get-paginated-posts-list-by-blog-id.query';
+import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
+import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
 
-describe('POST blogger ban user (e2e)', () => {
+describe(`Admin ban or unban blog with it's posts`, () => {
   let given: Given;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
+  let usersPgRepository: UsersPgRepository;
+  let blogsPgRepository: BlogsPgRepository;
+  let postsPgRepository: PostsPgRepository;
 
   let userAsBlogger;
   let userAsReader;
@@ -21,76 +26,64 @@ describe('POST blogger ban user (e2e)', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
+    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger"
      * And: The blogger has a blog with name "First Blog" with post "test posts"
-     * And: There is a user as reader with login "reader"
      */
     await prepareData();
-  });
-
-  test(`Given: user as reader see post of not banned blog
-  When: Admin ban the blog
-  Then: user as reader can't see the post of banned blog`, async () => {
-    let response = await queryBus.execute(
-      new GetPaginatedPostsListByBlogIdQuery(
-        firstBlog.id,
-        'createdAt',
-        'desc',
-        10,
-        1,
-        userAsReader.id,
-      ),
-    );
-
-    expect(response.items.length).toBe(1);
-
-    await commandBus.execute(
-      new AdminBanOrUnbanBlogCommand(firstBlog.id, true),
-    );
-
-    response = await queryBus.execute(
-      new GetPaginatedPostsListByBlogIdQuery(
-        firstBlog.id,
-        'createdAt',
-        'desc',
-        10,
-        1,
-        userAsReader.id,
-      ),
-    );
-
-    expect(response.items.length).toBe(0);
-
-    await commandBus.execute(
-      new AdminBanOrUnbanBlogCommand(firstBlog.id, false),
-    );
-
-    response = await queryBus.execute(
-      new GetPaginatedPostsListByBlogIdQuery(
-        firstBlog.id,
-        'createdAt',
-        'desc',
-        10,
-        1,
-        userAsReader.id,
-      ),
-    );
-
-    expect(response.items.length).toBe(1);
   });
 
   afterEach(async () => {
     await given.closeApp();
   });
 
+  test(`Admin ban blog with posts`, async () => {
+    await commandBus.execute(
+      new AdminBanOrUnbanBlogCommand(firstBlog.id, true),
+    );
+
+    const blog = await blogsPgRepository.findById(firstBlog.id);
+    expect(blog.isBanned).toBe(true);
+    expect(blog.banDate).not.toBeNull();
+
+    const post = await postsPgRepository.findById(postInFirstBlog.id);
+    expect(post.isBanned).toBe(true);
+  });
+
+  test(`GIVEN: banned blog.
+              WHEN: Admin unban blog with posts
+              THEN: blog and posts have "isBanned = false"`, async () => {
+    //Arrange
+    await commandBus.execute(
+      new AdminBanOrUnbanBlogCommand(firstBlog.id, true),
+    );
+
+    //Act
+    await commandBus.execute(
+      new AdminBanOrUnbanBlogCommand(firstBlog.id, false),
+    );
+
+    //Assert
+    const blog = await blogsPgRepository.findById(firstBlog.id);
+    expect(blog.isBanned).toBe(false);
+    expect(blog.banDate).toBeNull();
+
+    const post = await postsPgRepository.findById(postInFirstBlog.id);
+    expect(post.isBanned).toBe(false);
+  });
+
   async function prepareData() {
-    userAsBlogger = await commandBus.execute(
+    await commandBus.execute(
       new AdminAddNewUserCommand('blogger', '123456', 'blogger@test.test'),
     );
 
-    firstBlog = await commandBus.execute(
+    userAsBlogger = await usersPgRepository.findByLogin('blogger');
+
+    await commandBus.execute(
       new BloggerCreateBlogCommand(
         'First Blog',
         'the first blog description',
@@ -99,7 +92,9 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
-    postInFirstBlog = await commandBus.execute(
+    firstBlog = await blogsPgRepository.findByName('First Blog');
+
+    await commandBus.execute(
       new BloggerCreatePostCommand(
         'test post title',
         'test post short description',
@@ -109,8 +104,15 @@ describe('POST blogger ban user (e2e)', () => {
       ),
     );
 
+    postInFirstBlog = await postsPgRepository.findByTitleAndBlog(
+      'test post title',
+      firstBlog.id,
+    );
+
     userAsReader = await commandBus.execute(
       new AdminAddNewUserCommand('reader', '123456', 'reader@test.test'),
     );
+
+    userAsReader = await usersPgRepository.findByLogin('reader');
   }
 });

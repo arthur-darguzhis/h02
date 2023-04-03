@@ -11,24 +11,21 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BasicAuthGuard } from '../../auth/guards/basic.auth.guard';
+import { BasicAuthGuard } from '../../auth/infrastructure/guards/basic.auth.guard';
 import { AdminBanOrUnbanUserDto } from './api/dto/admin-ban-or-unban-user.dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminBanOrUnbanUserCommand } from './use-cases/admin-ban-or-unban-user.use-case';
-import { UsersQueryRepository } from '../../users/users.query.repository';
 import { PaginatedUserListDto } from '../../users/api/dto/paginatedUserList.dto';
 import { CreateUserDto } from '../../users/api/dto/createUser.dto';
 import { AdminAddNewUserCommand } from './use-cases/admin-add-new-user.use-case';
-import { mapUserToViewModel } from '../../users/user.mapper';
 import { AdminDeleteUserByIdCommand } from './use-cases/admin-delete-user-by-id.use-case';
+import { AdminGetUserDataByEmailQuery } from './query/admin-get-user-data-by-email.query';
+import { GetUsersListQuery } from './query/get-users-list.query';
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class SuperAdminUsersController {
-  constructor(
-    private commandBus: CommandBus,
-    private usersQueryRepository: UsersQueryRepository,
-  ) {}
+  constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Put(':userId/ban')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -37,23 +34,36 @@ export class SuperAdminUsersController {
     @Body() dto: AdminBanOrUnbanUserDto,
   ) {
     return await this.commandBus.execute(
-      new AdminBanOrUnbanUserCommand(userId, dto),
+      new AdminBanOrUnbanUserCommand(userId, dto.isBanned, dto.banReason),
     );
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async getPaginatedUserList(@Query() dto: PaginatedUserListDto) {
-    return await this.usersQueryRepository.getPaginatedUsersList(dto);
+    return await this.queryBus.execute(
+      new GetUsersListQuery(
+        dto.banStatus,
+        dto.searchLoginTerm,
+        dto.searchEmailTerm,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+      ),
+    );
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async adminAddNewUser(@Body() dto: CreateUserDto) {
-    const user = await this.commandBus.execute(
+    await this.commandBus.execute(
       new AdminAddNewUserCommand(dto.login, dto.password, dto.email),
     );
-    return mapUserToViewModel(user);
+
+    return await this.queryBus.execute(
+      new AdminGetUserDataByEmailQuery(dto.email),
+    );
   }
 
   @Delete(':userId')
