@@ -40,19 +40,22 @@ export class EmailSenderService {
     });
   }
 
-  // public async sendPasswordRecoveryEmail(user: UserDocument) {
-  //   const confirmUrl =
-  //     process.env.APP_HOST +
-  //     'password-recovery?recoveryCode=' +
-  //     passwordRecoveryCode.code;
-  //
-  //   await this.sendMail({
-  //     from: `"Artur Darguzhis" <${this.appConfigService.getGmailLogin}>`,
-  //     to: user.email,
-  //     subject: 'Password recovery',
-  //     html: `<p>To finish password recovery please follow the link below:
-  //               <a href='${confirmUrl}'>recovery password</a>
-  //            </p>`,
-  //   });
-  // }
+  public async sendPasswordRecoveryEmail(
+    userEmail: string,
+    passwordRecoveryCode: string,
+  ) {
+    const confirmUrl =
+      process.env.APP_HOST +
+      'password-recovery?recoveryCode=' +
+      passwordRecoveryCode;
+
+    await this.sendMail({
+      from: `"Artur Darguzhis" <${this.appConfigService.getGmailLogin}>`,
+      to: userEmail,
+      subject: 'Password recovery',
+      html: `<p>To finish password recovery please follow the link below:
+                <a href='${confirmUrl}'>recovery password</a>
+             </p>`,
+    });
+  }
 }

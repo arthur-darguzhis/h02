@@ -35,6 +35,7 @@ import { LoginCommand } from '../application/use-cases/login.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
 import { CurrentUserInfoQuery } from '../application/query/current-user-info.query';
+import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -145,11 +146,19 @@ export class AuthController {
   }
 
   @Post('password-recovery')
+  @UseGuards(ThrottlerGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async requestPasswordRecovery(@Body() dto: PasswordRecoveryDto) {
-    // return this.authService.requestPasswordRecovery(dto);
+    try {
+      await this.commandBus.execute(new PasswordRecoveryCommand(dto.email));
+    } catch (err) {
+      console.log("silent exception for prevent user's email detection");
+    }
   }
 
   @Post('new-password')
+  @UseGuards(ThrottlerGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async setNewPassword(@Body() dto: SetNewPasswordDto) {
     // return this.authService.setNewPassword(dto);
   }
