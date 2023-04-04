@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { EntityAlreadyExistsException } from '../common/exceptions/domain.exceptions/entity-already-exists.exception';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
+import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()
 export class UsersPgRepository {
@@ -170,5 +171,29 @@ export class UsersPgRepository {
        WHERE id = $3`,
       [confirmationCode, expirationDate, userId],
     );
+  }
+
+  async getByLoginOrEmail(loginOrEmail: string) {
+    const user = await this.dataSource.query(
+      `SELECT id,
+              login,
+              email,
+              password_hash                        as "passwordHash",
+              created_at                           as "createdAt",
+              confirmation_code                    as "confirmationCode",
+              expiration_date_of_confirmation_code as "expirationDate",
+              is_confirmed                         as "isConfirmed",
+              is_banned                            as "isBanned",
+              ban_date                             as "banDate",
+              ban_reason                           as "banReason" FROM users WHERE login = $1 OR email = $1`,
+      [loginOrEmail],
+    );
+
+    if (!user) {
+      throw new EntityNotFoundException(
+        `User with email or login "${loginOrEmail}" does not exist`,
+      );
+    }
+    return user;
   }
 }

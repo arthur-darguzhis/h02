@@ -31,6 +31,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from '../application/use-cases/registration.use-case';
 import { ConfirmRegistrationCommand } from '../application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.use-case';
+import { LoginCommand } from '../application/use-cases/login.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -76,10 +77,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const { accessToken, refreshToken } = await this.authService.login(
-        req.user,
-        ip,
-        userAgent,
+      const { accessToken, refreshToken } = await this.commandBus.execute(
+        new LoginCommand(req.user, ip, userAgent),
       );
 
       res.status(HttpStatus.OK).cookie('refreshToken', refreshToken, {

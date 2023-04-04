@@ -98,6 +98,8 @@ import { UsersPgRepository } from './users/users.pg-repository';
 import { RegistrationUseCase } from './auth/application/use-cases/registration.use-case';
 import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
+import { LoginUseCase } from './auth/application/use-cases/login.use-case';
+import { UserSessionsPgRepository } from './security/user-sessions-pg.repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -106,6 +108,7 @@ const userUseCases = [
   RegistrationUseCase,
   ConfirmRegistrationUseCase,
   ResendRegistrationEmailUseCase,
+  LoginUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
@@ -197,6 +200,7 @@ const postsQueries = [
     UsersRepository,
     UsersQueryRepository,
     UsersPgRepository,
+    UserSessionsPgRepository,
     AuthService,
     AuthConfigService,
     AppConfigService,
