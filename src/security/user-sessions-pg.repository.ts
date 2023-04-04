@@ -77,4 +77,11 @@ export class UserSessionsPgRepository {
 
     return userSession[0] || null;
   }
+
+  async removeOne(deviceId: string, userId: string) {
+    await this.dataSource.query(
+      'DELETE FROM users_sessions WHERE device_id = $1 AND user_id = $2',
+      [deviceId, userId],
+    );
+  }
 }

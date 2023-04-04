@@ -33,6 +33,7 @@ import { ConfirmRegistrationCommand } from '../application/use-cases/registratio
 import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.use-case';
 import { LoginCommand } from '../application/use-cases/login.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
+import { LogoutCommand } from '../application/use-cases/logout.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -132,9 +133,11 @@ export class AuthController {
       deviceId: string;
     },
   ) {
-    await this.userSessionsService.removeUserSession(
-      refreshTokenPayload.deviceId,
-      refreshTokenPayload.userId,
+    await this.commandBus.execute(
+      new LogoutCommand(
+        refreshTokenPayload.deviceId,
+        refreshTokenPayload.userId,
+      ),
     );
     res.clearCookie('refreshToken');
   }

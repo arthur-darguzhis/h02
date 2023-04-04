@@ -101,6 +101,7 @@ import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/res
 import { LoginUseCase } from './auth/application/use-cases/login.use-case';
 import { UserSessionsPgRepository } from './security/user-sessions-pg.repository';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
+import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -111,6 +112,7 @@ const userUseCases = [
   ResendRegistrationEmailUseCase,
   LoginUseCase,
   RefreshTokenUseCase,
+  LogoutUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
