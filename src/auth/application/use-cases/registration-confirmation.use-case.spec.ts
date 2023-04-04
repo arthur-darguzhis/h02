@@ -5,7 +5,7 @@ import { UsersPgRepository } from '../../../users/users.pg-repository';
 import { ConfirmRegistrationCommand } from './registration-confirmation.use-case';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 
-describe('User registration use-case', () => {
+describe('User confirm registration use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersPgRepository;

@@ -3,7 +3,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { EntityAlreadyExistsException } from '../common/exceptions/domain.exceptions/entity-already-exists.exception';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { use } from 'passport';
 
 @Injectable()
 export class UsersPgRepository {
@@ -81,7 +80,7 @@ export class UsersPgRepository {
       );
     }
 
-    return result[0] || null;
+    return result[0];
   }
 
   async saveNewUser(newUser: any): Promise<void> {
@@ -128,6 +127,48 @@ export class UsersPgRepository {
     await this.dataSource.query(
       'UPDATE users SET expiration_date_of_confirmation_code = $1 WHERE id = $2',
       [new Date(), userId],
+    );
+  }
+
+  async getByEmail(email: string) {
+    const result = await this.dataSource.query(
+      `
+    SELECT id,
+           login,
+           email,
+           password_hash                        as "passwordHash",
+           created_at                           as "createdAt",
+           confirmation_code                    as "confirmationCode",
+           expiration_date_of_confirmation_code as "expirationDate",
+           is_confirmed                         as "isConfirmed",
+           is_banned                            as "isBanned",
+           ban_date                             as "banDate",
+           ban_reason                           as "banReason"
+    FROM users
+    WHERE email = $1`,
+      [email],
+    );
+
+    if (result.length === 0) {
+      throw new UnprocessableEntityException(
+        `User with email: ${email} is not found`,
+      );
+    }
+
+    return result[0];
+  }
+
+  async refreshEmailConfirmationInfo(
+    userId: string,
+    confirmationCode: string,
+    expirationDate: Date,
+  ) {
+    await this.dataSource.query(
+      `UPDATE users
+       SET confirmation_code = $1,
+           expiration_date_of_confirmation_code = $2
+       WHERE id = $3`,
+      [confirmationCode, expirationDate, userId],
     );
   }
 }

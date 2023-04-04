@@ -30,6 +30,7 @@ import { RefreshTokenInCookieGuard } from '../infrastructure/guards/refresh-toke
 import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from '../application/use-cases/registration.use-case';
 import { ConfirmRegistrationCommand } from '../application/use-cases/registration-confirmation.use-case';
+import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -60,7 +61,9 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendRegistrationEmail(@Body() dto: ResendRegistrationEmailDto) {
-    return this.authService.resendRegistrationEmail(dto);
+    await this.commandBus.execute(
+      new ResendRegistrationEmailCommand(dto.email),
+    );
   }
 
   @Post('login')

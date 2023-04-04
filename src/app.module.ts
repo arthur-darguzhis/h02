@@ -97,6 +97,7 @@ import { PostsController } from './posts/api/posts.controller';
 import { UsersPgRepository } from './users/users.pg-repository';
 import { RegistrationUseCase } from './auth/application/use-cases/registration.use-case';
 import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
+import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -104,6 +105,7 @@ const userUseCases = [
   DeleteUserUseCase,
   RegistrationUseCase,
   ConfirmRegistrationUseCase,
+  ResendRegistrationEmailUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
