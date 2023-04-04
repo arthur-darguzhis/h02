@@ -4,8 +4,10 @@ import { RegistrationCommand } from './registration.use-case';
 import { UsersPgRepository } from '../../../users/users.pg-repository';
 import { LoginCommand } from './login.use-case';
 import jwt from 'jsonwebtoken';
+import { RefreshTokenCommand } from './refresh-token.use-case';
+import { delay } from '../../../testing/delay';
 
-describe('User login use-case', () => {
+describe('Refresh token use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersPgRepository;
@@ -28,13 +30,25 @@ describe('User login use-case', () => {
 
   it(`Successfully register new user`, async () => {
     const user = await usersPgRepository.getByEmail('firstUser@test.test');
-    const { accessToken, refreshToken } = await commandBus.execute(
+    const tokensPair = await commandBus.execute(
       new LoginCommand(user, '127.0.0.1', 'jest'),
     );
 
+    const decodedToken: any = jwt.decode(tokensPair.refreshToken, {
+      json: true,
+    });
+
+    await delay(2000);
+
+    const newTokensPair = await commandBus.execute(
+      new RefreshTokenCommand(decodedToken, '127.0.0.1', 'jest'),
+    );
+
     //Assert
-    jwt.verify(accessToken, process.env.JWT_SECRET);
-    jwt.verify(refreshToken, process.env.JWT_SECRET);
+    jwt.verify(newTokensPair.accessToken, process.env.JWT_SECRET);
+    jwt.verify(newTokensPair.refreshToken, process.env.JWT_SECRET);
+    expect(tokensPair.accessToken).not.toBe(newTokensPair.accessToken);
+    expect(tokensPair.refreshToken).not.toBe(newTokensPair.refreshToken);
   });
 
   async function prepareData(): Promise<void> {

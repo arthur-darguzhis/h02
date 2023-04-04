@@ -100,6 +100,7 @@ import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registr
 import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
 import { LoginUseCase } from './auth/application/use-cases/login.use-case';
 import { UserSessionsPgRepository } from './security/user-sessions-pg.repository';
+import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -109,6 +110,7 @@ const userUseCases = [
   ConfirmRegistrationUseCase,
   ResendRegistrationEmailUseCase,
   LoginUseCase,
+  RefreshTokenUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,

@@ -32,6 +32,7 @@ import { RegistrationCommand } from '../application/use-cases/registration.use-c
 import { ConfirmRegistrationCommand } from '../application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.use-case';
 import { LoginCommand } from '../application/use-cases/login.use-case';
+import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -107,10 +108,8 @@ export class AuthController {
     },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } = await this.authService.refreshToken(
-      refreshTokenPayload,
-      ip,
-      userAgent,
+    const { accessToken, refreshToken } = await this.commandBus.execute(
+      new RefreshTokenCommand(refreshTokenPayload, ip, userAgent),
     );
 
     res.cookie('refreshToken', refreshToken, {

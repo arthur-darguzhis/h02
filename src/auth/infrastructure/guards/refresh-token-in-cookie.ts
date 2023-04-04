@@ -5,14 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import { UserSessionsRepository } from '../../../security/user-sessions.repository';
 import { AuthConfigService } from '../auth-config.service';
+import { UserSessionsPgRepository } from '../../../security/user-sessions-pg.repository';
 
 @Injectable()
 export class RefreshTokenInCookieGuard implements CanActivate {
   constructor(
-    private readonly userSessionsRepository: UserSessionsRepository,
     private readonly authConfigService: AuthConfigService,
+    private readonly userSessionsPgRepository: UserSessionsPgRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,9 +37,11 @@ export class RefreshTokenInCookieGuard implements CanActivate {
     const decodedToken = jwt.decode(request.cookies.refreshToken, {
       json: true,
     });
-    const userSession = await this.userSessionsRepository.findByDeviceId(
+
+    const userSession = await this.userSessionsPgRepository.findByDeviceId(
       decodedToken.deviceId,
     );
+
     if (!userSession || userSession.issuedAt !== decodedToken.iat) {
       throw new UnauthorizedException('refresh JWT is invalid');
     }

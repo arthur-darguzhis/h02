@@ -1,10 +1,14 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserSessionsPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    private jwtService: JwtService,
+  ) {}
 
   async saveNewSession(
     issuedAt,
@@ -32,5 +36,45 @@ export class UserSessionsPgRepository {
       deviceName,
       userId,
     ]);
+  }
+
+  async updateSessionByDeviceId(
+    deviceId: string,
+    refreshToken: string,
+    ip: string,
+    userAgent = 'unknown',
+  ) {
+    const decodedRefreshToken: any = this.jwtService.decode(refreshToken, {
+      json: true,
+    });
+
+    await this.dataSource.query(
+      `UPDATE users_sessions 
+             SET issued_at = $1, expire_at = $2, ip = $3, device_name = $4 
+             WHERE device_id = $5`,
+      [
+        decodedRefreshToken.iat,
+        decodedRefreshToken.exp,
+        ip,
+        userAgent,
+        deviceId,
+      ],
+    );
+  }
+
+  async findByDeviceId(deviceId: string): Promise<any | never> {
+    const userSession = await this.dataSource.query(
+      `SELECT id, issued_at as "issuedAt",
+              expire_at as "expireAt",
+              device_id as "deviceId",
+              ip,
+              device_name as "deviceName",
+              user_id 
+            FROM users_sessions 
+            WHERE device_id = $1`,
+      [deviceId],
+    );
+
+    return userSession[0] || null;
   }
 }
