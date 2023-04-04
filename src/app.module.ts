@@ -102,6 +102,8 @@ import { LoginUseCase } from './auth/application/use-cases/login.use-case';
 import { UserSessionsPgRepository } from './security/user-sessions-pg.repository';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
+import { CurrentUserInfoHandler } from './auth/application/query/current-user-info.query';
+import { UsersPgQueryRepository } from './users/users.pg-query-repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -113,6 +115,7 @@ const userUseCases = [
   LoginUseCase,
   RefreshTokenUseCase,
   LogoutUseCase,
+  CurrentUserInfoHandler,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
@@ -204,6 +207,7 @@ const postsQueries = [
     UsersRepository,
     UsersQueryRepository,
     UsersPgRepository,
+    UsersPgQueryRepository,
     UserSessionsPgRepository,
     AuthService,
     AuthConfigService,

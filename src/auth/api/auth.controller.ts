@@ -27,18 +27,20 @@ import { RefreshTokenPayload } from '../../global-services/decorators/get-refres
 import { UserSessionsService } from '../../security/user-sessions.service';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { RefreshTokenInCookieGuard } from '../infrastructure/guards/refresh-token-in-cookie';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from '../application/use-cases/registration.use-case';
 import { ConfirmRegistrationCommand } from '../application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.use-case';
 import { LoginCommand } from '../application/use-cases/login.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
+import { CurrentUserInfoQuery } from '../application/query/current-user-info.query';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
     private authService: AuthService,
     private usersQueryRepository: UsersQueryRepository,
     private userSessionsService: UserSessionsService,
@@ -155,6 +157,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getInfoAboutLoggedInUser(@CurrentUserId() currentUserId) {
-    return this.usersQueryRepository.getInfoAboutCurrentUser(currentUserId);
+    return await this.queryBus.execute(new CurrentUserInfoQuery(currentUserId));
   }
 }
