@@ -107,6 +107,7 @@ import { UsersPgQueryRepository } from './users/users.pg-query-repository';
 import { PasswordRecoveryUseCase } from './auth/application/use-cases/password-recovery.use-case';
 import { PasswordRecoveryRepository } from './users/password-recovery.repository';
 import { SetNewPasswordUseCase } from './auth/application/use-cases/set-new-password.use-case';
+import { AdminGetUserDataByIdHandler } from './super-admin/users/query/admin-get-user-data-by-email.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -140,6 +141,8 @@ const superAdminUseCases = [
   AdminSetOwnerToOrphanBlogUseCase,
   AdminBanOrUnbanBlogUseCase,
 ];
+
+const superAdminQueries = [AdminGetUserDataByIdHandler];
 
 const bloggerQueries = [
   BloggerGetListOfBannedUsersForBlogHandler,
@@ -250,6 +253,7 @@ const postsQueries = [
     ...userUseCases,
     ...bloggerUseCases,
     ...superAdminUseCases,
+    ...superAdminQueries,
     ...bloggerQueries,
     ...postsQueries,
   ],
