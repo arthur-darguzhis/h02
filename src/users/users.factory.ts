@@ -46,6 +46,24 @@ export class UsersFactory {
     return this.createUser(login, password, email, true);
   }
 
+  public async adminAddNewUserPg(login, password, email) {
+    await this.usersPgRepository.throwIfLoginInUse(login);
+    await this.usersPgRepository.throwIfEmailInUse(email);
+
+    return {
+      passwordHash: await bcrypt.hash(password, 10),
+      login: login,
+      email: email,
+      createdAt: new Date(),
+      confirmationCode: null,
+      expirationDate: null,
+      isConfirmed: true,
+      isBanned: false,
+      banDate: null,
+      banReason: null,
+    };
+  }
+
   public async registerNewUser(login, password, email): Promise<UserDocument> {
     return this.createUser(login, password, email, false);
   }
