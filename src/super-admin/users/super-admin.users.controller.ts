@@ -38,7 +38,7 @@ export class SuperAdminUsersController {
     @Body() dto: AdminBanOrUnbanUserDto,
   ) {
     return await this.commandBus.execute(
-      new AdminBanOrUnbanUserCommand(userId, dto),
+      new AdminBanOrUnbanUserCommand(userId, dto.isBanned, dto.banReason),
     );
   }
 

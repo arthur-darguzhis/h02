@@ -84,4 +84,18 @@ export class UserSessionsPgRepository {
       [deviceId, userId],
     );
   }
+
+  async forTest_findByUserId(userId) {
+    return await this.dataSource.query(
+      `SELECT * FROM users_sessions WHERE user_id = $1`,
+      [userId],
+    );
+  }
+
+  async deleteAllSessionsByUserId(userId: string) {
+    await this.dataSource.query(
+      `DELETE FROM users_sessions WHERE user_id = $1`,
+      [userId],
+    );
+  }
 }

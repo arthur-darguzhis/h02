@@ -173,6 +173,30 @@ export class UsersPgRepository {
     );
   }
 
+  async getById(userId: string) {
+    const user = await this.dataSource.query(
+      `SELECT id,
+              login,
+              email,
+              password_hash                        as "passwordHash",
+              created_at                           as "createdAt",
+              confirmation_code                    as "confirmationCode",
+              expiration_date_of_confirmation_code as "expirationDate",
+              is_confirmed                         as "isConfirmed",
+              is_banned                            as "isBanned",
+              ban_date                             as "banDate",
+              ban_reason                           as "banReason" FROM users WHERE id = $1`,
+      [userId],
+    );
+
+    if (!user) {
+      throw new EntityNotFoundException(
+        `User with id: "${userId}" does not exist`,
+      );
+    }
+    return user[0];
+  }
+
   async getByLoginOrEmail(loginOrEmail: string) {
     const user = await this.dataSource.query(
       `SELECT id,
@@ -219,5 +243,17 @@ export class UsersPgRepository {
         'login',
       );
     }
+  }
+
+  async banUnbanUser(
+    userId: string,
+    isBanned: boolean,
+    banDate: Date | boolean,
+    banReason: string | boolean,
+  ) {
+    await this.dataSource.query(
+      `UPDATE users SET is_banned = $1, ban_date = $2, ban_reason = $3 WHERE id = $4`,
+      [isBanned, banDate, banReason, userId],
+    );
   }
 }
