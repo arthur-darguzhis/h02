@@ -36,6 +36,7 @@ import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
 import { CurrentUserInfoQuery } from '../application/query/current-user-info.query';
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
+import { SetNewPasswordCommand } from '../application/use-cases/set-new-password.use-case';
 
 @Controller('auth')
 export class AuthController {
@@ -160,7 +161,9 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async setNewPassword(@Body() dto: SetNewPasswordDto) {
-    // return this.authService.setNewPassword(dto);
+    await this.commandBus.execute(
+      new SetNewPasswordCommand(dto.newPassword, dto.recoveryCode),
+    );
   }
 
   @UseGuards(JwtAuthGuard)

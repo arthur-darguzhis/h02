@@ -24,17 +24,13 @@ describe('Password recovery use-case', () => {
 
   it(`Successfully send email with password recovery url`, async () => {
     await commandBus.execute(
-      new PasswordRecoveryCommand('artur.dargujis@yandex.com'),
+      new PasswordRecoveryCommand('firstUser@test.test'),
     );
   });
 
   async function prepareData(): Promise<void> {
     await commandBus.execute(
-      new RegistrationCommand(
-        'firstUser',
-        '123456',
-        'artur.dargujis@yandex.com',
-      ),
+      new RegistrationCommand('firstUser', '123456', 'firstUser@test.test'),
     );
   }
 });

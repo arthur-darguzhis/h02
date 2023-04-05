@@ -196,4 +196,11 @@ export class UsersPgRepository {
     }
     return user;
   }
+
+  async setNewPassword(passwordHash: string, userId: string) {
+    await this.dataSource.query(
+      `UPDATE users SET password_hash = $1 WHERE id = $2`,
+      [passwordHash, userId],
+    );
+  }
 }

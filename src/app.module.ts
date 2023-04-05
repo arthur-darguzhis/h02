@@ -106,6 +106,7 @@ import { CurrentUserInfoHandler } from './auth/application/query/current-user-in
 import { UsersPgQueryRepository } from './users/users.pg-query-repository';
 import { PasswordRecoveryUseCase } from './auth/application/use-cases/password-recovery.use-case';
 import { PasswordRecoveryRepository } from './users/password-recovery.repository';
+import { SetNewPasswordUseCase } from './auth/application/use-cases/set-new-password.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -119,6 +120,7 @@ const userUseCases = [
   LogoutUseCase,
   CurrentUserInfoHandler,
   PasswordRecoveryUseCase,
+  SetNewPasswordUseCase,
 ];
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
