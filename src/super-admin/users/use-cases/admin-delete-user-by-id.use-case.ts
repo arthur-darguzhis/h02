@@ -1,5 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../../users/users.repository';
+import { UsersPgRepository } from '../../../users/users.pg-repository';
 
 export class AdminDeleteUserByIdCommand {
   constructor(public userId: string) {}
@@ -7,8 +7,9 @@ export class AdminDeleteUserByIdCommand {
 
 @CommandHandler(AdminDeleteUserByIdCommand)
 export class AdminDeleteUserByIdUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(private usersPgRepository: UsersPgRepository) {}
   async execute(command: AdminDeleteUserByIdCommand) {
-    await this.usersRepository.deleteById(command.userId);
+    await this.usersPgRepository.throwIfUserIsNotExists(command.userId);
+    await this.usersPgRepository.deleteById(command.userId);
   }
 }

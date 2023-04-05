@@ -203,4 +203,21 @@ export class UsersPgRepository {
       [passwordHash, userId],
     );
   }
+
+  async deleteById(userId: string) {
+    await this.dataSource.query(`DELETE FROM users WHERE id = $1`, [userId]);
+  }
+
+  async throwIfUserIsNotExists(userId: string) {
+    const result = await this.dataSource.query(
+      `SELECT * FROM users WHERE id = $1`,
+      [userId],
+    );
+    if (result.length === 0) {
+      throw new EntityNotFoundException(
+        `User with id: ${userId} is not exists`,
+        'login',
+      );
+    }
+  }
 }
