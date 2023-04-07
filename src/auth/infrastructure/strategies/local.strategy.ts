@@ -11,7 +11,7 @@ import { InvalidValueException } from '../../../common/exceptions/domain.excepti
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly usersPgRepository: UsersPgRepository) {
     super({
-      usernameField: 'loginOrEmail', // specify the new field here
+      usernameField: 'loginOrEmail',
     });
   }
 

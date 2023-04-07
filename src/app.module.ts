@@ -108,6 +108,7 @@ import { PasswordRecoveryUseCase } from './auth/application/use-cases/password-r
 import { PasswordRecoveryRepository } from './users/password-recovery.repository';
 import { SetNewPasswordUseCase } from './auth/application/use-cases/set-new-password.use-case';
 import { AdminGetUserDataByIdHandler } from './super-admin/users/query/admin-get-user-data-by-email.query';
+import { GetPaginatedUsersListHandler } from './super-admin/users/query/get-paginated-users-list.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -142,7 +143,10 @@ const superAdminUseCases = [
   AdminBanOrUnbanBlogUseCase,
 ];
 
-const superAdminQueries = [AdminGetUserDataByIdHandler];
+const superAdminQueries = [
+  AdminGetUserDataByIdHandler,
+  GetPaginatedUsersListHandler,
+];
 
 const bloggerQueries = [
   BloggerGetListOfBannedUsersForBlogHandler,

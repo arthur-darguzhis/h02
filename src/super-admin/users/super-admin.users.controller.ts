@@ -21,6 +21,7 @@ import { CreateUserDto } from '../../users/api/dto/createUser.dto';
 import { AdminAddNewUserCommand } from './use-cases/admin-add-new-user.use-case';
 import { AdminDeleteUserByIdCommand } from './use-cases/admin-delete-user-by-id.use-case';
 import { AdminGetUserDataByEmailQuery } from './query/admin-get-user-data-by-email.query';
+import { GetPaginatedUsersListQuery } from './query/get-paginated-users-list.query';
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -45,7 +46,17 @@ export class SuperAdminUsersController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getPaginatedUserList(@Query() dto: PaginatedUserListDto) {
-    return await this.usersQueryRepository.getPaginatedUsersList(dto);
+    return await this.queryBus.execute(
+      new GetPaginatedUsersListQuery(
+        dto.banStatus,
+        dto.searchLoginTerm,
+        dto.searchEmailTerm,
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+      ),
+    );
   }
 
   @Post()

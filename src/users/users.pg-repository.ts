@@ -213,12 +213,12 @@ export class UsersPgRepository {
       [loginOrEmail],
     );
 
-    if (!user) {
+    if (user.length === 0) {
       throw new EntityNotFoundException(
         `User with email or login "${loginOrEmail}" does not exist`,
       );
     }
-    return user;
+    return user[0] || null;
   }
 
   async setNewPassword(passwordHash: string, userId: string) {
