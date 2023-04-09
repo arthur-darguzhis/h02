@@ -111,6 +111,7 @@ import { AdminGetUserDataByIdHandler } from './super-admin/users/query/admin-get
 import { GetPaginatedUsersListHandler } from './super-admin/users/query/get-paginated-users-list.query';
 import { UserPurgeOtherSessionsUseCase } from './security/application/use-cases/user-purge-other-sessions.use-case';
 import { UserPurgeSessionUseCase } from './security/application/use-cases/user-purge-session.use-case';
+import { UserSessionsListHandler } from './security/application/query/user-sessions-list.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -150,6 +151,8 @@ const securityUseCases = [
   UserPurgeOtherSessionsUseCase,
   UserPurgeSessionUseCase,
 ];
+
+const securityQueries = [UserSessionsListHandler];
 
 const superAdminQueries = [
   AdminGetUserDataByIdHandler,
@@ -266,6 +269,7 @@ const postsQueries = [
     ...bloggerUseCases,
     ...superAdminUseCases,
     ...securityUseCases,
+    ...securityQueries,
     ...superAdminQueries,
     ...bloggerQueries,
     ...postsQueries,

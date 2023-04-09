@@ -11,9 +11,10 @@ import { UserSessionsQueryRepository } from './user-sessions.query-repository';
 import { UserSessionsService } from './user-sessions.service';
 import { RefreshTokenPayload } from '../global-services/decorators/get-refresh-token-from-cookie.decorator';
 import { RefreshTokenInCookieGuard } from '../auth/infrastructure/guards/refresh-token-in-cookie';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserPurgeOtherSessionsCommand } from './application/use-cases/user-purge-other-sessions.use-case';
 import { UserPurgeSessionCommand } from './application/use-cases/user-purge-session.use-case';
+import { UserSessionsListQuery } from './application/query/user-sessions-list.query';
 
 @Controller('security')
 export class SecurityController {
@@ -21,6 +22,7 @@ export class SecurityController {
     private userSessionsQueryRepository: UserSessionsQueryRepository,
     private securityService: UserSessionsService,
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
   @UseGuards(RefreshTokenInCookieGuard)
@@ -32,8 +34,8 @@ export class SecurityController {
       deviceId: string;
     },
   ) {
-    return await this.userSessionsQueryRepository.findByUserId(
-      refreshTokenPayload.userId,
+    return await this.queryBus.execute(
+      new UserSessionsListQuery(refreshTokenPayload.userId),
     );
   }
 
