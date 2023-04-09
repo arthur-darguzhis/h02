@@ -2,6 +2,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { EntityNotFoundException } from '../common/exceptions/domain.exceptions/entity-not-found.exception';
 
 @Injectable()
 export class UserSessionsPgRepository {
@@ -69,13 +70,23 @@ export class UserSessionsPgRepository {
               device_id as "deviceId",
               ip,
               device_name as "deviceName",
-              user_id 
+              user_id as "userId"
             FROM users_sessions 
             WHERE device_id = $1`,
       [deviceId],
     );
 
     return userSession[0] || null;
+  }
+
+  async getByDeviceId(deviceId: string) {
+    const userSession = await this.findByDeviceId(deviceId);
+    if (userSession.length === 0) {
+      throw new EntityNotFoundException(
+        `There is not session for deviceId: ${deviceId}`,
+      );
+    }
+    return userSession;
   }
 
   async findAllSessionsByUser(userId: string): Promise<any | never> {
@@ -117,6 +128,13 @@ export class UserSessionsPgRepository {
     await this.dataSource.query(
       `DELETE FROM users_sessions WHERE user_id = $1 AND device_id <> $2`,
       [userId, deviceId],
+    );
+  }
+
+  async purgeSession(deviceId: string) {
+    await this.dataSource.query(
+      `DELETE FROM users_sessions WHERE device_id = $1`,
+      [deviceId],
     );
   }
 }

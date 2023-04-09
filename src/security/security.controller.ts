@@ -13,6 +13,7 @@ import { RefreshTokenPayload } from '../global-services/decorators/get-refresh-t
 import { RefreshTokenInCookieGuard } from '../auth/infrastructure/guards/refresh-token-in-cookie';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserPurgeOtherSessionsCommand } from './application/use-cases/user-purge-other-sessions.use-case';
+import { UserPurgeSessionCommand } from './application/use-cases/user-purge-session.use-case';
 
 @Controller('security')
 export class SecurityController {
@@ -65,9 +66,11 @@ export class SecurityController {
       deviceId: string;
     },
   ) {
-    await this.securityService.purgeSessionByDeviceId(
-      deviceId,
-      refreshTokenPayload.userId,
+    await this.commandBus.execute(
+      new UserPurgeSessionCommand(
+        refreshTokenPayload.deviceId,
+        refreshTokenPayload.userId,
+      ),
     );
   }
 }

@@ -110,6 +110,7 @@ import { SetNewPasswordUseCase } from './auth/application/use-cases/set-new-pass
 import { AdminGetUserDataByIdHandler } from './super-admin/users/query/admin-get-user-data-by-email.query';
 import { GetPaginatedUsersListHandler } from './super-admin/users/query/get-paginated-users-list.query';
 import { UserPurgeOtherSessionsUseCase } from './security/application/use-cases/user-purge-other-sessions.use-case';
+import { UserPurgeSessionUseCase } from './security/application/use-cases/user-purge-session.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -125,6 +126,7 @@ const userUseCases = [
   PasswordRecoveryUseCase,
   SetNewPasswordUseCase,
 ];
+
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
   BloggerUpdateBlogUseCase,
@@ -142,7 +144,11 @@ const bloggerUseCases = [
 const superAdminUseCases = [
   AdminSetOwnerToOrphanBlogUseCase,
   AdminBanOrUnbanBlogUseCase,
+];
+
+const securityUseCases = [
   UserPurgeOtherSessionsUseCase,
+  UserPurgeSessionUseCase,
 ];
 
 const superAdminQueries = [
@@ -259,6 +265,7 @@ const postsQueries = [
     ...userUseCases,
     ...bloggerUseCases,
     ...superAdminUseCases,
+    ...securityUseCases,
     ...superAdminQueries,
     ...bloggerQueries,
     ...postsQueries,
