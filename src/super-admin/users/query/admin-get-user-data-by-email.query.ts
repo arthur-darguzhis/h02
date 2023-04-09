@@ -7,9 +7,7 @@ export class AdminGetUserDataByEmailQuery {
 
 @QueryHandler(AdminGetUserDataByEmailQuery)
 export class AdminGetUserDataByIdHandler implements IQueryHandler {
-  constructor(
-    private usersPgQueryRepository: UsersPgQueryRepository, //TODO inject here necessary services
-  ) {}
+  constructor(private usersPgQueryRepository: UsersPgQueryRepository) {}
   async execute(query: AdminGetUserDataByEmailQuery) {
     const user = await this.usersPgQueryRepository.findByEmail(query.email);
     return {

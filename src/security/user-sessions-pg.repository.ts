@@ -78,6 +78,20 @@ export class UserSessionsPgRepository {
     return userSession[0] || null;
   }
 
+  async findAllSessionsByUser(userId: string): Promise<any | never> {
+    return await this.dataSource.query(
+      `SELECT id, issued_at as "issuedAt",
+              expire_at as "expireAt",
+              device_id as "deviceId",
+              ip,
+              device_name as "deviceName",
+              user_id 
+            FROM users_sessions 
+            WHERE user_id = $1`,
+      [userId],
+    );
+  }
+
   async removeOne(deviceId: string, userId: string) {
     await this.dataSource.query(
       'DELETE FROM users_sessions WHERE device_id = $1 AND user_id = $2',
@@ -96,6 +110,13 @@ export class UserSessionsPgRepository {
     await this.dataSource.query(
       `DELETE FROM users_sessions WHERE user_id = $1`,
       [userId],
+    );
+  }
+
+  async purgeOtherSessions(deviceId: string, userId: string) {
+    await this.dataSource.query(
+      `DELETE FROM users_sessions WHERE user_id = $1 AND device_id <> $2`,
+      [userId, deviceId],
     );
   }
 }

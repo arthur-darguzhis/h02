@@ -109,6 +109,7 @@ import { PasswordRecoveryRepository } from './users/password-recovery.repository
 import { SetNewPasswordUseCase } from './auth/application/use-cases/set-new-password.use-case';
 import { AdminGetUserDataByIdHandler } from './super-admin/users/query/admin-get-user-data-by-email.query';
 import { GetPaginatedUsersListHandler } from './super-admin/users/query/get-paginated-users-list.query';
+import { UserPurgeOtherSessionsUseCase } from './security/application/use-cases/user-purge-other-sessions.use-case';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -141,6 +142,7 @@ const bloggerUseCases = [
 const superAdminUseCases = [
   AdminSetOwnerToOrphanBlogUseCase,
   AdminBanOrUnbanBlogUseCase,
+  UserPurgeOtherSessionsUseCase,
 ];
 
 const superAdminQueries = [
