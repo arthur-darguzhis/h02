@@ -77,7 +77,7 @@ export class UsersPgRepository {
 
     if (result.length === 0) {
       throw new UnprocessableEntityException(
-        `User with confirmationCode: ${confirmationCode} is not found`,
+        `User with confirmationCode: "${confirmationCode}" is not found`,
       );
     }
 
@@ -115,9 +115,9 @@ export class UsersPgRepository {
     ]);
   }
 
-  async confirmEmailAndActivateAccount(userId: string) {
+  async confirmEmail(userId: string) {
     await this.dataSource.query(
-      'UPDATE users SET is_confirmed = true WHERE id = $1',
+      `UPDATE users SET is_confirmed = true WHERE id = $1`,
       [userId],
     );
   }
@@ -151,8 +151,9 @@ export class UsersPgRepository {
     );
 
     if (result.length === 0) {
-      throw new UnprocessableEntityException(
+      throw new EntityNotFoundException(
         `User with email: ${email} is not found`,
+        'email',
       );
     }
 

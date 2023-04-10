@@ -69,10 +69,7 @@ export class SecurityController {
     },
   ) {
     await this.commandBus.execute(
-      new UserPurgeSessionCommand(
-        refreshTokenPayload.deviceId,
-        refreshTokenPayload.userId,
-      ),
+      new UserPurgeSessionCommand(deviceId, refreshTokenPayload.userId),
     );
   }
 }

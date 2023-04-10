@@ -28,7 +28,6 @@ import { PostsRepository } from './posts/posts.repository';
 import { BlogsQueryRepository } from './blogs/blogs.query.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth/api/auth.controller';
-import { AuthService } from './auth/infrastructure/auth.service';
 import { GlobalServicesModule } from './global-services/global-services.module';
 import { EmailSenderService } from './global-services/email-sender.service';
 import { BasicStrategy } from './auth/infrastructure/strategies/basic.strategy';
@@ -185,6 +184,7 @@ const postsQueries = [
       database: process.env.PG_DATABASE_NAME,
       autoLoadEntities: false,
       synchronize: false,
+      ssl: process.env.PG_SSL_FLAG === 'true',
     }),
     TypeOrmModule.forFeature([]),
     ThrottlerModule.forRoot({
@@ -205,7 +205,7 @@ const postsQueries = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' },
+      signOptions: { expiresIn: '10s' },
     }),
     GlobalServicesModule,
   ],
@@ -233,7 +233,6 @@ const postsQueries = [
     UsersPgQueryRepository,
     UserSessionsPgRepository,
     PasswordRecoveryRepository,
-    AuthService,
     AuthConfigService,
     AppConfigService,
     EmailSenderService,
@@ -259,7 +258,7 @@ const postsQueries = [
     LocalStrategy,
     JwtStrategy,
     BlogUserBansRepository,
-    // RefreshTokenStrategy,
+    RefreshTokenStrategy,
     BlogExists,
     UserSessionsService,
     UserSessionsRepository,

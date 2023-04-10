@@ -57,7 +57,7 @@ describe('User resend registration email use-case', () => {
     );
   });
 
-  it(`Successfully confirm registration `, async () => {
+  it(`Successfully resend registration email`, async () => {
     const validUser = await usersPgRepository.findByLogin('valid');
 
     await commandBus.execute(

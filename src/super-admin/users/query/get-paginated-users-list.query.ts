@@ -11,7 +11,13 @@ export class GetPaginatedUsersListQuery {
     public readonly sortDirection = 'desc',
     public readonly pageSize = 10,
     public readonly pageNumber = 1,
-  ) {}
+  ) {
+    //convert camel case to snake
+    this.sortBy = this.sortBy.replace(
+      /[A-Z]/g,
+      (letter) => `_${letter.toLowerCase()}`,
+    );
+  }
 }
 
 @QueryHandler(GetPaginatedUsersListQuery)
@@ -31,17 +37,17 @@ export class GetPaginatedUsersListHandler implements IQueryHandler {
       ? `%${query.searchLoginTerm}%`
       : null;
 
-    const searchEmailTerm = query.searchLoginTerm
-      ? `%${query.searchLoginTerm}%`
+    const searchEmailTerm = query.searchEmailTerm
+      ? `%${query.searchEmailTerm}%`
       : null;
 
     let count = await this.dataSource.query(
       `SELECT COUNT(*) as count FROM users WHERE 
         ($1::boolean is null or is_banned = $1::boolean) AND
-        (($2::varchar is null or login LIKE $2::varchar) OR ($3::varchar is null or email LIKE $3::varchar))`,
+        (($2::varchar is null or login ILIKE $2::varchar) OR ($3::varchar is null or email ILIKE $3::varchar))`,
       [banStatus, searchLoginTerm, searchEmailTerm],
     );
-    count = count[0].count;
+    count = Number(count[0].count);
 
     const offset = (query.pageNumber - 1) * query.pageSize;
 
@@ -56,18 +62,10 @@ export class GetPaginatedUsersListHandler implements IQueryHandler {
       ban_reason as "banReason"
       FROM users WHERE
            ($1::boolean is null or is_banned = $1::boolean) AND
-           (($2::varchar is null or login LIKE $2::varchar) OR ($3::varchar is null or email LIKE $3::varchar))
-           ORDER BY $4, $5
-           LIMIT $6 OFFSET $7`,
-      [
-        banStatus,
-        searchLoginTerm,
-        searchEmailTerm,
-        query.sortBy,
-        query.sortDirection,
-        query.pageSize,
-        offset,
-      ],
+           (($2::varchar is null or login ILIKE $2::varchar) OR ($3::varchar is null or email ILIKE $3::varchar))
+           ORDER BY ${query.sortBy} ${query.sortDirection}
+           LIMIT $4 OFFSET $5`,
+      [banStatus, searchLoginTerm, searchEmailTerm, query.pageSize, offset],
     );
 
     return {

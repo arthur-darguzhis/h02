@@ -33,7 +33,7 @@ export class RegistrationUseCase implements ICommandHandler {
     );
 
     await this.usersPgRepository.saveNewUser(newUser);
-    await this.emailSenderService.sendRegistrationConfirmationEmail(
+    this.emailSenderService.sendRegistrationConfirmationEmail(
       command.email,
       newUser.confirmationCode,
     );

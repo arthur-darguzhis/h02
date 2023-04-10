@@ -42,7 +42,7 @@ export class RefreshTokenInCookieGuard implements CanActivate {
       decodedToken.deviceId,
     );
 
-    if (!userSession || userSession.issuedAt !== decodedToken.iat) {
+    if (!userSession || Number(userSession.issuedAt) !== decodedToken.iat) {
       throw new UnauthorizedException('refresh JWT is invalid');
     }
 

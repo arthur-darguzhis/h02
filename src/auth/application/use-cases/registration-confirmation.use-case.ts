@@ -24,6 +24,6 @@ export class ConfirmRegistrationUseCase implements ICommandHandler {
       );
     }
 
-    await this.usersPgRepository.confirmEmailAndActivateAccount(user.id);
+    await this.usersPgRepository.confirmEmail(user.id);
   }
 }

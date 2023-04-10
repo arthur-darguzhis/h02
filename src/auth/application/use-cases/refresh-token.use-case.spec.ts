@@ -5,7 +5,7 @@ import { UsersPgRepository } from '../../../users/users.pg-repository';
 import { LoginCommand } from './login.use-case';
 import jwt from 'jsonwebtoken';
 import { RefreshTokenCommand } from './refresh-token.use-case';
-import { delay } from '../../../testing/delay';
+import { wait } from '../../../testing/wait';
 
 describe('Refresh token use-case', () => {
   let given: Given;
@@ -38,7 +38,7 @@ describe('Refresh token use-case', () => {
       json: true,
     });
 
-    await delay(2000);
+    await wait(2000);
 
     const newTokensPair = await commandBus.execute(
       new RefreshTokenCommand(decodedToken, '127.0.0.1', 'jest'),

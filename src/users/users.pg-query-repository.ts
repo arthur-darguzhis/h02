@@ -8,13 +8,14 @@ export class UsersPgQueryRepository {
   constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
   async findOne(currentUserId: string) {
-    return await this.dataSource.query(
+    const user = await this.dataSource.query(
       `SELECT id as "userId",
                login,
                email
              FROM users WHERE id = $1`,
       [currentUserId],
     );
+    return user[0];
   }
 
   async findByEmail(email: string) {

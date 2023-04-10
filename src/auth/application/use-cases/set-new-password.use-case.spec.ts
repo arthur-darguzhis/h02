@@ -8,7 +8,7 @@ import { PasswordRecoveryCommand } from './password-recovery.use-case';
 import { SetNewPasswordCommand } from './set-new-password.use-case';
 import { PasswordRecoveryRepository } from '../../../users/password-recovery.repository';
 import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
-import { delay } from '../../../testing/delay';
+import { wait } from '../../../testing/wait';
 
 describe('set new password use-case', () => {
   let given: Given;
@@ -59,7 +59,7 @@ describe('set new password use-case', () => {
       passwordRecovery.id,
     );
 
-    await delay(2000);
+    await wait(2000);
 
     //Act & Assert
     await expect(

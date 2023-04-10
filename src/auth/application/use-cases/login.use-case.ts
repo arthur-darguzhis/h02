@@ -40,7 +40,7 @@ export class LoginUseCase implements ICommandHandler {
   private generateJwtRefreshToken(userId: string, deviceId: string = uuidv4()) {
     return this.jwtService.sign(
       { userId: userId, deviceId: deviceId },
-      { expiresIn: '20m' },
+      { expiresIn: '20s' },
     );
   }
 }

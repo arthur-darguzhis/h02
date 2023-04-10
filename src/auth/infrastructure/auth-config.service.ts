@@ -17,4 +17,8 @@ export class AuthConfigService {
   get getJwtSecret(): string {
     return this.configService.get('JWT_SECRET');
   }
+
+  get getCookieMaxAge(): number {
+    return this.configService.get<number>('COOKIE_MAX_AGE');
+  }
 }

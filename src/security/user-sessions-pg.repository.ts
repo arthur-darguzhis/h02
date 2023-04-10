@@ -81,7 +81,7 @@ export class UserSessionsPgRepository {
 
   async getByDeviceId(deviceId: string) {
     const userSession = await this.findByDeviceId(deviceId);
-    if (userSession.length === 0) {
+    if (!userSession) {
       throw new EntityNotFoundException(
         `There is not session for deviceId: ${deviceId}`,
       );

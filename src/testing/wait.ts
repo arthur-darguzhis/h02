@@ -1,4 +1,4 @@
-export const delay = (milliseconds: number): Promise<void> => {
+export const wait = (milliseconds: number): Promise<void> => {
   return new Promise((resolve, _) => {
     setTimeout(() => {
       resolve();
