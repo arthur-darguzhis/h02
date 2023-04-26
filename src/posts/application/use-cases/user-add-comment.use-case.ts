@@ -1,9 +1,9 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { CommentsFactory } from '../../../comments/comments.factory';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
-import { CommentsPgRepository } from '../../../comments/infrastructure/comments-pg.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { CommentsRepository } from '../../../comments/infrastructure/comments.repository';
 import { BlogUserBanRepository } from '../../../blogs/infrastructure/blog-user-ban.repository';
 
 export class UserAddCommentCommand {
@@ -17,9 +17,9 @@ export class UserAddCommentCommand {
 @CommandHandler(UserAddCommentCommand)
 export class UserAddCommentUseCase {
   constructor(
-    private postsPgRepository: PostsPgRepository,
-    private blogsPgRepository: BlogsPgRepository,
-    private commentsPgRepository: CommentsPgRepository,
+    private postsPgRepository: PostsRepository,
+    private blogsPgRepository: BlogsRepository,
+    private commentsPgRepository: CommentsRepository,
     private commentsFactory: CommentsFactory,
     private blogUserBanRepository: BlogUserBanRepository,
   ) {}

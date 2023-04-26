@@ -2,13 +2,13 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
 import { GetCommentsListRelatedToPostQuery } from './get-comments-list-related-to-post.query';
 import { UserMakeReactionOnCommentCommand } from '../use-cases/user-make-reaction-on-comment.use-case';
-import { CommentsPgRepository } from '../../infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { AdminBanOrUnbanUserCommand } from '../../../super-admin/users/application/use-cases/admin-ban-or-unban-user.use-case';
 import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';
 import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
@@ -17,9 +17,9 @@ import { UserAddCommentCommand } from '../../../posts/application/use-cases/user
 describe('Should return list of comments related to a special post', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
-  let commentsPgRepository: CommentsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
+  let commentsPgRepository: CommentsRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -39,9 +39,9 @@ describe('Should return list of comments related to a special post', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
-    commentsPgRepository = given.configuredTestApp.get(CommentsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
+    commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger" and blog "First Blog";

@@ -2,8 +2,8 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
 
@@ -16,8 +16,8 @@ describe('User make reaction on post', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
 
   let userAsBlogger;
   let firstBlog;
@@ -29,9 +29,9 @@ describe('User make reaction on post', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
 
     /** Arrange
      * Given: There is blogger with "blogger" login and "first post" post

@@ -3,7 +3,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from './registration.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { LoginCommand } from './login.use-case';
-import { UserSessionsPgRepository } from '../../../security/infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
 import { LogoutCommand } from './logout.use-case';
 import jwt from 'jsonwebtoken';
 
@@ -11,7 +11,7 @@ describe('User login use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsPgRepository;
+  let userSessionsPgRepository: userSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
@@ -19,7 +19,7 @@ describe('User login use-case', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
-      UserSessionsPgRepository,
+      userSessionsPgRepository,
     );
 
     /** Arrange

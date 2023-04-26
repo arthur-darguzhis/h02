@@ -3,11 +3,11 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 import { UserAddCommentCommand } from '../../../posts/application/use-cases/user-add-comment.use-case';
-import { CommentsPgRepository } from '../../infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { GetCommentQuery } from './get-comment.query';
 import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';
 import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
@@ -16,9 +16,9 @@ import { UserMakeReactionOnCommentCommand } from '../use-cases/user-make-reactio
 describe('Should return comment', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
-  let commentsPgRepository: CommentsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
+  let commentsPgRepository: CommentsRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -38,9 +38,9 @@ describe('Should return comment', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
-    commentsPgRepository = given.configuredTestApp.get(CommentsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
+    commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
 
     /** Arrange
      * Given: There is a blogger with login "blogger" with blog "First blog" and post "First post";

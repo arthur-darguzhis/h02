@@ -1,7 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class BloggerUpdatePostCommand {
   constructor(
@@ -17,8 +17,8 @@ export class BloggerUpdatePostCommand {
 @CommandHandler(BloggerUpdatePostCommand)
 export class BloggerUpdatePostUseCase {
   constructor(
-    private postsPgRepository: PostsPgRepository,
-    private blogsPgRepository: BlogsPgRepository,
+    private postsPgRepository: PostsRepository,
+    private blogsPgRepository: BlogsRepository,
   ) {}
   async execute(command: BloggerUpdatePostCommand) {
     console.log(command);

@@ -2,22 +2,22 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
 import { UserAddCommentCommand } from '../../../posts/application/use-cases/user-add-comment.use-case';
-import { CommentsPgRepository } from '../../infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { UserDeleteCommentCommand } from './user-delete-comment.use-case';
 
 describe('Blogger delete blog', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
   let commandBus: CommandBus;
-  let postsPgRepository: PostsPgRepository;
-  let commentsPgRepository: CommentsPgRepository;
+  let postsPgRepository: PostsRepository;
+  let commentsPgRepository: CommentsRepository;
 
   let userAsBlogger;
 
@@ -32,10 +32,10 @@ describe('Blogger delete blog', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
-    commentsPgRepository = given.configuredTestApp.get(CommentsPgRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
+    commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
 
     /** Arrange
      * Given: There are bloggers with "blogger" login and "first post" post

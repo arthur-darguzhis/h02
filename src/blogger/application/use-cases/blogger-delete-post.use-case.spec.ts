@@ -3,19 +3,19 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from './blogger-create-blog.use-case';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 import { BloggerDeleteBlogCommand } from './blogger-delete-blog.use-case';
 import { BloggerDeletePostCommand } from './blogger-delete-post.use-case';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 import { BloggerCreatePostCommand } from './blogger-create-post.use-case';
 
 describe('Blogger delete blog', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
   let commandBus: CommandBus;
-  let postsPgRepository: PostsPgRepository;
+  let postsPgRepository: PostsRepository;
 
   let userAsBlogger;
   let userAsSecondBlogger;
@@ -28,9 +28,9 @@ describe('Blogger delete blog', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
 
     /** Arrange
      * Given: There are 2 bloggers with "blogger" and "blogger2" logins

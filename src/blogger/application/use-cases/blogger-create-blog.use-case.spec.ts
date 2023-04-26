@@ -3,12 +3,12 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from './blogger-create-blog.use-case';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 describe('blogger create new blog', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
   let commandBus: CommandBus;
 
   let userAsBlogger;
@@ -17,7 +17,7 @@ describe('blogger create new blog', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
 
     /** Arrange

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentsPgRepository } from '../../infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 
 export class UserUpdateCommentCommand {
@@ -12,7 +12,7 @@ export class UserUpdateCommentCommand {
 
 @CommandHandler(UserUpdateCommentCommand)
 export class UserUpdateCommentUseCase implements ICommandHandler {
-  constructor(private commentsPgRepository: CommentsPgRepository) {}
+  constructor(private commentsPgRepository: CommentsRepository) {}
 
   async execute(command: UserUpdateCommentCommand) {
     console.log(command);

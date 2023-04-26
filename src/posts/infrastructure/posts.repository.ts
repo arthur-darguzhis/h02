@@ -1,11 +1,16 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { Post } from '../application/entities/post';
 
 @Injectable()
-export class PostsPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+export class PostsRepository {
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(Post)
+    private postsRepository: Repository<Post>,
+  ) {}
 
   async saveNewPost(post) {
     const query = `

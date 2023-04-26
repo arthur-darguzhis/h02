@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class BloggerGetListOfBannedUsersInBlogQuery {
   constructor(
@@ -22,7 +22,7 @@ export class BloggerGetListOfBannedUsersForBlogHandler
 {
   constructor(
     @InjectDataSource() protected dataSource: DataSource,
-    private blogsPgRepository: BlogsPgRepository,
+    private blogsPgRepository: BlogsRepository,
   ) {}
 
   async execute(query: BloggerGetListOfBannedUsersInBlogQuery) {

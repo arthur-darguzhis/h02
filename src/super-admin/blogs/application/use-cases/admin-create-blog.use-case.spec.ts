@@ -2,14 +2,14 @@ import { Given } from '../../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
 import { AdminCreateBlogCommand } from './admin-create-blog.use-case';
 
 describe('Admin create blog', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
 
   let userAsBlogger;
   let firstBlog;
@@ -19,7 +19,7 @@ describe('Admin create blog', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
 
     /** Arrange
      * Given: There is blogger with "blogger" login and without any blog

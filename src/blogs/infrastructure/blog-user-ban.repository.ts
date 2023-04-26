@@ -1,10 +1,15 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { BlogUserBan } from '../application/entities/blog-user-ban';
 
 @Injectable()
 export class BlogUserBanRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(BlogUserBan)
+    private blogUserBansRepository: Repository<BlogUserBan>,
+  ) {}
 
   async findOne(blogId: string, userId: string) {
     const banInfo = await this.dataSource.query(

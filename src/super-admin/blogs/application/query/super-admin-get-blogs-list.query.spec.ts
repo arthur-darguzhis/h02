@@ -5,12 +5,12 @@ import { UsersRepository } from '../../../../users/infrastructure/users.reposito
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { SuperAdminGetBlogsListQuery } from './super-admin-get-blogs-list.query';
 import { AdminBanOrUnbanBlogCommand } from '../use-cases/admin-ban-or-unban-blog.use-case';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -22,7 +22,7 @@ describe('Should return list of banned users in a blog', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
 
     /** Arrange

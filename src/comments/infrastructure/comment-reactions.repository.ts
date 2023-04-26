@@ -1,10 +1,15 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { CommentReaction } from '../application/entities/comment-reaction';
 
 @Injectable()
-export class CommentReactionsPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+export class CommentReactionsRepository {
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(CommentReaction)
+    private commentReactionsRepository: Repository<CommentReaction>,
+  ) {}
 
   async find(commentId: string, userId: string) {
     const commentReaction = await this.dataSource.query(

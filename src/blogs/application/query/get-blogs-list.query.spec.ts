@@ -5,14 +5,14 @@ import { UsersRepository } from '../../../users/infrastructure/users.repository'
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { GetBlogsListQuery } from './get-blogs-list.query';
 import { AdminBanOrUnbanBlogCommand } from '../../../super-admin/blogs/application/use-cases/admin-ban-or-unban-blog.use-case';
-import { BlogsPgRepository } from '../../infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../infrastructure/blogs.repository';
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
-  let blogsPgRepository: BlogsPgRepository;
+  let blogsPgRepository: BlogsRepository;
 
   let userAsBlogger;
   let blog1;
@@ -23,7 +23,7 @@ describe('Should return list of banned users in a blog', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger" and 5 blogs;

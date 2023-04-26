@@ -3,8 +3,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
 import { UserMakeReactionOnPostCommand } from '../use-cases/user-make-reaction-on-post.use-case';
 import { GetPostsListQuery } from './get-posts-list.query';
@@ -13,8 +13,8 @@ import { AdminBanOrUnbanBlogCommand } from '../../../super-admin/blogs/applicati
 describe('Return posts list', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -35,8 +35,8 @@ describe('Return posts list', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger";

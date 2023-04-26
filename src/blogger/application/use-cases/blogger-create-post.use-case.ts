@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { PostsFactory } from '../../../posts/posts.factory';
-import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 
 export class BloggerCreatePostCommand {
   constructor(
@@ -16,7 +16,7 @@ export class BloggerCreatePostCommand {
 export class BloggerCreatePostUseCase {
   constructor(
     private postsFactory: PostsFactory,
-    private postsPgRepository: PostsPgRepository,
+    private postsPgRepository: PostsRepository,
   ) {}
   async execute(command: BloggerCreatePostCommand) {
     console.log(command);

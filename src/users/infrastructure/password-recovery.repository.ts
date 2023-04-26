@@ -1,11 +1,16 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { PasswordRecovery } from '../application/entities/password-recovery';
 
 @Injectable()
 export class PasswordRecoveryRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(PasswordRecovery)
+    private passwordRecoveryRepository: Repository<PasswordRecovery>,
+  ) {}
 
   async savePasswordRecoveryMetadata(
     code: string,

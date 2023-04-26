@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
 import { BlogsFactory } from '../../../../blogs/blogs.factory';
 
 export class AdminCreateBlogCommand {
@@ -14,7 +14,7 @@ export class AdminCreateBlogCommand {
 export class AdminCreateBlogUseCase implements ICommandHandler {
   constructor(
     private blogsFactory: BlogsFactory,
-    private blogsPgRepository: BlogsPgRepository,
+    private blogsPgRepository: BlogsRepository,
   ) {}
   async execute(command: AdminCreateBlogCommand) {
     console.log(command);

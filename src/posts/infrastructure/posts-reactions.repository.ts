@@ -1,10 +1,15 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { PostReaction } from '../application/entities/post-reaction';
 
 @Injectable()
-export class PostsReactionsPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+export class PostsReactionsRepository {
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(PostReaction)
+    private postsReactionsRepository: Repository<PostReaction>,
+  ) {}
 
   async findUserReaction(postId: string, userId: string) {
     const userReaction = await this.dataSource.query(

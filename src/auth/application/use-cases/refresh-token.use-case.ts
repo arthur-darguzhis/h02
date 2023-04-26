@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
-import { UserSessionsPgRepository } from '../../../security/infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
 
 export class RefreshTokenCommand {
   constructor(
@@ -18,7 +18,7 @@ export class RefreshTokenCommand {
 export class RefreshTokenUseCase implements ICommandHandler {
   constructor(
     private jwtService: JwtService,
-    private userSessionsPgRepository: UserSessionsPgRepository,
+    private userSessionsPgRepository: userSessionsRepository,
   ) {}
 
   async execute(command: RefreshTokenCommand) {

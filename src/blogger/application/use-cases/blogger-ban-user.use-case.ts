@@ -1,7 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 import { BlogUserBanRepository } from '../../../blogs/infrastructure/blog-user-ban.repository';
 import { BlogUsersBanFactory } from '../../../users/blog-users-ban.factory';
 
@@ -18,7 +18,7 @@ export class BloggerBanUserCommand {
 @CommandHandler(BloggerBanUserCommand)
 export class BloggerBanUserUseCase {
   constructor(
-    private blogsPgRepository: BlogsPgRepository,
+    private blogsPgRepository: BlogsRepository,
     private usersPgRepository: UsersRepository,
     private blogUserBanRepository: BlogUserBanRepository,
     private blogUsersBanFactory: BlogUsersBanFactory,

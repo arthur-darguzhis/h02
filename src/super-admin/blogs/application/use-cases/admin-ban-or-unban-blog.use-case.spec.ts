@@ -5,15 +5,15 @@ import { AdminBanOrUnbanBlogCommand } from './admin-ban-or-unban-blog.use-case';
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../../blogger/application/use-cases/blogger-create-post.use-case';
 import { UsersRepository } from '../../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../../../posts/infrastructure/posts.repository';
 
 describe(`Admin ban or unban blog with it's posts`, () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
 
   let userAsBlogger;
   let userAsReader;
@@ -25,8 +25,8 @@ describe(`Admin ban or unban blog with it's posts`, () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger"

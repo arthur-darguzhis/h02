@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class GetPostsListByBlogIdQuery {
   constructor(
@@ -18,7 +18,7 @@ export class GetPostsListByBlogIdQuery {
 export class GetPostsListByBlogIdHandler implements IQueryHandler {
   constructor(
     @InjectDataSource() protected dataSource: DataSource,
-    private blogsPgRepository: BlogsPgRepository,
+    private blogsPgRepository: BlogsRepository,
   ) {}
 
   async execute(query: GetPostsListByBlogIdQuery) {

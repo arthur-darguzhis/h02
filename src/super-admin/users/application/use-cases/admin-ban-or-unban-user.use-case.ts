@@ -1,12 +1,12 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UsersRepository } from '../../../../users/infrastructure/users.repository';
-import { UserSessionsPgRepository } from '../../../../security/infrastructure/user-sessions-pg.repository';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
-import { CommentsPgRepository } from '../../../../comments/infrastructure/comments-pg.repository';
-import { PostsReactionsPgRepository } from '../../../../posts/infrastructure/posts-reactions-pg.repository';
-import { CommentReactionsPgRepository } from '../../../../comments/infrastructure/comment-reactions-pg.repository';
+import { userSessionsRepository } from '../../../../security/infrastructure/user-sessions.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../../../posts/infrastructure/posts.repository';
+import { CommentsRepository } from '../../../../comments/infrastructure/comments.repository';
+import { PostsReactionsRepository } from '../../../../posts/infrastructure/posts-reactions.repository';
+import { CommentReactionsRepository } from '../../../../comments/infrastructure/comment-reactions.repository';
 
 export class AdminBanOrUnbanUserCommand {
   constructor(
@@ -20,12 +20,12 @@ export class AdminBanOrUnbanUserCommand {
 export class AdminBanOrUnbanUserUseCase {
   constructor(
     private usersPgRepository: UsersRepository,
-    private userSessionsPgRepository: UserSessionsPgRepository,
-    private blogsPgRepository: BlogsPgRepository,
-    private postsPgRepository: PostsPgRepository,
-    private commentsPgRepository: CommentsPgRepository,
-    private postsReactionsPgRepository: PostsReactionsPgRepository,
-    private commentReactionsPgRepository: CommentReactionsPgRepository,
+    private userSessionsPgRepository: userSessionsRepository,
+    private blogsPgRepository: BlogsRepository,
+    private postsPgRepository: PostsRepository,
+    private commentsPgRepository: CommentsRepository,
+    private postsReactionsPgRepository: PostsReactionsRepository,
+    private commentReactionsPgRepository: CommentReactionsRepository,
   ) {}
   async execute(command: AdminBanOrUnbanUserCommand) {
     console.log(command);

@@ -1,14 +1,17 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { UserSession } from '../../users/application/entities/user-session';
 
 @Injectable()
-export class UserSessionsPgRepository {
+export class userSessionsRepository {
   constructor(
     @InjectDataSource() protected dataSource: DataSource,
     private jwtService: JwtService,
+    @InjectRepository(UserSession)
+    private userSessionsRepository: Repository<UserSession>,
   ) {}
 
   async saveNewSession(

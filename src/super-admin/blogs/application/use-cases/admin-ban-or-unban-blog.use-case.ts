@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
+import { PostsRepository } from '../../../../posts/infrastructure/posts.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
 
 export class AdminBanOrUnbanBlogCommand {
   constructor(
@@ -12,8 +12,8 @@ export class AdminBanOrUnbanBlogCommand {
 @CommandHandler(AdminBanOrUnbanBlogCommand)
 export class AdminBanOrUnbanBlogUseCase implements ICommandHandler {
   constructor(
-    private postsPgRepository: PostsPgRepository,
-    private blogsPgRepository: BlogsPgRepository,
+    private postsPgRepository: PostsRepository,
+    private blogsPgRepository: BlogsRepository,
   ) {}
   async execute(command: AdminBanOrUnbanBlogCommand) {
     console.log(command);

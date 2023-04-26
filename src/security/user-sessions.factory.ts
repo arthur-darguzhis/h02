@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserSessionsPgRepository } from './infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from './infrastructure/user-sessions.repository';
 
 @Injectable()
 export class UserSessionsFactory {
   constructor(
     private jwtService: JwtService,
-    private userSessionsPgRepository: UserSessionsPgRepository,
+    private userSessionsPgRepository: userSessionsRepository,
   ) {}
 
   async createNewUserSessionPg(

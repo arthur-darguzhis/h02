@@ -55,7 +55,7 @@ import { RegistrationUseCase } from './auth/application/use-cases/registration.u
 import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
 import { LoginUseCase } from './auth/application/use-cases/login.use-case';
-import { UserSessionsPgRepository } from './security/infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from './security/infrastructure/user-sessions.repository';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
 import { CurrentUserInfoHandler } from './auth/application/query/current-user-info.query';
@@ -68,12 +68,12 @@ import { GetUsersListHandler } from './super-admin/users/application/query/get-u
 import { UserPurgeOtherSessionsUseCase } from './security/application/use-cases/user-purge-other-sessions.use-case';
 import { UserPurgeSessionUseCase } from './security/application/use-cases/user-purge-session.use-case';
 import { UserSessionsListHandler } from './security/application/query/user-sessions-list.query';
-import { BlogsPgRepository } from './blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
 import { BlogUserBanRepository } from './blogs/infrastructure/blog-user-ban.repository';
-import { CommentsPgRepository } from './comments/infrastructure/comments-pg.repository';
-import { PostsPgRepository } from './posts/infrastructure/posts-pg.repository';
-import { PostsReactionsPgRepository } from './posts/infrastructure/posts-reactions-pg.repository';
-import { CommentReactionsPgRepository } from './comments/infrastructure/comment-reactions-pg.repository';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import { PostsRepository } from './posts/infrastructure/posts.repository';
+import { PostsReactionsRepository } from './posts/infrastructure/posts-reactions.repository';
+import { CommentReactionsRepository } from './comments/infrastructure/comment-reactions.repository';
 import { UserDeleteCommentUseCase } from './comments/application/use-cases/user-delete-comment.use-case';
 import { BlogUsersBanFactory } from './users/blog-users-ban.factory';
 import { UserUpdateCommentUseCase } from './comments/application/use-cases/user-update-comment.use-case';
@@ -223,24 +223,24 @@ const postsQueries = [
     BlogUsersBanFactory,
     UsersRepository,
     UsersPgQueryRepository,
-    UserSessionsPgRepository,
+    userSessionsRepository,
     PasswordRecoveryRepository,
     AuthConfigService,
     AppConfigService,
     EmailSenderService,
     BlogsFactory,
-    BlogsPgRepository,
-    BlogsPgRepository,
+    BlogsRepository,
+    BlogsRepository,
     BlogUserBanRepository,
     PostsFactory,
-    PostsPgRepository,
-    PostsReactionsPgRepository,
+    PostsRepository,
+    PostsReactionsRepository,
     PostReactionsFactory,
-    PostsReactionsPgRepository,
+    PostsReactionsRepository,
     CommentsFactory,
-    CommentsPgRepository,
+    CommentsRepository,
     CommentReactionsFactory,
-    CommentReactionsPgRepository,
+    CommentReactionsRepository,
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,

@@ -2,19 +2,19 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
-import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
 import { UserAddCommentCommand } from './user-add-comment.use-case';
 import { BloggerCreatePostCommand } from '../../../blogger/application/use-cases/blogger-create-post.use-case';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
-import { CommentsPgRepository } from '../../../comments/infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../../comments/infrastructure/comments.repository';
 
 describe('User add comment to a post', () => {
   let given: Given;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let postsPgRepository: PostsPgRepository;
-  let commentsPgRepository: CommentsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let postsPgRepository: PostsRepository;
+  let commentsPgRepository: CommentsRepository;
   let commandBus: CommandBus;
 
   let userAsBlogger;
@@ -26,9 +26,9 @@ describe('User add comment to a post', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
-    commentsPgRepository = given.configuredTestApp.get(CommentsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
+    commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
 
     /** Arrange

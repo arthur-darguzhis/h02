@@ -1,11 +1,16 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { Comment } from '../application/entities/comment';
 
 @Injectable()
-export class CommentsPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+export class CommentsRepository {
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(Comment)
+    private commentsRepository: Repository<Comment>,
+  ) {}
 
   async saveNewComment(comment: {
     createdAt: Date;

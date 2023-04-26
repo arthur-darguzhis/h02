@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
-import { PostsReactionsPgRepository } from '../../infrastructure/posts-reactions-pg.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
+import { PostsReactionsRepository } from '../../infrastructure/posts-reactions.repository';
 import { PostReactionsFactory } from '../../post-reaction.factory';
 
 export class UserMakeReactionOnPostCommand {
@@ -14,8 +14,8 @@ export class UserMakeReactionOnPostCommand {
 @CommandHandler(UserMakeReactionOnPostCommand)
 export class UserMakeReactionOnPostUseCase implements ICommandHandler {
   constructor(
-    private postsPgRepository: PostsPgRepository,
-    private postsReactionsPgRepository: PostsReactionsPgRepository,
+    private postsPgRepository: PostsRepository,
+    private postsReactionsPgRepository: PostsReactionsRepository,
     private postReactionsFactory: PostReactionsFactory,
   ) {}
   async execute(command: UserMakeReactionOnPostCommand) {

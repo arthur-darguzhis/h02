@@ -5,13 +5,13 @@ import jwt from 'jsonwebtoken';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { UserPurgeOtherSessionsCommand } from './user-purge-other-sessions.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { UserSessionsPgRepository } from '../../infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
 
 describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsPgRepository;
+  let userSessionsPgRepository: userSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
@@ -19,7 +19,7 @@ describe('User purge other sessions', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
-      UserSessionsPgRepository,
+      userSessionsPgRepository,
     );
 
     /** Arrange

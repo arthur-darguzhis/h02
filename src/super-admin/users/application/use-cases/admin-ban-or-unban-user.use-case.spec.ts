@@ -4,25 +4,25 @@ import { UsersRepository } from '../../../../users/infrastructure/users.reposito
 import { AdminAddNewUserCommand } from './admin-add-new-user.use-case';
 import { AdminBanOrUnbanUserCommand } from './admin-ban-or-unban-user.use-case';
 import { LoginCommand } from '../../../../auth/application/use-cases/login.use-case';
-import { UserSessionsPgRepository } from '../../../../security/infrastructure/user-sessions-pg.repository';
+import { userSessionsRepository } from '../../../../security/infrastructure/user-sessions.repository';
 import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
-import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
 import { BloggerCreatePostCommand } from '../../../../blogger/application/use-cases/blogger-create-post.use-case';
-import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
+import { PostsRepository } from '../../../../posts/infrastructure/posts.repository';
 import { UserMakeReactionOnPostCommand } from '../../../../posts/application/use-cases/user-make-reaction-on-post.use-case';
 import { UserAddCommentCommand } from '../../../../posts/application/use-cases/user-add-comment.use-case';
 import { UserMakeReactionOnCommentCommand } from '../../../../comments/application/use-cases/user-make-reaction-on-comment.use-case';
-import { CommentsPgRepository } from '../../../../comments/infrastructure/comments-pg.repository';
+import { CommentsRepository } from '../../../../comments/infrastructure/comments.repository';
 
 describe('Admin ban or unban user use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let blogsPgRepository: BlogsPgRepository;
-  let userSessionsPgRepository: UserSessionsPgRepository;
-  let postsPgRepository: PostsPgRepository;
-  let commentsPgRepository: CommentsPgRepository;
+  let blogsPgRepository: BlogsRepository;
+  let userSessionsPgRepository: userSessionsRepository;
+  let postsPgRepository: PostsRepository;
+  let commentsPgRepository: CommentsRepository;
 
   let userAsBlogger;
   let firstBlog;
@@ -37,11 +37,11 @@ describe('Admin ban or unban user use-case', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
-    commentsPgRepository = given.configuredTestApp.get(CommentsPgRepository);
+    blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
+    postsPgRepository = given.configuredTestApp.get(PostsRepository);
+    commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
-      UserSessionsPgRepository,
+      userSessionsPgRepository,
     );
 
     /** Arrange

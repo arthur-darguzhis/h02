@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class BloggerDeleteBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -8,7 +8,7 @@ export class BloggerDeleteBlogCommand {
 
 @CommandHandler(BloggerDeleteBlogCommand)
 export class BloggerDeleteBlogUseCase {
-  constructor(private blogsPgRepository: BlogsPgRepository) {}
+  constructor(private blogsPgRepository: BlogsRepository) {}
 
   async execute(command: BloggerDeleteBlogCommand) {
     console.log(command);
