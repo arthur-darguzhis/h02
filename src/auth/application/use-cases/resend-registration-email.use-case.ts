@@ -12,20 +12,13 @@ export class ResendRegistrationEmailCommand {
 @CommandHandler(ResendRegistrationEmailCommand)
 export class ResendRegistrationEmailUseCase implements ICommandHandler {
   constructor(
-    private usersPgRepository: UsersRepository,
+    private usersRepository: UsersRepository,
     private emailSenderService: EmailSenderService,
   ) {}
   async execute(command: ResendRegistrationEmailCommand) {
     console.log(command);
-    let user;
-    try {
-      user = await this.usersPgRepository.getByEmail(command.email);
-    } catch (e) {
-      throw new UnprocessableEntityException(
-        `User with email: ${command.email} is not found`,
-        'email',
-      );
-    }
+    const user = await this.usersRepository.getByEmail(command.email);
+
     if (user.isConfirmed) {
       throw new UnprocessableEntityException(
         'The email is already confirmed',
@@ -33,16 +26,13 @@ export class ResendRegistrationEmailUseCase implements ICommandHandler {
       );
     }
 
-    const newConfirmationCode = uuidv4();
-    await this.usersPgRepository.refreshEmailConfirmationInfo(
-      user.id,
-      newConfirmationCode,
-      add(Date.now(), { hours: 24 }),
-    );
+    user.confirmationCode = uuidv4();
+    user.expirationDateOfConfirmationCode = add(Date.now(), { hours: 24 });
+    await this.usersRepository.save(user);
 
     this.emailSenderService.sendRegistrationConfirmationEmail(
       user.email,
-      newConfirmationCode,
+      user.confirmationCode,
     );
   }
 }

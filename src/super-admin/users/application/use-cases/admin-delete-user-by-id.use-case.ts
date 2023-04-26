@@ -10,7 +10,7 @@ export class AdminDeleteUserByIdUseCase {
   constructor(private usersPgRepository: UsersRepository) {}
   async execute(command: AdminDeleteUserByIdCommand) {
     console.log(command);
-    await this.usersPgRepository.throwIfUserIsNotExists(command.userId);
-    await this.usersPgRepository.deleteById(command.userId);
+    const user = await this.usersPgRepository.getById(command.userId);
+    await this.usersPgRepository.delete(user);
   }
 }

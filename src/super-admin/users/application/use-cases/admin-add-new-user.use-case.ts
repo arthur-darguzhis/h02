@@ -18,12 +18,12 @@ export class AdminAddNewUserUseCase {
   ) {}
   async execute(command: AdminAddNewUserCommand) {
     console.log(command);
-    const user = await this.usersFactory.adminAddNewUserPg(
+    const user = await this.usersFactory.adminAddNewUser(
       command.login,
       command.password,
       command.email,
     );
 
-    await this.usersPgRepository.saveNewUser(user);
+    await this.usersPgRepository.save(user);
   }
 }

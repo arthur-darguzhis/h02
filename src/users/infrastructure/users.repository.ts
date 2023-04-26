@@ -14,33 +14,13 @@ export class UsersRepository {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findByLogin(login: string) {
-    const result = await this.dataSource.query(
-      `SELECT id,
-               login,
-               email,
-               password_hash                        as "passwordHash",
-               created_at                           as "createdAt",
-               confirmation_code                    as "confirmationCode",
-               expiration_date_of_confirmation_code as "expirationDate",
-               is_confirmed                         as "isConfirmed",
-               is_banned                            as "isBanned",
-               ban_date                             as "banDate",
-               ban_reason                           as "banReason" 
-            FROM users 
-                WHERE login = $1`,
-      [login],
-    );
-
-    return result[0] || null;
+  async findByLogin(login: string): Promise<User | null> {
+    return await this.usersRepository.findOneBy([{ login: login }]);
   }
 
   async throwIfEmailInUse(email: string): Promise<void | never> {
-    const result = await this.dataSource.query(
-      `SELECT * FROM users WHERE email = $1`,
-      [email],
-    );
-    if (result.length > 0) {
+    const user = await this.usersRepository.findOneBy([{ email: email }]);
+    if (user === null) {
       throw new EntityAlreadyExistsException(
         `User with email: ${email} already exists`,
         'email',
@@ -49,11 +29,8 @@ export class UsersRepository {
   }
 
   async throwIfLoginInUse(login: string): Promise<void | never> {
-    const result = await this.dataSource.query(
-      `SELECT * FROM users WHERE login = $1`,
-      [login],
-    );
-    if (result.length > 0) {
+    const user = await this.usersRepository.findOneBy([{ login: login }]);
+    if (user === null) {
       throw new EntityAlreadyExistsException(
         `User with login: ${login} already exists`,
         'login',
@@ -61,72 +38,38 @@ export class UsersRepository {
     }
   }
 
-  async getByConfirmationCode(confirmationCode): Promise<any | never> {
-    const result = await this.dataSource.query(
-      `
-    SELECT id,
-           login,
-           email,
-           password_hash                        as "passwordHash",
-           created_at                           as "createdAt",
-           confirmation_code                    as "confirmationCode",
-           expiration_date_of_confirmation_code as "expirationDate",
-           is_confirmed                         as "isConfirmed",
-           is_banned                            as "isBanned",
-           ban_date                             as "banDate",
-           ban_reason                           as "banReason"
-    FROM users
-    WHERE confirmation_code = $1`,
-      [confirmationCode],
-    );
+  async getByConfirmationCode(confirmationCode): Promise<User | never> {
+    const user = await this.usersRepository.findOneBy([
+      { confirmationCode: confirmationCode },
+    ]);
 
-    if (result.length === 0) {
+    if (user === null) {
       throw new UnprocessableEntityException(
         `User with confirmationCode: "${confirmationCode}" is not found`,
       );
     }
 
-    return result[0];
+    return user;
   }
 
-  async saveNewUser(newUser: any): Promise<void> {
-    const query = `
-    INSERT INTO users (
-      login,
-      email,
-      password_hash,
-      created_at,
-      confirmation_code,
-      expiration_date_of_confirmation_code,
-      is_confirmed,
-      is_banned,
-      ban_date,
-      ban_reason
-    )
-    VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-  `;
+  async getByEmail(email: string): Promise<User | never> {
+    const user = await this.usersRepository.findOneBy([{ email: email }]);
 
-    await this.dataSource.query(query, [
-      newUser.login,
-      newUser.email,
-      newUser.passwordHash,
-      newUser.createdAt,
-      newUser.confirmationCode,
-      newUser.expirationDate,
-      newUser.isConfirmed,
-      newUser.isBanned,
-      newUser.banDate,
-      newUser.banReason,
-    ]);
+    if (user === null) {
+      throw new EntityNotFoundException(
+        `User with email: ${email} is not found`,
+        'email',
+      );
+    }
+
+    return user;
   }
 
-  async confirmEmail(userId: string) {
-    await this.dataSource.query(
-      `UPDATE users SET is_confirmed = true WHERE id = $1`,
-      [userId],
-    );
+  async save(newUser: User): Promise<User> {
+    return await this.usersRepository.save(newUser);
   }
 
+  //TODO заменить этот кусочек кода.
   async forTest_resetExpirationDateOfConfirmationCodeToCurrentDate(
     userId: string,
   ) {
@@ -136,114 +79,40 @@ export class UsersRepository {
     );
   }
 
-  async getByEmail(email: string) {
-    const result = await this.dataSource.query(
-      `
-    SELECT id,
-           login,
-           email,
-           password_hash                        as "passwordHash",
-           created_at                           as "createdAt",
-           confirmation_code                    as "confirmationCode",
-           expiration_date_of_confirmation_code as "expirationDate",
-           is_confirmed                         as "isConfirmed",
-           is_banned                            as "isBanned",
-           ban_date                             as "banDate",
-           ban_reason                           as "banReason"
-    FROM users
-    WHERE email = $1`,
-      [email],
-    );
-
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        `User with email: ${email} is not found`,
-        'email',
-      );
-    }
-
-    return result[0];
-  }
-
-  async refreshEmailConfirmationInfo(
-    userId: string,
-    confirmationCode: string,
-    expirationDate: Date,
-  ) {
-    await this.dataSource.query(
-      `UPDATE users
-       SET confirmation_code = $1,
-           expiration_date_of_confirmation_code = $2
-       WHERE id = $3`,
-      [confirmationCode, expirationDate, userId],
-    );
-  }
-
   async getById(userId: string) {
-    const user = await this.dataSource.query(
-      `SELECT id,
-              login,
-              email,
-              password_hash                        as "passwordHash",
-              created_at                           as "createdAt",
-              confirmation_code                    as "confirmationCode",
-              expiration_date_of_confirmation_code as "expirationDate",
-              is_confirmed                         as "isConfirmed",
-              is_banned                            as "isBanned",
-              ban_date                             as "banDate",
-              ban_reason                           as "banReason" FROM users WHERE id = $1`,
-      [userId],
-    );
+    const user = await this.usersRepository.findOneBy({ id: userId });
 
-    if (!user) {
+    if (user === null) {
       throw new EntityNotFoundException(
         `User with id: "${userId}" does not exist`,
       );
     }
-    return user[0];
+    return user;
   }
 
   async getByLoginOrEmail(loginOrEmail: string) {
-    const user = await this.dataSource.query(
-      `SELECT id,
-              login,
-              email,
-              password_hash                        as "passwordHash",
-              created_at                           as "createdAt",
-              confirmation_code                    as "confirmationCode",
-              expiration_date_of_confirmation_code as "expirationDate",
-              is_confirmed                         as "isConfirmed",
-              is_banned                            as "isBanned",
-              ban_date                             as "banDate",
-              ban_reason                           as "banReason" FROM users WHERE login = $1 OR email = $1`,
-      [loginOrEmail],
-    );
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.login = :loginOrEmail', { loginOrEmail })
+      .orWhere('user.email = :loginOrEmail', { loginOrEmail })
+      .getOne();
 
-    if (user.length === 0) {
+    if (user === null) {
       throw new EntityNotFoundException(
         `User with email or login "${loginOrEmail}" does not exist`,
       );
     }
-    return user[0] || null;
+
+    return user;
   }
 
-  async setNewPassword(passwordHash: string, userId: string) {
-    await this.dataSource.query(
-      `UPDATE users SET password_hash = $1 WHERE id = $2`,
-      [passwordHash, userId],
-    );
-  }
-
-  async deleteById(userId: string) {
-    await this.dataSource.query(`DELETE FROM users WHERE id = $1`, [userId]);
+  async delete(user: User) {
+    await this.usersRepository.remove(user);
   }
 
   async throwIfUserIsNotExists(userId: string) {
-    const result = await this.dataSource.query(
-      `SELECT * FROM users WHERE id = $1`,
-      [userId],
-    );
-    if (result.length === 0) {
+    const user = await this.usersRepository.findOneBy({ id: userId });
+    if (user === null) {
       throw new EntityNotFoundException(
         `User with id: ${userId} is not exists`,
         'login',
@@ -255,11 +124,13 @@ export class UsersRepository {
     userId: string,
     isBanned: boolean,
     banDate: Date | boolean,
-    banReason: string | boolean,
+    banReason: string,
   ) {
-    await this.dataSource.query(
-      `UPDATE users SET is_banned = $1, ban_date = $2, ban_reason = $3 WHERE id = $4`,
-      [isBanned, banDate, banReason, userId],
-    );
+    await this.usersRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ isBanned, banDate, banReason })
+      .where('id = :id', { id: userId })
+      .execute();
   }
 }

@@ -14,7 +14,7 @@ export class SetNewPasswordCommand {
 @CommandHandler(SetNewPasswordCommand)
 export class SetNewPasswordUseCase implements ICommandHandler {
   constructor(
-    private usersPgRepository: UsersRepository,
+    private usersRepository: UsersRepository,
     private passwordRecoveryRepository: PasswordRecoveryRepository,
   ) {}
   async execute(command: SetNewPasswordCommand) {
@@ -29,10 +29,9 @@ export class SetNewPasswordUseCase implements ICommandHandler {
       );
     }
 
-    await this.usersPgRepository.setNewPassword(
-      await this.generatePasswordHash(command.newPassword),
-      passwordRecovery.userId,
-    );
+    const user = await this.usersRepository.getById(passwordRecovery.userId);
+    user.passwordHash = await this.generatePasswordHash(command.newPassword);
+    await this.usersRepository.save(user);
 
     await this.passwordRecoveryRepository.confirmPasswordRecovery(
       passwordRecovery.code,

@@ -20,20 +20,13 @@ export class RegistrationUseCase implements ICommandHandler {
   ) {}
   async execute(command: RegistrationCommand): Promise<void | never> {
     console.log(command);
-    //TODO when we will use typeOrm entities not raw sql use usersFactory
-    // const newUser = await this.usersFactory.registerNewUser(
-    //   command.login,
-    //   command.password,
-    //   command.email,
-    // );
-
-    const newUser = await this.usersFactory.registerNewUserPg(
+    const newUser = await this.usersFactory.registerNewUser(
       command.login,
       command.password,
       command.email,
     );
 
-    await this.usersPgRepository.saveNewUser(newUser);
+    await this.usersPgRepository.save(newUser);
     this.emailSenderService.sendRegistrationConfirmationEmail(
       command.email,
       newUser.confirmationCode,

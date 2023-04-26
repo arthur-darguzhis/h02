@@ -8,23 +8,22 @@ export class ConfirmRegistrationCommand {
 
 @CommandHandler(ConfirmRegistrationCommand)
 export class ConfirmRegistrationUseCase implements ICommandHandler {
-  constructor(private usersPgRepository: UsersRepository) {}
+  constructor(private usersRepository: UsersRepository) {}
   async execute(command: ConfirmRegistrationCommand) {
     console.log(command);
-    const user = await this.usersPgRepository.getByConfirmationCode(
-      command.code,
-    );
+    const user = await this.usersRepository.getByConfirmationCode(command.code);
 
     if (user.isConfirmed) {
       throw new UnprocessableEntityException('The email is already confirmed');
     }
 
-    if (user.expirationDate < new Date().getTime()) {
+    if (user.expirationDateOfConfirmationCode < new Date()) {
       throw new UnprocessableEntityException(
         'The confirmation code is expired',
       );
     }
 
-    await this.usersPgRepository.confirmEmail(user.id);
+    user.isConfirmed = true;
+    await this.usersRepository.save(user);
   }
 }
