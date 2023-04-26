@@ -27,6 +27,6 @@ export class BloggerUpdateBlogUseCase {
     blog.name = command.name;
     blog.description = command.description;
     blog.websiteUrl = command.websiteUrl;
-    await this.blogsPgRepository.update(blog);
+    await this.blogsPgRepository.save(blog);
   }
 }

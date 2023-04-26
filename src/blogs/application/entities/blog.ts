@@ -37,6 +37,9 @@ export class Blog {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId: string;
+
   @Column({ type: 'boolean', name: 'is_banned' })
   isBanned: boolean;
 

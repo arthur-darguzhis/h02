@@ -19,13 +19,13 @@ export class BloggerCreateBlogUseCase implements ICommandHandler {
   ) {}
 
   async execute(command: BloggerCreateBlogCommand) {
-    const blog = this.blogsFactory.bloggerCreateBlogPg(
+    const blog = this.blogsFactory.bloggerCreateBlog(
       command.name,
       command.description,
       command.websiteUrl,
       command.userId,
     );
 
-    return await this.blogsPgRepository.saveNewBlog(blog);
+    return await this.blogsPgRepository.save(blog);
   }
 }

@@ -1,35 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { Blog } from './application/entities/blog';
 
 @Injectable()
 export class BlogsFactory {
-  public adminCreateBlogPg(name, description, websiteUrl) {
-    return {
-      name: name,
-      description: description,
-      websiteUrl: websiteUrl,
-      createdAt: new Date(),
-      isMembership: false,
-      userId: null,
-      isBanned: false,
-      banDate: null,
-    };
+  public adminCreateBlog(name, description, websiteUrl) {
+    const blog = new Blog();
+
+    blog.name = name;
+    blog.description = description;
+    blog.websiteUrl = websiteUrl;
+    blog.createdAt = new Date();
+    blog.isMembership = false;
+    blog.userId = null;
+    blog.isBanned = false;
+    blog.banDate = null;
+
+    return blog;
   }
 
-  bloggerCreateBlogPg(
+  bloggerCreateBlog(
     name: string,
     description: string,
     websiteUrl: string,
     userId: string,
   ) {
-    return {
-      name: name,
-      description: description,
-      websiteUrl: websiteUrl,
-      createdAt: new Date(),
-      isMembership: false,
-      userId: userId,
-      isBanned: false,
-      banDate: null,
-    };
+    const blog = new Blog();
+    blog.name = name;
+    blog.description = description;
+    blog.websiteUrl = websiteUrl;
+    blog.createdAt = new Date();
+    blog.isMembership = false;
+    blog.userId = userId;
+    blog.isBanned = false;
+    blog.banDate = null;
+
+    return blog;
   }
 }

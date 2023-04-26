@@ -24,7 +24,6 @@ export class AdminSetOwnerToOrphanBlogUseCase {
       );
     }
     blog.userId = userId;
-
-    await this.blogsPgRepository.updateOwner(userId, blog.id);
+    await this.blogsPgRepository.save(blog);
   }
 }

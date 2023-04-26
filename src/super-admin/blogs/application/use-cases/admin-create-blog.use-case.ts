@@ -18,12 +18,12 @@ export class AdminCreateBlogUseCase implements ICommandHandler {
   ) {}
   async execute(command: AdminCreateBlogCommand) {
     console.log(command);
-    const blog = this.blogsFactory.adminCreateBlogPg(
+    const blog = this.blogsFactory.adminCreateBlog(
       command.name,
       command.description,
       command.websiteUrl,
     );
 
-    return await this.blogsPgRepository.saveNewBlog(blog);
+    return await this.blogsPgRepository.save(blog);
   }
 }

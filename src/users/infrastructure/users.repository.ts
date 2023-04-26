@@ -65,8 +65,8 @@ export class UsersRepository {
     return user;
   }
 
-  async save(newUser: User): Promise<User> {
-    return await this.usersRepository.save(newUser);
+  async save(user: User): Promise<User> {
+    return await this.usersRepository.save(user);
   }
 
   //TODO заменить этот кусочек кода.
