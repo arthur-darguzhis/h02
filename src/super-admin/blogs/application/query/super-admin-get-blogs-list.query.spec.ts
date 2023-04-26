@@ -1,7 +1,7 @@
 import { Given } from '../../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../users/application/use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { SuperAdminGetBlogsListQuery } from './super-admin-get-blogs-list.query';
 import { AdminBanOrUnbanBlogCommand } from '../use-cases/admin-ban-or-unban-blog.use-case';
@@ -9,7 +9,7 @@ import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.rep
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
@@ -23,7 +23,7 @@ describe('Should return list of banned users in a blog', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger" and 5 blogs;

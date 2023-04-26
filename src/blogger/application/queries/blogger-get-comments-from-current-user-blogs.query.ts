@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class BloggerGetCommentsFromCurrentUserBlogsQuery {
   constructor(
@@ -22,7 +22,7 @@ export class BloggerGetCommentsFromCurrentUserBlogsQuery {
 export class BloggerGetCommentsListInBlogHandler implements IQueryHandler {
   constructor(
     @InjectDataSource() protected dataSource: DataSource,
-    protected usersPgRepository: UsersPgRepository,
+    protected usersPgRepository: UsersRepository,
   ) {}
 
   async execute(query: BloggerGetCommentsFromCurrentUserBlogsQuery) {

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 
 export class ConfirmRegistrationCommand {
@@ -8,7 +8,7 @@ export class ConfirmRegistrationCommand {
 
 @CommandHandler(ConfirmRegistrationCommand)
 export class ConfirmRegistrationUseCase implements ICommandHandler {
-  constructor(private usersPgRepository: UsersPgRepository) {}
+  constructor(private usersPgRepository: UsersRepository) {}
   async execute(command: ConfirmRegistrationCommand) {
     console.log(command);
     const user = await this.usersPgRepository.getByConfirmationCode(

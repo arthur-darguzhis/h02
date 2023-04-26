@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersFactory } from '../../../users/users.factory';
 import { EmailSenderService } from '../../../global-services/email-sender.service';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class RegistrationCommand {
   constructor(
@@ -15,7 +15,7 @@ export class RegistrationCommand {
 export class RegistrationUseCase implements ICommandHandler {
   constructor(
     private usersFactory: UsersFactory,
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private emailSenderService: EmailSenderService,
   ) {}
   async execute(command: RegistrationCommand): Promise<void | never> {

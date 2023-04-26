@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
 export class AdminSetOwnerToOrphanBlogCommand {
   constructor(public blogId: string, public userId: string) {}
@@ -9,7 +9,7 @@ export class AdminSetOwnerToOrphanBlogCommand {
 @CommandHandler(AdminSetOwnerToOrphanBlogCommand)
 export class AdminSetOwnerToOrphanBlogUseCase {
   constructor(
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private blogsPgRepository: BlogsPgRepository,
   ) {}
   async execute(command: AdminSetOwnerToOrphanBlogCommand) {

@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
@@ -14,7 +14,7 @@ import { UserMakeReactionOnCommentCommand } from './user-make-reaction-on-commen
 
 describe('User make reaction on comment', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let commandBus: CommandBus;
   let postsPgRepository: PostsPgRepository;
@@ -32,7 +32,7 @@ describe('User make reaction on comment', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
     postsPgRepository = given.configuredTestApp.get(PostsPgRepository);

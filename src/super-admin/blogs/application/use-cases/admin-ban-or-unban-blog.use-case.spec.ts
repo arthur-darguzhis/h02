@@ -4,14 +4,14 @@ import { AdminAddNewUserCommand } from '../../../users/application/use-cases/adm
 import { AdminBanOrUnbanBlogCommand } from './admin-ban-or-unban-blog.use-case';
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BloggerCreatePostCommand } from '../../../../blogger/application/use-cases/blogger-create-post.use-case';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
 import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
 
 describe(`Admin ban or unban blog with it's posts`, () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let postsPgRepository: PostsPgRepository;
 
@@ -24,7 +24,7 @@ describe(`Admin ban or unban blog with it's posts`, () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
 

@@ -1,12 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { UsersPgRepository } from './infrastructure/users.pg-repository';
+import { UsersRepository } from './infrastructure/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 
 @Injectable()
 export class UsersFactory {
-  constructor(private usersPgRepository: UsersPgRepository) {}
+  constructor(private usersPgRepository: UsersRepository) {}
 
   public async adminAddNewUserPg(login, password, email) {
     await this.usersPgRepository.throwIfLoginInUse(login);

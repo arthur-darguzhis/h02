@@ -1,14 +1,14 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { DomainException } from '../../../common/exceptions/domain.exceptions/domain.exception';
 import * as bcrypt from 'bcrypt';
 import { InvalidValueException } from '../../../common/exceptions/domain.exceptions/invalid-value-exception';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly usersPgRepository: UsersPgRepository) {
+  constructor(private readonly usersPgRepository: UsersRepository) {
     super({
       usernameField: 'loginOrEmail',
     });

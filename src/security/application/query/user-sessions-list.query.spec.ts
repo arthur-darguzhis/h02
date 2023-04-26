@@ -1,6 +1,6 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { UserSessionsPgRepository } from '../../infrastructure/user-sessions-pg.repository';
@@ -10,7 +10,7 @@ describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let userSessionsPgRepository: UserSessionsPgRepository;
 
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('User purge other sessions', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
       UserSessionsPgRepository,
     );

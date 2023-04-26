@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from './registration.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { LoginCommand } from './login.use-case';
 import { UserSessionsPgRepository } from '../../../security/infrastructure/user-sessions-pg.repository';
 import { LogoutCommand } from './logout.use-case';
@@ -10,14 +10,14 @@ import jwt from 'jsonwebtoken';
 describe('User login use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let userSessionsPgRepository: UserSessionsPgRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
       UserSessionsPgRepository,
     );

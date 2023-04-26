@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { UserSessionsPgRepository } from '../../../../security/infrastructure/user-sessions-pg.repository';
 import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
 import { PostsPgRepository } from '../../../../posts/infrastructure/posts-pg.repository';
@@ -19,7 +19,7 @@ export class AdminBanOrUnbanUserCommand {
 @CommandHandler(AdminBanOrUnbanUserCommand)
 export class AdminBanOrUnbanUserUseCase {
   constructor(
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private userSessionsPgRepository: UserSessionsPgRepository,
     private blogsPgRepository: BlogsPgRepository,
     private postsPgRepository: PostsPgRepository,

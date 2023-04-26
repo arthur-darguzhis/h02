@@ -1,6 +1,6 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import jwt from 'jsonwebtoken';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { UserPurgeOtherSessionsCommand } from './user-purge-other-sessions.use-case';
@@ -10,14 +10,14 @@ import { UserSessionsPgRepository } from '../../infrastructure/user-sessions-pg.
 describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let userSessionsPgRepository: UserSessionsPgRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
       UserSessionsPgRepository,
     );

@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from './registration.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { ConfirmRegistrationCommand } from './registration-confirmation.use-case';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { PasswordRecoveryCommand } from './password-recovery.use-case';
@@ -13,14 +13,14 @@ import { wait } from '../../../testing/wait';
 describe('set new password use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let passwordRecoveryRepository: PasswordRecoveryRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     passwordRecoveryRepository = given.configuredTestApp.get(
       PasswordRecoveryRepository,
     );

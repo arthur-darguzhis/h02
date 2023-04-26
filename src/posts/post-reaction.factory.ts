@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
-import { UsersPgRepository } from '../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../users/infrastructure/users.repository';
 
 @Injectable()
 export class PostReactionsFactory {
-  constructor(private usersPgRepository: UsersPgRepository) {}
+  constructor(private usersPgRepository: UsersRepository) {}
 
   async createNewPostReaction(
     postId: string,

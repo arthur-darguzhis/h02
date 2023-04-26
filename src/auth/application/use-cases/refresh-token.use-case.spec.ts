@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegistrationCommand } from './registration.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { LoginCommand } from './login.use-case';
 import jwt from 'jsonwebtoken';
 import { RefreshTokenCommand } from './refresh-token.use-case';
@@ -10,13 +10,13 @@ import { wait } from '../../../testing/wait';
 describe('Refresh token use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
 
     /** Arrange
      * Given: There is a user with login "firstUser"

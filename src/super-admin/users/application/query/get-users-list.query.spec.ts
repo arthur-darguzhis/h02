@@ -1,13 +1,13 @@
 import { Given } from '../../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { AdminBanOrUnbanUserCommand } from '../use-cases/admin-ban-or-unban-user.use-case';
 import { GetUsersListQuery } from './get-users-list.query';
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -22,7 +22,7 @@ describe('Should return list of banned users in a blog', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
 
     /** Arrange
      * Given: There is a user as blogger with login "blogger";

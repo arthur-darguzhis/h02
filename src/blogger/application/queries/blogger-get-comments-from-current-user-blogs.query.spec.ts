@@ -2,7 +2,7 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { BloggerCreateBlogCommand } from '../use-cases/blogger-create-blog.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 import { UserAddCommentCommand } from '../../../posts/application/use-cases/user-add-comment.use-case';
 import { BloggerCreatePostCommand } from '../use-cases/blogger-create-post.use-case';
@@ -13,7 +13,7 @@ import { EntityNotFoundException } from '../../../common/exceptions/domain.excep
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let postsPgRepository: PostsPgRepository;
   let commandBus: CommandBus;
@@ -33,7 +33,7 @@ describe('Should return list of banned users in a blog', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
 

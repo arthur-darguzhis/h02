@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { UsersFactory } from '../../../../users/users.factory';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 
 export class AdminAddNewUserCommand {
   constructor(
@@ -14,7 +14,7 @@ export class AdminAddNewUserCommand {
 export class AdminAddNewUserUseCase {
   constructor(
     private usersFactory: UsersFactory,
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
   ) {}
   async execute(command: AdminAddNewUserCommand) {
     console.log(command);

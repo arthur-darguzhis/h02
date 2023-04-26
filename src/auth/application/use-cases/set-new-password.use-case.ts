@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { PasswordRecoveryRepository } from '../../../users/infrastructure/password-recovery.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import * as bcrypt from 'bcrypt';
@@ -14,7 +14,7 @@ export class SetNewPasswordCommand {
 @CommandHandler(SetNewPasswordCommand)
 export class SetNewPasswordUseCase implements ICommandHandler {
   constructor(
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private passwordRecoveryRepository: PasswordRecoveryRepository,
   ) {}
   async execute(command: SetNewPasswordCommand) {

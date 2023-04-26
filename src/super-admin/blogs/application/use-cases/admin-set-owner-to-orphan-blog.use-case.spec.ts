@@ -1,7 +1,7 @@
 import { Given } from '../../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../users/application/use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../../blogs/infrastructure/blogs-pg.repository';
 import { AdminCreateBlogCommand } from './admin-create-blog.use-case';
 import { AdminSetOwnerToOrphanBlogCommand } from './admin-set-owner-to-orphan-blog.use-case';
@@ -10,7 +10,7 @@ import { UnprocessableEntityException } from '../../../../common/exceptions/doma
 describe('Admin set owner to an orphan blog', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
 
   let userAsBlogger;
@@ -21,7 +21,7 @@ describe('Admin set owner to an orphan blog', () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
 
     /** Arrange

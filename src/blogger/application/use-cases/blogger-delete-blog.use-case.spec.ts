@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from './blogger-create-blog.use-case';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
@@ -9,7 +9,7 @@ import { BloggerDeleteBlogCommand } from './blogger-delete-blog.use-case';
 
 describe('Blogger delete blog', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let commandBus: CommandBus;
 
@@ -21,7 +21,7 @@ describe('Blogger delete blog', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
 

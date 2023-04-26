@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { EntityAlreadyExistsException } from '../../common/exceptions/domain.exceptions/entity-already-exists.exception';
 import { UnprocessableEntityException } from '../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
+import { User } from '../application/entities/user';
 
 @Injectable()
-export class UsersPgRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+export class UsersRepository {
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
   async findByLogin(login: string) {
     const result = await this.dataSource.query(

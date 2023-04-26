@@ -2,12 +2,12 @@ import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
 import { BloggerCreateBlogCommand } from '../use-cases/blogger-create-blog.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { GetListOfBlogsByOwnerQuery } from './get-list-of-blogs-by-owner.query';
 
 describe('Should return blogs list by owner', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
 
@@ -16,7 +16,7 @@ describe('Should return blogs list by owner', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
 

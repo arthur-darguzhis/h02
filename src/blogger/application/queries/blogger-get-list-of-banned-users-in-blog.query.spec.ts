@@ -4,12 +4,12 @@ import { AdminAddNewUserCommand } from '../../../super-admin/users/application/u
 import { BloggerCreateBlogCommand } from '../use-cases/blogger-create-blog.use-case';
 import { BloggerGetListOfBannedUsersInBlogQuery } from './blogger-get-list-of-banned-users-in-blog.query';
 import { BloggerBanUserCommand } from '../use-cases/blogger-ban-user.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 
 describe('Should return list of banned users in a blog', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let commandBus: CommandBus;
   let queryBus: QueryBus;
@@ -25,7 +25,7 @@ describe('Should return list of banned users in a blog', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);

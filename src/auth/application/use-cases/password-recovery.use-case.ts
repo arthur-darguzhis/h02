@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { PasswordRecoveryRepository } from '../../../users/infrastructure/password-recovery.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
@@ -12,7 +12,7 @@ export class PasswordRecoveryCommand {
 @CommandHandler(PasswordRecoveryCommand)
 export class PasswordRecoveryUseCase implements ICommandHandler {
   constructor(
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private passwordRecoveryRepository: PasswordRecoveryRepository,
     private emailSenderService: EmailSenderService,
   ) {}

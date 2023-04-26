@@ -6,7 +6,7 @@ import { BloggerCreatePostCommand } from './blogger-create-post.use-case';
 import { UserAddCommentCommand } from '../../../posts/application/use-cases/user-add-comment.use-case';
 import { BloggerBanUserCommand } from './blogger-ban-user.use-case';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 import { PostsPgRepository } from '../../../posts/infrastructure/posts-pg.repository';
 import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';
@@ -14,7 +14,7 @@ import { EntityNotFoundException } from '../../../common/exceptions/domain.excep
 
 describe('Blogger ban user', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let postsPgRepository: PostsPgRepository;
   let commandBus: CommandBus;
@@ -30,7 +30,7 @@ describe('Blogger ban user', () => {
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
     commandBus = given.configuredTestApp.get(CommandBus);

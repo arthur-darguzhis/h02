@@ -1,6 +1,6 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import jwt from 'jsonwebtoken';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
@@ -11,14 +11,14 @@ import { UnauthorizedActionException } from '../../../common/exceptions/domain.e
 describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let userSessionsPgRepository: UserSessionsPgRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     userSessionsPgRepository = given.configuredTestApp.get(
       UserSessionsPgRepository,
     );

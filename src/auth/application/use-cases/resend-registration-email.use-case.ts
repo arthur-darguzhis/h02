@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { UnprocessableEntityException } from '../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { EmailSenderService } from '../../../global-services/email-sender.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,7 +12,7 @@ export class ResendRegistrationEmailCommand {
 @CommandHandler(ResendRegistrationEmailCommand)
 export class ResendRegistrationEmailUseCase implements ICommandHandler {
   constructor(
-    private usersPgRepository: UsersPgRepository,
+    private usersPgRepository: UsersRepository,
     private emailSenderService: EmailSenderService,
   ) {}
   async execute(command: ResendRegistrationEmailCommand) {

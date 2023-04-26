@@ -1,7 +1,7 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { UsersPgRepository } from '../../../users/infrastructure/users.pg-repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BloggerCreateBlogCommand } from '../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BlogsPgRepository } from '../../../blogs/infrastructure/blogs-pg.repository';
 import { PostsPgRepository } from '../../infrastructure/posts-pg.repository';
@@ -12,7 +12,7 @@ import { AdminBanOrUnbanBlogCommand } from '../../../super-admin/blogs/applicati
 
 describe('Return posts list', () => {
   let given: Given;
-  let usersPgRepository: UsersPgRepository;
+  let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsPgRepository;
   let postsPgRepository: PostsPgRepository;
   let commandBus: CommandBus;
@@ -34,7 +34,7 @@ describe('Return posts list', () => {
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
-    usersPgRepository = given.configuredTestApp.get(UsersPgRepository);
+    usersPgRepository = given.configuredTestApp.get(UsersRepository);
     blogsPgRepository = given.configuredTestApp.get(BlogsPgRepository);
     postsPgRepository = given.configuredTestApp.get(PostsPgRepository);
 

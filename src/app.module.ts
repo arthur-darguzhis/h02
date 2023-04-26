@@ -50,7 +50,7 @@ import { AdminBanOrUnbanBlogUseCase } from './super-admin/blogs/application/use-
 import { GetPostsListHandler } from './posts/application/query/get-posts-list.query';
 import { GetPostsListByBlogIdHandler } from './posts/application/query/get-posts-list-by-blog-id.query';
 import { PostsController } from './posts/api/posts.controller';
-import { UsersPgRepository } from './users/infrastructure/users.pg-repository';
+import { UsersRepository } from './users/infrastructure/users.repository';
 import { RegistrationUseCase } from './auth/application/use-cases/registration.use-case';
 import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
@@ -221,7 +221,7 @@ const postsQueries = [
     TestingService,
     UsersFactory,
     BlogUsersBanFactory,
-    UsersPgRepository,
+    UsersRepository,
     UsersPgQueryRepository,
     UserSessionsPgRepository,
     PasswordRecoveryRepository,
