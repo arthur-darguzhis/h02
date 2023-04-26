@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UnauthorizedActionException } from '../common/exceptions/domain.exceptions/unauthorized-action.exception';
 import { BloggerCreatePostCommand } from '../blogger/application/use-cases/blogger-create-post.use-case';
 import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
+import { Post } from './application/entities/post';
 
 @Injectable()
 export class PostsFactory {
@@ -16,18 +17,18 @@ export class PostsFactory {
       );
     }
 
-    return {
-      title: command.title,
-      shortDescription: command.shortDescription,
-      content: command.content,
-      blogId: command.blogId,
-      blogName: blog.name,
-      isBanned: false,
-      createdAt: new Date(),
-      likesCount: 0,
-      dislikesCount: 0,
-      newestLikes: [],
-      userId: command.userId,
-    };
+    const post = new Post();
+    post.title = command.title;
+    post.shortDescription = command.shortDescription;
+    post.content = command.content;
+    post.blogId = command.blogId;
+    post.isBanned = false;
+    post.createdAt = new Date();
+    post.likesCount = 0;
+    post.dislikesCount = 0;
+    post.newestLikes = [];
+    post.userId = command.userId;
+
+    return post;
   }
 }

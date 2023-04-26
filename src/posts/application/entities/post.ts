@@ -44,20 +44,20 @@ export class Post {
   @Column({ type: 'uuid', name: 'user_id' })
   userId: string;
 
-  @Column({ type: 'boolean' })
-  is_banned: boolean;
+  @Column({ type: 'boolean', name: 'is_banned' })
+  isBanned: boolean;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
+  createdAt: Date;
 
-  @Column({ type: 'integer' })
-  likes_count: number;
+  @Column({ type: 'integer', name: 'likes_count' })
+  likesCount: number;
 
-  @Column({ type: 'integer' })
-  dislikes_count: number;
+  @Column({ type: 'integer', name: 'dislikes_count' })
+  dislikesCount: number;
 
-  @Column({ type: 'jsonb', array: true })
-  newest_likes: any[];
+  @Column({ type: 'jsonb', array: true, name: 'newest_likes' })
+  newestLikes: any[];
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];

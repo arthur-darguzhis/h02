@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../infrastructure/posts.repository';
 import { PostsReactionsRepository } from '../../infrastructure/posts-reactions.repository';
 import { PostReactionsFactory } from '../../post-reaction.factory';
+import { Post } from '../entities/post';
 
 export class UserMakeReactionOnPostCommand {
   constructor(
@@ -14,13 +15,13 @@ export class UserMakeReactionOnPostCommand {
 @CommandHandler(UserMakeReactionOnPostCommand)
 export class UserMakeReactionOnPostUseCase implements ICommandHandler {
   constructor(
-    private postsPgRepository: PostsRepository,
+    private postsRepository: PostsRepository,
     private postsReactionsPgRepository: PostsReactionsRepository,
     private postReactionsFactory: PostReactionsFactory,
   ) {}
   async execute(command: UserMakeReactionOnPostCommand) {
     console.log(command);
-    await this.postsPgRepository.throwIfNotExists(command.postId);
+    const post = await this.postsRepository.getById(command.postId);
     const userReaction = await this.postsReactionsPgRepository.findUserReaction(
       command.postId,
       command.userId,
@@ -45,21 +46,20 @@ export class UserMakeReactionOnPostUseCase implements ICommandHandler {
       );
     }
 
-    await this.updatePostReactionsCount(command.postId);
+    await this.updatePostReactionsCount(post);
   }
 
-  public async updatePostReactionsCount(postId: string) {
+  public async updatePostReactionsCount(post: Post) {
     const likesCount =
-      await this.postsReactionsPgRepository.calculateCountOfLikes(postId);
+      await this.postsReactionsPgRepository.calculateCountOfLikes(post.id);
     const dislikesCount =
-      await this.postsReactionsPgRepository.calculateCountOfDislikes(postId);
+      await this.postsReactionsPgRepository.calculateCountOfDislikes(post.id);
     const newestLikes =
-      await this.postsReactionsPgRepository.getNewestLikesOnThePost(postId);
-    await this.postsPgRepository.updateLikesInfo(
-      postId,
-      likesCount,
-      dislikesCount,
-      newestLikes,
-    );
+      await this.postsReactionsPgRepository.getNewestLikesOnThePost(post.id);
+
+    post.likesCount = likesCount;
+    post.dislikesCount = dislikesCount;
+    post.newestLikes = newestLikes;
+    await this.postsRepository.save(post);
   }
 }

@@ -21,6 +21,6 @@ export class BloggerCreatePostUseCase {
   async execute(command: BloggerCreatePostCommand) {
     console.log(command);
     const post = await this.postsFactory.bloggerCreatePostPg(command);
-    return await this.postsPgRepository.saveNewPost(post);
+    return await this.postsPgRepository.save(post);
   }
 }

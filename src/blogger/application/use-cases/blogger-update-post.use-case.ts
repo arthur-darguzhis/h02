@@ -39,6 +39,6 @@ export class BloggerUpdatePostUseCase {
     post.title = command.title;
     post.shortDescription = command.shortDescription;
     post.content = command.content;
-    await this.postsPgRepository.update(post);
+    await this.postsPgRepository.save(post);
   }
 }

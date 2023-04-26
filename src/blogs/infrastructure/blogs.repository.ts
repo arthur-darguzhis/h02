@@ -3,7 +3,6 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
 import { Blog } from '../application/entities/blog';
-import { User } from '../../users/application/entities/user';
 
 @Injectable()
 export class BlogsRepository {
@@ -51,7 +50,7 @@ export class BlogsRepository {
       .createQueryBuilder()
       .update(Blog)
       .set({ isBanned })
-      .where('user_id = :id', { id: userId })
+      .where('userId = :id', { id: userId })
       .execute();
   }
 }

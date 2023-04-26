@@ -32,6 +32,6 @@ export class BloggerDeletePostUseCase {
         'Unauthorized delete. This post belongs to another user.',
       );
     }
-    await this.postsPgRepository.delete(command.postId);
+    await this.postsPgRepository.delete(post);
   }
 }
