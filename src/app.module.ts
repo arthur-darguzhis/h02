@@ -87,6 +87,15 @@ import { GetCommentHandler } from './comments/application/query/get-comment.quer
 import { SuperAdminGetBlogsListHandler } from './super-admin/blogs/application/query/super-admin-get-blogs-list.query';
 import { GetPostHandler } from './posts/application/query/get-post.query';
 import { GetCommentsListRelatedToPostHandler } from './comments/application/query/get-comments-list-related-to-post.query';
+import { User } from './users/application/entities/user';
+import { UserSession } from './users/application/entities/user-session';
+import { PasswordRecovery } from './users/application/entities/password-recovery';
+import { Blog } from './blogs/application/entities/blog';
+import { BlogUserBan } from './blogs/application/entities/blog-user-ban';
+import { Post } from './posts/application/entities/post';
+import { Comment } from './comments/application/entities/comment';
+import { CommentReaction } from './comments/application/entities/comment-reaction';
+import { PostReaction } from './posts/application/entities/post-reaction';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -170,11 +179,21 @@ const postsQueries = [
       username: process.env.PG_USERNAME,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE_NAME,
-      autoLoadEntities: false,
-      synchronize: false,
+      autoLoadEntities: true,
+      synchronize: true,
       ssl: process.env.PG_SSL_FLAG === 'true',
     }),
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([
+      User,
+      UserSession,
+      PasswordRecovery,
+      Blog,
+      BlogUserBan,
+      Post,
+      Comment,
+      PostReaction,
+      CommentReaction,
+    ]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
       limit: 5, // Request limit
