@@ -4,7 +4,7 @@ import { UsersRepository } from '../../../users/infrastructure/users.repository'
 import jwt from 'jsonwebtoken';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../infrastructure/user-sessions.repository';
 import { UserPurgeSessionCommand } from './user-purge-session.use-case';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 
@@ -12,7 +12,7 @@ describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: userSessionsRepository;
+  let userSessionsPgRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();

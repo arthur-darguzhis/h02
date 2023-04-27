@@ -2,6 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CommentReaction } from '../application/entities/comment-reaction';
+import { LikeStatus } from '../../common/pgTypes/enum/likeStatus';
 
 @Injectable()
 export class CommentReactionsRepository {
@@ -12,69 +13,36 @@ export class CommentReactionsRepository {
   ) {}
 
   async find(commentId: string, userId: string) {
-    const commentReaction = await this.dataSource.query(
-      `SELECT 
-       id,
-       user_id as userId,
-       comment_id as commentId,
-       status,
-       created_at as createdAt,
-       is_banned as isBanned
-      FROM comment_reactions WHERE comment_id = $1 AND user_id = $2`,
-      [commentId, userId],
-    );
-
-    return commentReaction[0] || null;
+    return await this.commentReactionsRepository.findOneBy({
+      commentId,
+      userId,
+    });
   }
 
-  async updateStatus(userReactionId: string, status: string) {
-    await this.dataSource.query(
-      `UPDATE comment_reactions SET status = $1 WHERE id = $2`,
-      [status, userReactionId],
-    );
+  async save(commentReaction: CommentReaction) {
+    await this.commentReactionsRepository.save(commentReaction);
   }
 
   async calculateCountOfLikes(commentId: string) {
-    const data = await this.dataSource.query(
-      `SELECT COUNT(*) as count FROM comment_reactions WHERE comment_id = $1 AND status = 'Like'`,
-      [commentId],
-    );
-
-    return data[0].count || 0;
+    return await this.commentReactionsRepository.countBy({
+      commentId: commentId,
+      status: LikeStatus.Like,
+    });
   }
 
   async calculateCountOfDislikes(commentId: string) {
-    const data = await this.dataSource.query(
-      `SELECT COUNT(*) as count FROM comment_reactions WHERE comment_id = $1 AND status = 'Dislike'`,
-      [commentId],
-    );
-
-    return data[0].count || 0;
-  }
-
-  async addCommentReaction(commentReaction: {
-    createdAt: Date;
-    commentId: string;
-    isBanned: boolean;
-    userId: string;
-    status: string;
-  }) {
-    await this.dataSource.query(
-      `INSERT INTO comment_reactions (user_id, comment_id, status, created_at, is_banned) VALUES ($1, $2, $3, $4, $5)`,
-      [
-        commentReaction.userId,
-        commentReaction.commentId,
-        commentReaction.status,
-        commentReaction.createdAt,
-        commentReaction.isBanned,
-      ],
-    );
+    return await this.commentReactionsRepository.countBy({
+      commentId: commentId,
+      status: LikeStatus.Dislike,
+    });
   }
 
   async setBanStatusByUserId(userId: string, isBanned: boolean) {
-    await this.dataSource.query(
-      `UPDATE comment_reactions SET is_banned = $1 WHERE user_id = $2`,
-      [isBanned, userId],
-    );
+    await this.commentReactionsRepository
+      .createQueryBuilder()
+      .update(CommentReaction)
+      .set({ isBanned })
+      .where('user_id = :userId', { userId: userId })
+      .execute();
   }
 }

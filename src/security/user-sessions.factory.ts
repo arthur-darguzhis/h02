@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { userSessionsRepository } from './infrastructure/user-sessions.repository';
+import { UserSession } from '../users/application/entities/user-session';
 
 @Injectable()
 export class UserSessionsFactory {
-  constructor(
-    private jwtService: JwtService,
-    private userSessionsPgRepository: userSessionsRepository,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
-  async createNewUserSessionPg(
+  async createNewUserSession(
     refreshToken: string,
     ip: string,
     userAgent: string,
@@ -17,14 +14,14 @@ export class UserSessionsFactory {
     const decodedRefreshToken: any = this.jwtService.decode(refreshToken, {
       json: true,
     });
+    const userSession = new UserSession();
+    userSession.issuedAt = decodedRefreshToken.iat;
+    userSession.expireAt = decodedRefreshToken.exp;
+    userSession.deviceId = decodedRefreshToken.deviceId;
+    userSession.ip = ip;
+    userSession.deviceName = userAgent ?? 'unknown';
+    userSession.userId = decodedRefreshToken.userId;
 
-    await this.userSessionsPgRepository.saveNewSession(
-      decodedRefreshToken.iat,
-      decodedRefreshToken.exp,
-      decodedRefreshToken.deviceId,
-      ip,
-      userAgent,
-      decodedRefreshToken.userId,
-    );
+    return userSession;
   }
 }

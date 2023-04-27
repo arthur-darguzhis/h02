@@ -23,7 +23,7 @@ export class PostsRepository {
     return await this.postsRepository
       .createQueryBuilder('post')
       .where('post.title = :title', { title })
-      .andWhere('post.blogId = :blogId', { blogId })
+      .andWhere('post.blog_id = :blogId', { blogId })
       .getOne();
   }
 
@@ -61,7 +61,7 @@ export class PostsRepository {
       .createQueryBuilder()
       .update(Post)
       .set({ isBanned })
-      .where('blogId = :blogId', { id: blogId })
+      .where('blog_id = :blogId', { id: blogId })
       .execute();
   }
 
@@ -70,7 +70,7 @@ export class PostsRepository {
       .createQueryBuilder()
       .update(Post)
       .set({ isBanned })
-      .where('userId = :id', { id: userId })
+      .where('user_id = :id', { id: userId })
       .execute();
   }
 

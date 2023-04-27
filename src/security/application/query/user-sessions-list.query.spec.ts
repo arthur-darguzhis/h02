@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../infrastructure/user-sessions.repository';
 import { UserSessionsListQuery } from './user-sessions-list.query';
 
 describe('User purge other sessions', () => {
@@ -11,7 +11,7 @@ describe('User purge other sessions', () => {
   let commandBus: CommandBus;
   let queryBus: QueryBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: userSessionsRepository;
+  let userSessionsPgRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();

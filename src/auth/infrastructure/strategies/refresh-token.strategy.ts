@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { userSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -10,7 +10,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   'refresh-token',
 ) {
   constructor(
-    private readonly userSessionsPgRepository: userSessionsRepository,
+    private readonly userSessionsPgRepository: UserSessionsRepository,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([

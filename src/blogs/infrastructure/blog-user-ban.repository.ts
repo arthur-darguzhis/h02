@@ -14,8 +14,8 @@ export class BlogUserBanRepository {
   async findOne(blogId: string, userId: string) {
     return await this.blogUserBansRepository
       .createQueryBuilder('blog_user_ban')
-      .where('blog_user_ban.blogId = :blogId', { blogId })
-      .andWhere('blog_user_ban.userId = :userId', { userId })
+      .where('blog_user_ban.blog_id = :blogId', { blogId })
+      .andWhere('blog_user_ban.user_id = :userId', { userId })
       .getOne();
   }
 

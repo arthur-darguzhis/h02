@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { userSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
 
 export class LogoutCommand {
   constructor(
@@ -10,10 +10,10 @@ export class LogoutCommand {
 
 @CommandHandler(LogoutCommand)
 export class LogoutUseCase implements ICommandHandler {
-  constructor(private userSessionsPgRepository: userSessionsRepository) {}
+  constructor(private userSessionsPgRepository: UserSessionsRepository) {}
   async execute(command: LogoutCommand) {
     console.log(command);
-    await this.userSessionsPgRepository.removeOne(
+    await this.userSessionsPgRepository.remove(
       command.deviceId,
       command.userId,
     );

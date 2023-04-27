@@ -5,13 +5,13 @@ import jwt from 'jsonwebtoken';
 import { LoginCommand } from '../../../auth/application/use-cases/login.use-case';
 import { UserPurgeOtherSessionsCommand } from './user-purge-other-sessions.use-case';
 import { AdminAddNewUserCommand } from '../../../super-admin/users/application/use-cases/admin-add-new-user.use-case';
-import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../infrastructure/user-sessions.repository';
 
 describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: userSessionsRepository;
+  let userSessionsPgRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();

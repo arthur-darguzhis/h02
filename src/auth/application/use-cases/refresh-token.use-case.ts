@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
-import { userSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../../security/infrastructure/user-sessions.repository';
 
 export class RefreshTokenCommand {
   constructor(
@@ -18,7 +18,7 @@ export class RefreshTokenCommand {
 export class RefreshTokenUseCase implements ICommandHandler {
   constructor(
     private jwtService: JwtService,
-    private userSessionsPgRepository: userSessionsRepository,
+    private userSessionsPgRepository: UserSessionsRepository,
   ) {}
 
   async execute(command: RefreshTokenCommand) {
@@ -31,12 +31,20 @@ export class RefreshTokenUseCase implements ICommandHandler {
       command.refreshTokenPayload.deviceId,
     );
 
-    await this.userSessionsPgRepository.updateSessionByDeviceId(
+    const userSession = await this.userSessionsPgRepository.getByDeviceId(
       command.refreshTokenPayload.deviceId,
-      refreshToken,
-      command.ip,
-      command.userAgent,
     );
+
+    const decodedRefreshToken: any = this.jwtService.decode(refreshToken, {
+      json: true,
+    });
+
+    userSession.issuedAt = decodedRefreshToken.iat;
+    userSession.expireAt = decodedRefreshToken.exp;
+    userSession.deviceName = command.userAgent ?? 'unknown';
+    userSession.ip = command.ip;
+
+    await this.userSessionsPgRepository.save(userSession);
 
     return {
       accessToken,

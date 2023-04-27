@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UsersRepository } from '../users/infrastructure/users.repository';
+import { CommentReaction } from './application/entities/comment-reaction';
 
 @Injectable()
 export class CommentReactionsFactory {
@@ -14,13 +15,14 @@ export class CommentReactionsFactory {
     await this.usersPgRepository.throwIfUserIsNotExists(userId);
     this.throwIfReactionStatusIsNotCorrect(likeStatus);
 
-    return {
-      userId: userId,
-      commentId: commentId,
-      status: likeStatus,
-      createdAt: new Date(),
-      isBanned: false,
-    };
+    const commentReaction = new CommentReaction();
+    commentReaction.userId = userId;
+    commentReaction.commentId = commentId;
+    commentReaction.status = likeStatus;
+    commentReaction.createdAt = new Date();
+    commentReaction.isBanned = false;
+
+    return commentReaction;
   }
 
   private throwIfReactionStatusIsNotCorrect(likeStatus: string) {
@@ -30,12 +32,6 @@ export class CommentReactionsFactory {
         LIKE: 'Like',
         DISLIKE: 'Dislike',
       }).includes(likeStatus)
-      // !Object.values(CommentReaction.LIKE_STATUS_OPTIONS).includes(likeStatus)
-      // public static readonly LIKE_STATUS_OPTIONS = {
-      //   NONE: 'None',
-      //   LIKE: 'Like',
-      //   DISLIKE: 'Dislike',
-      // };
     ) {
       throw new UnprocessableEntityException(
         'Unknown status for user reaction on Post',

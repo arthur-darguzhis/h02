@@ -3,7 +3,6 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
 import { Comment } from '../application/entities/comment';
-import { Post } from '../../posts/application/entities/post';
 
 @Injectable()
 export class CommentsRepository {
@@ -20,8 +19,8 @@ export class CommentsRepository {
   async forTest_findOne(postId: string, userId: string) {
     return await this.commentsRepository
       .createQueryBuilder('comments')
-      .where('comments.userId = :userId', { userId })
-      .andWhere('comments.postId = :postId', { postId })
+      .where('comments.user_id = :userId', { userId })
+      .andWhere('comments.post_id = :postId', { postId })
       .getOne();
   }
 
@@ -50,7 +49,7 @@ export class CommentsRepository {
       .createQueryBuilder()
       .update(Comment)
       .set({ isBanned })
-      .where('userId = :userId', { userId: userId })
+      .where('user_id = :userId', { userId: userId })
       .execute();
   }
 

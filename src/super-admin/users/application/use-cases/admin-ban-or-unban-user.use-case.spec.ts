@@ -4,7 +4,7 @@ import { UsersRepository } from '../../../../users/infrastructure/users.reposito
 import { AdminAddNewUserCommand } from './admin-add-new-user.use-case';
 import { AdminBanOrUnbanUserCommand } from './admin-ban-or-unban-user.use-case';
 import { LoginCommand } from '../../../../auth/application/use-cases/login.use-case';
-import { userSessionsRepository } from '../../../../security/infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../../../security/infrastructure/user-sessions.repository';
 import { UnprocessableEntityException } from '../../../../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { BloggerCreateBlogCommand } from '../../../../blogger/application/use-cases/blogger-create-blog.use-case';
 import { BlogsRepository } from '../../../../blogs/infrastructure/blogs.repository';
@@ -20,7 +20,7 @@ describe('Admin ban or unban user use-case', () => {
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
   let blogsPgRepository: BlogsRepository;
-  let userSessionsPgRepository: userSessionsRepository;
+  let userSessionsRepository: UserSessionsRepository;
   let postsPgRepository: PostsRepository;
   let commentsPgRepository: CommentsRepository;
 
@@ -40,8 +40,8 @@ describe('Admin ban or unban user use-case', () => {
     blogsPgRepository = given.configuredTestApp.get(BlogsRepository);
     postsPgRepository = given.configuredTestApp.get(PostsRepository);
     commentsPgRepository = given.configuredTestApp.get(CommentsRepository);
-    userSessionsPgRepository = given.configuredTestApp.get(
-      userSessionsPgRepository,
+    userSessionsRepository = given.configuredTestApp.get(
+      UserSessionsRepository,
     );
 
     /** Arrange
@@ -96,7 +96,7 @@ describe('Admin ban or unban user use-case', () => {
     );
 
     //Assert
-    const userSessions = await userSessionsPgRepository.forTest_findByUserId(
+    const userSessions = await userSessionsRepository.forTest_findByUserId(
       user.id,
     );
     expect(userSessions).toEqual([]);

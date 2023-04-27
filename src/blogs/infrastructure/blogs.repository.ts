@@ -50,7 +50,7 @@ export class BlogsRepository {
       .createQueryBuilder()
       .update(Blog)
       .set({ isBanned })
-      .where('userId = :id', { id: userId })
+      .where('user_id = :id', { id: userId })
       .execute();
   }
 }

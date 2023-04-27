@@ -55,7 +55,7 @@ import { RegistrationUseCase } from './auth/application/use-cases/registration.u
 import { ConfirmRegistrationUseCase } from './auth/application/use-cases/registration-confirmation.use-case';
 import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.use-case';
 import { LoginUseCase } from './auth/application/use-cases/login.use-case';
-import { userSessionsRepository } from './security/infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from './security/infrastructure/user-sessions.repository';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
 import { CurrentUserInfoHandler } from './auth/application/query/current-user-info.query';
@@ -223,7 +223,7 @@ const postsQueries = [
     BlogUsersBanFactory,
     UsersRepository,
     UsersPgQueryRepository,
-    userSessionsRepository,
+    UserSessionsRepository,
     PasswordRecoveryRepository,
     AuthConfigService,
     AppConfigService,

@@ -34,21 +34,16 @@ export class UserMakeReactionOnCommentUseCase implements ICommandHandler {
           command.currentUserId,
           command.likeStatus,
         );
-      await this.commentReactionsPgRepository.addCommentReaction(
-        commentReaction,
-      );
+      await this.commentReactionsPgRepository.save(commentReaction);
     } else {
       if (userReaction.status === command.likeStatus) {
         return true;
       }
       userReaction.status = command.likeStatus;
-      await this.commentReactionsPgRepository.updateStatus(
-        userReaction.id,
-        command.likeStatus,
-      );
+      await this.commentReactionsPgRepository.save(userReaction);
     }
 
-    await this.updateCommentReactionsCount(command);
+    await this.updateCommentReactionsCount(comment);
   }
 
   public async updateCommentReactionsCount(comment: Comment) {

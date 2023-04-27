@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../infrastructure/user-sessions.repository';
 
 export class UserPurgeOtherSessionsCommand {
   constructor(
@@ -10,7 +10,7 @@ export class UserPurgeOtherSessionsCommand {
 
 @CommandHandler(UserPurgeOtherSessionsCommand)
 export class UserPurgeOtherSessionsUseCase implements ICommandHandler {
-  constructor(private userSessionsPgRepository: userSessionsRepository) {}
+  constructor(private userSessionsPgRepository: UserSessionsRepository) {}
   async execute(command: UserPurgeOtherSessionsCommand) {
     console.log(command);
     await this.userSessionsPgRepository.purgeOtherSessions(

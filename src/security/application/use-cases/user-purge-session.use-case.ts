@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { userSessionsRepository } from '../../infrastructure/user-sessions.repository';
+import { UserSessionsRepository } from '../../infrastructure/user-sessions.repository';
 import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 
 export class UserPurgeSessionCommand {
@@ -11,7 +11,7 @@ export class UserPurgeSessionCommand {
 
 @CommandHandler(UserPurgeSessionCommand)
 export class UserPurgeSessionUseCase implements ICommandHandler {
-  constructor(private userSessionsPgRepository: userSessionsRepository) {}
+  constructor(private userSessionsPgRepository: UserSessionsRepository) {}
   async execute(command: UserPurgeSessionCommand) {
     console.log(command);
     const userSession = await this.userSessionsPgRepository.getByDeviceId(
