@@ -4,6 +4,7 @@ import { PasswordRecoveryRepository } from '../../../users/infrastructure/passwo
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 import { EmailSenderService } from '../../../global-services/email-sender.service';
+import { PasswordRecovery } from '../../../users/application/entities/password-recovery';
 
 export class PasswordRecoveryCommand {
   constructor(public readonly email: string) {}
@@ -20,13 +21,15 @@ export class PasswordRecoveryUseCase implements ICommandHandler {
     console.log(command);
     const user = await this.usersPgRepository.getByEmail(command.email);
     const code = uuidv4();
-    await this.passwordRecoveryRepository.savePasswordRecoveryMetadata(
-      code,
-      new Date(),
-      add(Date.now(), { hours: 24 }),
-      false,
-      user.id,
-    );
+
+    const passwordRecovery = new PasswordRecovery();
+    passwordRecovery.code = code;
+    passwordRecovery.sendingTime = new Date();
+    passwordRecovery.expirationDate = add(Date.now(), { hours: 24 });
+    passwordRecovery.isConfirmed = false;
+    passwordRecovery.userId = user.id;
+
+    await this.passwordRecoveryRepository.save(passwordRecovery);
     await this.emailSenderService.sendPasswordRecoveryEmail(user.email, code);
   }
 }

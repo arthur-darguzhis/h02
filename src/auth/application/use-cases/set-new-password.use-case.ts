@@ -32,10 +32,9 @@ export class SetNewPasswordUseCase implements ICommandHandler {
     const user = await this.usersRepository.getById(passwordRecovery.userId);
     user.passwordHash = await this.generatePasswordHash(command.newPassword);
     await this.usersRepository.save(user);
+    passwordRecovery.isConfirmed = true;
 
-    await this.passwordRecoveryRepository.confirmPasswordRecovery(
-      passwordRecovery.code,
-    );
+    await this.passwordRecoveryRepository.save(passwordRecovery);
   }
 
   private async generatePasswordHash(password) {

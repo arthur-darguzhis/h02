@@ -12,51 +12,20 @@ export class PasswordRecoveryRepository {
     private passwordRecoveryRepository: Repository<PasswordRecovery>,
   ) {}
 
-  async savePasswordRecoveryMetadata(
-    code: string,
-    sendingTime,
-    expirationDate,
-    isConfirmed,
-    userId,
-  ): Promise<void> {
-    const query = `
-    INSERT INTO password_recovery (
-      code,
-      sending_time,
-      expiration_date,
-      is_confirmed,
-      user_id
-    )
-    VALUES ( $1, $2, $3, $4, $5)
-  `;
-
-    await this.dataSource.query(query, [
-      code,
-      sendingTime,
-      expirationDate,
-      isConfirmed,
-      userId,
-    ]);
+  async save(passwordRecovery: PasswordRecovery): Promise<void> {
+    await this.passwordRecoveryRepository.save(passwordRecovery);
   }
 
   async getByCode(recoveryCode: string) {
-    const passwordRecovery = await this.dataSource.query(
-      `SELECT
-                code,
-                sending_time as "sendingTime",
-                expiration_date as "expirationDate",
-                is_confirmed as "isConfirmed",
-                user_id as "userId"
-            FROM password_recovery
-            WHERE code = $1`,
-      [recoveryCode],
-    );
+    const passwordRecovery = await this.passwordRecoveryRepository.findOneBy({
+      code: recoveryCode,
+    });
 
-    if (passwordRecovery.length === 0) {
+    if (passwordRecovery === null) {
       throw new EntityNotFoundException('invalid password recovery');
     }
 
-    return passwordRecovery[0];
+    return passwordRecovery;
   }
 
   async forTests_getByUserId(userId: string) {
@@ -78,13 +47,6 @@ export class PasswordRecoveryRepository {
     }
 
     return passwordRecovery[0];
-  }
-
-  async confirmPasswordRecovery(code) {
-    await this.dataSource.query(
-      `UPDATE password_recovery SET is_confirmed = true WHERE code = $1`,
-      [code],
-    );
   }
 
   async forTest_resetExpirationDate(id) {
