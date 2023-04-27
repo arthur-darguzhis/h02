@@ -27,6 +27,7 @@ export class CommentReactionsRepository {
     return await this.commentReactionsRepository.countBy({
       commentId: commentId,
       status: LikeStatus.Like,
+      isBanned: false,
     });
   }
 
@@ -34,6 +35,7 @@ export class CommentReactionsRepository {
     return await this.commentReactionsRepository.countBy({
       commentId: commentId,
       status: LikeStatus.Dislike,
+      isBanned: false,
     });
   }
 

@@ -34,16 +34,13 @@ export class UserMakeReactionOnPostUseCase implements ICommandHandler {
           command.userId,
           command.likeStatus,
         );
-      await this.postsReactionsPgRepository.addPostReaction(userReaction);
+      await this.postsReactionsPgRepository.save(userReaction);
     } else {
       if (userReaction.status === command.likeStatus) {
         return true;
       }
       userReaction.status = command.likeStatus;
-      await this.postsReactionsPgRepository.updateStatus(
-        userReaction.id,
-        userReaction.status,
-      );
+      await this.postsReactionsPgRepository.save(userReaction);
     }
 
     await this.updatePostReactionsCount(post);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UnprocessableEntityException } from '../common/exceptions/domain.exceptions/unprocessable-entity.exception';
 import { UsersRepository } from '../users/infrastructure/users.repository';
+import { PostReaction } from './application/entities/post-reaction';
 
 @Injectable()
 export class PostReactionsFactory {
@@ -14,13 +15,15 @@ export class PostReactionsFactory {
     await this.usersPgRepository.throwIfUserIsNotExists(userId);
     this.throwIfReactionStatusIsNotCorrect(likeStatus);
 
-    return {
-      userId: userId,
-      postId: postId,
-      status: likeStatus,
-      createdAt: new Date(),
-      isBanned: false,
-    };
+    const postReaction = new PostReaction();
+
+    postReaction.userId = userId;
+    postReaction.postId = postId;
+    postReaction.status = likeStatus;
+    postReaction.createdAt = new Date();
+    postReaction.isBanned = false;
+
+    return postReaction;
   }
 
   private throwIfReactionStatusIsNotCorrect(likeStatus: string) {

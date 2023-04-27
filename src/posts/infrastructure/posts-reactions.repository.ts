@@ -2,6 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { PostReaction } from '../application/entities/post-reaction';
+import { LikeStatus } from '../../common/pgTypes/enum/likeStatus';
 
 @Injectable()
 export class PostsReactionsRepository {
@@ -12,47 +13,23 @@ export class PostsReactionsRepository {
   ) {}
 
   async findUserReaction(postId: string, userId: string) {
-    const userReaction = await this.dataSource.query(
-      `SELECT id,
-       user_id as "userId",
-       post_id as "postId",
-       status, 
-       is_banned as "isBanned",
-       created_at as "createdAt"
-    FROM post_reactions WHERE post_id = $1 AND user_id = $2`,
-      [postId, userId],
-    );
-
-    return userReaction[0] || null;
-  }
-
-  async updateStatus(id: string, status: string) {
-    await this.dataSource.query(
-      `UPDATE post_reactions SET status = $1 WHERE id = $2`,
-      [status, id],
-    );
+    return await this.postsReactionsRepository.findOneBy({ postId, userId });
   }
 
   async calculateCountOfLikes(postId: string) {
-    const data = await this.dataSource.query(
-      `SELECT COUNT(*) as count 
-                FROM post_reactions 
-             WHERE post_id = $1 AND status = 'Like' AND is_banned = false`,
-      [postId],
-    );
-
-    return data[0].count || 0;
+    return await this.postsReactionsRepository.countBy({
+      postId: postId,
+      status: LikeStatus.Like,
+      isBanned: false,
+    });
   }
 
   async calculateCountOfDislikes(postId: string) {
-    const data = await this.dataSource.query(
-      `SELECT COUNT(*) as count 
-                FROM post_reactions 
-            WHERE post_id = $1 AND status = 'Dislike' AND is_banned = false`,
-      [postId],
-    );
-
-    return data[0].count || 0;
+    return await this.postsReactionsRepository.countBy({
+      postId: postId,
+      status: LikeStatus.Dislike,
+      isBanned: false,
+    });
   }
 
   async getNewestLikesOnThePost(postId: string) {
@@ -69,30 +46,16 @@ export class PostsReactionsRepository {
     );
   }
 
-  async addPostReaction(userReaction: {
-    createdAt: Date;
-    isBanned: boolean;
-    postId: string;
-    userId: string;
-    status: string;
-  }) {
-    return await this.dataSource.query(
-      `INSERT INTO post_reactions (user_id, post_id, status, is_banned, created_at) 
-            VALUES ($1, $2, $3, $4, $5)`,
-      [
-        userReaction.userId,
-        userReaction.postId,
-        userReaction.status,
-        userReaction.isBanned,
-        userReaction.createdAt,
-      ],
-    );
+  async save(userReaction: PostReaction) {
+    return await this.postsReactionsRepository.save(userReaction);
   }
 
   async setBanStatusByUserId(userId: string, isBanned: boolean) {
-    await this.dataSource.query(
-      `UPDATE post_reactions SET is_banned = $1 WHERE user_id = $2`,
-      [isBanned, userId],
-    );
+    await this.postsReactionsRepository
+      .createQueryBuilder()
+      .update(PostReaction)
+      .set({ isBanned })
+      .where('user_id = :userId', { userId: userId })
+      .execute();
   }
 }
