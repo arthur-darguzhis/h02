@@ -49,14 +49,17 @@ export class BloggerBanUserUseCase {
     }
 
     if (blogUserBan) {
-      await this.blogUserBanRepository.banOrUnban(blogUserBan);
+      blogUserBan.isBanned = command.isBanned;
+      blogUserBan.banDate = new Date();
+      blogUserBan.banReason = command.banReason;
+      await this.blogUserBanRepository.save(blogUserBan);
     } else {
-      const newUserBan = this.blogUsersBanFactory.createBlogUserBan(
+      const blogUserBan = this.blogUsersBanFactory.createBlogUserBan(
         command.blogId,
         command.userId,
         command.banReason,
       );
-      await this.blogUserBanRepository.save(newUserBan);
+      await this.blogUserBanRepository.save(blogUserBan);
     }
   }
 }

@@ -18,9 +18,15 @@ export class BlogUserBan {
   @JoinColumn({ name: 'blog_id' })
   blog: Blog;
 
+  @Column({ type: 'uuid', name: 'blog_id' })
+  blogId: string;
+
   @ManyToOne(() => User, (user) => user.bannedInBlogs)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId: string;
 
   @Column({ type: 'boolean', default: false, name: 'is_banned' })
   isBanned: boolean;
