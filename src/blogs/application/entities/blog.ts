@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
-  Unique,
   OneToMany,
 } from 'typeorm';
 import { User } from '../../../users/application/entities/user';
@@ -13,7 +12,6 @@ import { BlogUserBan } from './blog-user-ban';
 import { Post } from '../../../posts/application/entities/post';
 
 @Entity({ name: 'blogs' })
-@Unique(['name'])
 export class Blog {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
@@ -33,11 +31,11 @@ export class Blog {
   @CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
   createdAt: Date;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.blogs, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ type: 'uuid', name: 'user_id' })
+  @Column('uuid', { name: 'user_id', nullable: true })
   userId: string;
 
   @Column({ type: 'boolean', name: 'is_banned' })

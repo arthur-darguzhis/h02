@@ -20,7 +20,7 @@ export class CommentReactionsRepository {
   }
 
   async save(commentReaction: CommentReaction) {
-    await this.commentReactionsRepository.save(commentReaction);
+    return await this.commentReactionsRepository.save(commentReaction);
   }
 
   async calculateCountOfLikes(commentId: string) {

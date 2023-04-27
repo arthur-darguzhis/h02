@@ -26,7 +26,7 @@ describe('Admin add new user use-case', () => {
     await given.closeApp();
   });
 
-  it(`throw when admin delete a user that is not exists`, async () => {
+  it(`throw when admin delete a user that does not exists`, async () => {
     //Act && Assert
     await expect(
       commandBus.execute(
@@ -34,7 +34,7 @@ describe('Admin add new user use-case', () => {
       ),
     ).rejects.toThrow(
       new EntityNotFoundException(
-        `User with id: ca3c3e56-eef1-4fe5-9abf-f96d8ca302fa is not exists`,
+        `User with id: "ca3c3e56-eef1-4fe5-9abf-f96d8ca302fa" does not exist`,
         'login',
       ),
     );

@@ -12,8 +12,8 @@ export class PasswordRecoveryRepository {
     private passwordRecoveryRepository: Repository<PasswordRecovery>,
   ) {}
 
-  async save(passwordRecovery: PasswordRecovery): Promise<void> {
-    await this.passwordRecoveryRepository.save(passwordRecovery);
+  async save(passwordRecovery: PasswordRecovery): Promise<PasswordRecovery> {
+    return await this.passwordRecoveryRepository.save(passwordRecovery);
   }
 
   async getByCode(recoveryCode: string) {

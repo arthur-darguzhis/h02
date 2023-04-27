@@ -11,15 +11,15 @@ describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsRepository;
+  let userSessionsRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    userSessionsPgRepository = given.configuredTestApp.get(
-      userSessionsPgRepository,
+    userSessionsRepository = given.configuredTestApp.get(
+      UserSessionsRepository,
     );
 
     /** Arrange
@@ -52,7 +52,7 @@ describe('User purge other sessions', () => {
     );
 
     //Assert
-    const userSession = await userSessionsPgRepository.findAllSessionsByUser(
+    const userSession = await userSessionsRepository.findAllSessionsByUser(
       decodedToken.userId,
     );
     expect(userSession.length).toBe(1);
@@ -66,7 +66,7 @@ describe('User purge other sessions', () => {
     const user = await usersPgRepository.getByEmail('firstUser@test.test');
     await commandBus.execute(new LoginCommand(user, '127.0.0.1', 'jest1'));
     await commandBus.execute(new LoginCommand(user, '127.0.0.1', 'jest2'));
-    const userSession = await userSessionsPgRepository.findAllSessionsByUser(
+    const userSession = await userSessionsRepository.findAllSessionsByUser(
       user.id,
     );
     expect(userSession.length).toBe(2);

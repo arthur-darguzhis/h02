@@ -17,7 +17,15 @@ export class ResendRegistrationEmailUseCase implements ICommandHandler {
   ) {}
   async execute(command: ResendRegistrationEmailCommand) {
     console.log(command);
-    const user = await this.usersRepository.getByEmail(command.email);
+    let user;
+    try {
+      user = await this.usersRepository.getByEmail(command.email);
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        `User with email: ${command.email} is not found`,
+        'email',
+      );
+    }
 
     if (user.isConfirmed) {
       throw new UnprocessableEntityException(
@@ -30,7 +38,7 @@ export class ResendRegistrationEmailUseCase implements ICommandHandler {
     user.expirationDateOfConfirmationCode = add(Date.now(), { hours: 24 });
     await this.usersRepository.save(user);
 
-    this.emailSenderService.sendRegistrationConfirmationEmail(
+    await this.emailSenderService.sendRegistrationConfirmationEmail(
       user.email,
       user.confirmationCode,
     );

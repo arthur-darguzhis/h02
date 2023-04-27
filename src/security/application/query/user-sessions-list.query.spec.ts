@@ -11,7 +11,7 @@ describe('User purge other sessions', () => {
   let commandBus: CommandBus;
   let queryBus: QueryBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsRepository;
+  let userSessionsRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
@@ -19,8 +19,8 @@ describe('User purge other sessions', () => {
     commandBus = given.configuredTestApp.get(CommandBus);
     queryBus = given.configuredTestApp.get(QueryBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    userSessionsPgRepository = given.configuredTestApp.get(
-      userSessionsPgRepository,
+    userSessionsRepository = given.configuredTestApp.get(
+      UserSessionsRepository,
     );
 
     /** Arrange

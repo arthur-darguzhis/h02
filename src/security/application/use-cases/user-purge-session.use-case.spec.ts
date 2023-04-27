@@ -12,15 +12,15 @@ describe('User purge other sessions', () => {
   let given: Given;
   let commandBus: CommandBus;
   let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsRepository;
+  let userSessionsRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
     usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    userSessionsPgRepository = given.configuredTestApp.get(
-      userSessionsPgRepository,
+    userSessionsRepository = given.configuredTestApp.get(
+      UserSessionsRepository,
     );
 
     /** Arrange
@@ -103,7 +103,7 @@ describe('User purge other sessions', () => {
       ),
     );
 
-    const userSession = await userSessionsPgRepository.findAllSessionsByUser(
+    const userSession = await userSessionsRepository.findAllSessionsByUser(
       firstUserDecodedToken.userId,
     );
     expect(userSession.length).toBe(0);

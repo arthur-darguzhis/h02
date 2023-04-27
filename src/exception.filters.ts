@@ -84,8 +84,9 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    console.log('=>>> ' + exception.toString());
-    console.log('=>>> ' + exception.stack);
+    console.log('=>>> 500 message: ' + exception.toString());
+    console.log('=>>> 500 stack: ' + exception.stack);
+    console.log('=>>> 500 END of the stack');
     if (process.env.NODE_ENV !== 'production') {
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)

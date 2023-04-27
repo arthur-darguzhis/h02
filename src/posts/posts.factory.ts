@@ -26,7 +26,6 @@ export class PostsFactory {
     post.createdAt = new Date();
     post.likesCount = 0;
     post.dislikesCount = 0;
-    post.newestLikes = [];
     post.userId = command.userId;
 
     return post;

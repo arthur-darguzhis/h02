@@ -15,7 +15,7 @@ export class UserSessionsRepository {
   ) {}
 
   async save(userSession: UserSession) {
-    await this.userSessionsRepository.save(userSession);
+    return await this.userSessionsRepository.save(userSession);
   }
 
   async findByDeviceId(deviceId: string): Promise<UserSession | never> {

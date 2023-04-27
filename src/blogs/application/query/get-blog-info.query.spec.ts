@@ -52,36 +52,6 @@ describe('Should return list of banned users in a blog', () => {
     });
   });
 
-  // it(`Check search by blog name`, async () => {
-  //   const data = await queryBus.execute(
-  //     new GetBlogsListQuery('th bl', 'createdAt', 'desc', 10, 1),
-  //   );
-  //
-  //   expect(data.items.length).toBe(2);
-  //   expect(data.items[0].name).toBe('Fifth Blog');
-  //   expect(data.items[1].name).toBe('Fourth Blog');
-  // });
-  //
-  // it('Check order', async () => {
-  //   const data = await queryBus.execute(
-  //     new GetBlogsListQuery(null, 'createdAt', 'asc', 10, 1),
-  //   );
-  //
-  //   expect(data.items.length).toBe(5);
-  //   expect(data.items[0].description).toBe('the first blog description');
-  //   expect(data.items[4].description).toBe('the fifth blog description');
-  // });
-  //
-  // it('Check that pagination works', async () => {
-  //   const data = await queryBus.execute(
-  //     new GetBlogsListQuery(null, 'createdAt', 'asc', 2, 3),
-  //   );
-  //
-  //   expect(data.page).toBe(3);
-  //   expect(data.items.length).toBe(1);
-  //   expect(data.items[0].name).toBe('Fifth Blog');
-  // });
-
   async function prepareData() {
     await commandBus.execute(
       new AdminAddNewUserCommand('blogger', '123456', 'blogger@test.test'),

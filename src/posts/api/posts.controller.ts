@@ -80,11 +80,11 @@ export class PostsController {
     @Body() dto: AddCommentToPostDto,
     @CurrentUserId() currentUserId,
   ) {
-    const commentId = await this.commandBus.execute(
+    const comment = await this.commandBus.execute(
       new UserAddCommentCommand(dto.content, postId, currentUserId),
     );
     return await this.queryBus.execute(
-      new GetCommentQuery(commentId, currentUserId),
+      new GetCommentQuery(comment.id, currentUserId),
     );
   }
 

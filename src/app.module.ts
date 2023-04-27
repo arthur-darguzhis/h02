@@ -182,6 +182,7 @@ const postsQueries = [
       autoLoadEntities: true,
       synchronize: true,
       ssl: process.env.PG_SSL_FLAG === 'true',
+      logging: true,
     }),
     TypeOrmModule.forFeature([
       User,

@@ -46,7 +46,7 @@ export class BloggerController {
     @Body() dto: CreateBlogDto,
     @CurrentUserId() currentUserId: string,
   ) {
-    const blogId = await this.commandBus.execute(
+    const blog = await this.commandBus.execute(
       new BloggerCreateBlogCommand(
         dto.name,
         dto.description,
@@ -55,7 +55,7 @@ export class BloggerController {
       ),
     );
 
-    return await this.queryBus.execute(new GetBlogInfoQuery(blogId));
+    return await this.queryBus.execute(new GetBlogInfoQuery(blog.id));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -115,7 +115,7 @@ export class BloggerController {
     @Body() dto: CreatePostWithoutBlogIdDto,
     @CurrentUserId() currentUserId: string,
   ) {
-    const postId = await this.commandBus.execute(
+    const post = await this.commandBus.execute(
       new BloggerCreatePostCommand(
         dto.title,
         dto.shortDescription,
@@ -125,7 +125,9 @@ export class BloggerController {
       ),
     );
 
-    return await this.queryBus.execute(new GetPostQuery(postId, currentUserId));
+    return await this.queryBus.execute(
+      new GetPostQuery(post.id, currentUserId),
+    );
   }
 
   @UseGuards(JwtAuthGuard)

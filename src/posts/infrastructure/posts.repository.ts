@@ -61,7 +61,7 @@ export class PostsRepository {
       .createQueryBuilder()
       .update(Post)
       .set({ isBanned })
-      .where('blog_id = :blogId', { id: blogId })
+      .where('blog_id = :blogId', { blogId: blogId })
       .execute();
   }
 
@@ -70,7 +70,7 @@ export class PostsRepository {
       .createQueryBuilder()
       .update(Post)
       .set({ isBanned })
-      .where('user_id = :id', { id: userId })
+      .where('user_id = :userId', { userId: userId })
       .execute();
   }
 
@@ -78,12 +78,12 @@ export class PostsRepository {
     await this.dataSource.query(
       `UPDATE posts SET likes_count = (SELECT COUNT(*) FROM post_reactions as pr WHERE pr.post_id = posts.id AND pr.status = 'Like' AND pr.is_banned = false),
                  dislikes_count = (SELECT COUNT(*) FROM post_reactions as pr WHERE pr.post_id = posts.id AND pr.status = 'Dislike' AND pr.is_banned = false),
-                 newest_likes = (SELECT ARRAY(SELECT 
+                 newest_likes = (SELECT jsonb_agg(likesInfo.obj) FROM (SELECT 
                                           json_build_object(
                                             'addedAt', pr.created_at,
                                             'userId', pr.user_id,
                                             'login', u.login
-                                          )
+                                          ) as obj
                                  FROM post_reactions as pr
                                         JOIN users u on pr.user_id = u.id
                                  WHERE post_id = posts.id AND pr.status = 'Like' AND pr.is_banned = false

@@ -8,6 +8,7 @@ import {
 import { UserSession } from './user-session';
 import { BlogUserBan } from '../../../blogs/application/entities/blog-user-ban';
 import { Post } from '../../../posts/application/entities/post';
+import { Blog } from '../../../blogs/application/entities/blog';
 
 @Entity({ name: 'users' })
 @Unique(['login'])
@@ -68,6 +69,9 @@ export class User {
 
   @OneToMany(() => UserSession, (session) => session.user)
   sessions: UserSession[];
+
+  @OneToMany(() => Blog, (blog) => blog.user)
+  blogs: Blog[];
 
   @OneToMany(() => BlogUserBan, (blogUserBan) => blogUserBan.blog)
   bannedInBlogs: BlogUserBan[];

@@ -53,7 +53,7 @@ export class GetPostsListByBlogIdHandler implements IQueryHandler {
                 json_build_object(
                     'likesCount', p.likes_count,
                     'dislikesCount', p.dislikes_count,
-                    'newestLikes', p.newest_likes,
+                    'newestLikes', COALESCE(p.newest_likes, '[]'),
                     'myStatus', COALESCE(pr.status, 'None')
                 ) as "extendedLikesInfo"
             FROM posts as p

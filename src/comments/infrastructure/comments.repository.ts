@@ -13,7 +13,7 @@ export class CommentsRepository {
   ) {}
 
   async save(comment: Comment) {
-    await this.commentsRepository.save(comment);
+    return await this.commentsRepository.save(comment);
   }
 
   async forTest_findOne(postId: string, userId: string) {

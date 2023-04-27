@@ -20,6 +20,6 @@ export class BlogUserBanRepository {
   }
 
   async save(blogUserBan: BlogUserBan) {
-    await this.blogUserBansRepository.save(blogUserBan);
+    return await this.blogUserBansRepository.save(blogUserBan);
   }
 }
