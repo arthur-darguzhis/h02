@@ -20,7 +20,7 @@ export class BloggerCreatePostUseCase {
   ) {}
   async execute(command: BloggerCreatePostCommand) {
     console.log(command);
-    const post = await this.postsFactory.bloggerCreatePostPg(command);
+    const post = await this.postsFactory.bloggerCreatePost(command);
     return await this.postsPgRepository.save(post);
   }
 }

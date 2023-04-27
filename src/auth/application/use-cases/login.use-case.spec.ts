@@ -10,16 +10,16 @@ import jwt from 'jsonwebtoken';
 describe('User login use-case', () => {
   let given: Given;
   let commandBus: CommandBus;
-  let usersPgRepository: UsersRepository;
-  let userSessionsPgRepository: UserSessionsRepository;
+  let usersRepository: UsersRepository;
+  let userSessionsRepository: UserSessionsRepository;
 
   beforeEach(async () => {
     given = await Given.bootstrapTestApp();
     await given.clearDb();
     commandBus = given.configuredTestApp.get(CommandBus);
-    usersPgRepository = given.configuredTestApp.get(UsersRepository);
-    userSessionsPgRepository = given.configuredTestApp.get(
-      userSessionsPgRepository,
+    usersRepository = given.configuredTestApp.get(UsersRepository);
+    userSessionsRepository = given.configuredTestApp.get(
+      UserSessionsRepository,
     );
 
     /** Arrange
@@ -34,7 +34,7 @@ describe('User login use-case', () => {
 
   it(`Successfully register new user`, async () => {
     //Arrange
-    const user = await usersPgRepository.getByEmail('firstUser@test.test');
+    const user = await usersRepository.getByEmail('firstUser@test.test');
     const { accessToken, refreshToken } = await commandBus.execute(
       new LoginCommand(user, '127.0.0.1', 'jest'),
     );
@@ -48,7 +48,7 @@ describe('User login use-case', () => {
     );
 
     //Assert
-    const userSession = await userSessionsPgRepository.findByDeviceId(
+    const userSession = await userSessionsRepository.findByDeviceId(
       decodedToken.deviceId,
     );
     expect(userSession).toBeNull();

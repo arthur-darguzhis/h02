@@ -20,7 +20,7 @@ export class UsersRepository {
 
   async throwIfEmailInUse(email: string): Promise<void | never> {
     const user = await this.usersRepository.findOneBy([{ email: email }]);
-    if (user === null) {
+    if (user !== null) {
       throw new EntityAlreadyExistsException(
         `User with email: ${email} already exists`,
         'email',
@@ -30,7 +30,7 @@ export class UsersRepository {
 
   async throwIfLoginInUse(login: string): Promise<void | never> {
     const user = await this.usersRepository.findOneBy([{ login: login }]);
-    if (user === null) {
+    if (user !== null) {
       throw new EntityAlreadyExistsException(
         `User with login: ${login} already exists`,
         'login',

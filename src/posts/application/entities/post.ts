@@ -56,8 +56,12 @@ export class Post {
   @Column({ type: 'integer', name: 'dislikes_count' })
   dislikesCount: number;
 
-  @Column({ type: 'jsonb', array: true, name: 'newest_likes' })
-  newestLikes: any[];
+  @Column({
+    type: 'jsonb',
+    name: 'newest_likes',
+    nullable: true,
+  })
+  newestLikes?: any[];
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];

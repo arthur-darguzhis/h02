@@ -8,7 +8,7 @@ import { Post } from './application/entities/post';
 export class PostsFactory {
   constructor(private blogsPgRepository: BlogsRepository) {}
 
-  async bloggerCreatePostPg(command: BloggerCreatePostCommand) {
+  async bloggerCreatePost(command: BloggerCreatePostCommand) {
     const blog = await this.blogsPgRepository.getById(command.blogId);
 
     if (blog.userId !== command.userId) {
