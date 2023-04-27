@@ -40,7 +40,7 @@ export class UserAddCommentUseCase {
       command.content,
     );
 
-    return await this.commentsPgRepository.saveNewComment(comment);
+    return await this.commentsPgRepository.save(comment);
   }
 
   private async isUserBannedForBlog(blogId: string, userId: string) {

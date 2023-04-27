@@ -25,6 +25,6 @@ export class UserUpdateCommentUseCase implements ICommandHandler {
     }
 
     comment.content = command.content;
-    await this.commentsPgRepository.update(comment);
+    await this.commentsPgRepository.save(comment);
   }
 }

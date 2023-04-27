@@ -22,6 +22,6 @@ export class UserDeleteCommentUseCase implements ICommandHandler {
       );
     }
 
-    return await this.commentsPgRepository.delete(command.commentId);
+    return await this.commentsPgRepository.delete(comment);
   }
 }

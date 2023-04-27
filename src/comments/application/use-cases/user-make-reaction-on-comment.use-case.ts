@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentReactionsRepository } from '../../infrastructure/comment-reactions.repository';
 import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { CommentReactionsFactory } from '../../comment-reactions.factory';
+import { Comment } from '../entities/comment';
 
 export class UserMakeReactionOnCommentCommand {
   constructor(
@@ -15,12 +16,12 @@ export class UserMakeReactionOnCommentCommand {
 export class UserMakeReactionOnCommentUseCase implements ICommandHandler {
   constructor(
     private commentReactionsPgRepository: CommentReactionsRepository,
-    private commentsPgRepository: CommentsRepository,
+    private commentsRepository: CommentsRepository,
     private commentReactionsFactory: CommentReactionsFactory,
   ) {}
   async execute(command: UserMakeReactionOnCommentCommand) {
     console.log(command);
-    await this.commentsPgRepository.throwIfNotExists(command.commentId);
+    const comment = await this.commentsRepository.getById(command.commentId);
     const userReaction = await this.commentReactionsPgRepository.find(
       command.commentId,
       command.currentUserId,
@@ -47,20 +48,18 @@ export class UserMakeReactionOnCommentUseCase implements ICommandHandler {
       );
     }
 
-    await this.updateCommentReactionsCount(command.commentId);
+    await this.updateCommentReactionsCount(command);
   }
 
-  public async updateCommentReactionsCount(commentId: string) {
+  public async updateCommentReactionsCount(comment: Comment) {
     const likesCount =
-      await this.commentReactionsPgRepository.calculateCountOfLikes(commentId);
+      await this.commentReactionsPgRepository.calculateCountOfLikes(comment.id);
     const dislikesCount =
       await this.commentReactionsPgRepository.calculateCountOfDislikes(
-        commentId,
+        comment.id,
       );
-    await this.commentsPgRepository.updateLikesInfo(
-      commentId,
-      likesCount,
-      dislikesCount,
-    );
+    comment.likesCount = likesCount;
+    comment.dislikesCount = dislikesCount;
+    await this.commentsRepository.save(comment);
   }
 }

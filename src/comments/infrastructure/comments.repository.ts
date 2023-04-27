@@ -3,6 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
 import { Comment } from '../application/entities/comment';
+import { Post } from '../../posts/application/entities/post';
 
 @Injectable()
 export class CommentsRepository {
@@ -12,74 +13,26 @@ export class CommentsRepository {
     private commentsRepository: Repository<Comment>,
   ) {}
 
-  async saveNewComment(comment: {
-    createdAt: Date;
-    likesCount: number;
-    dislikesCount: number;
-    isBanned: boolean;
-    postId: any;
-    userId: any;
-    content: any;
-  }) {
-    const sql = `
-        INSERT INTO comments 
-            (content, post_id, user_id, is_banned, created_at, likes_count, dislikes_count) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING id`;
-
-    const result = await this.dataSource.query(sql, [
-      comment.content,
-      comment.postId,
-      comment.userId,
-      comment.isBanned,
-      comment.createdAt,
-      comment.likesCount,
-      comment.dislikesCount,
-    ]);
-
-    return result[0].id;
+  async save(comment: Comment) {
+    await this.commentsRepository.save(comment);
   }
 
   async forTest_findOne(postId: string, userId: string) {
-    const comment = await this.dataSource.query(
-      `SELECT 
-       id,
-       content,
-       post_id AS "postId",
-       is_banned AS "isBanned",
-       created_at AS "createdAt",
-       user_id AS "userId",
-       likes_count AS "likesCount",
-       dislikes_count AS "dislikesCount"
-        FROM comments WHERE user_id = $1 AND post_id = $2`,
-      [userId, postId],
-    );
-
-    return comment[0] || null;
+    return await this.commentsRepository
+      .createQueryBuilder('comments')
+      .where('comments.userId = :userId', { userId })
+      .andWhere('comments.postId = :postId', { postId })
+      .getOne();
   }
 
   async findById(commentId: any) {
-    const comment = await this.dataSource.query(
-      `SELECT 
-       id,
-       content,
-       post_id AS "postId",
-       is_banned AS "isBanned",
-       created_at AS "createdAt",
-       user_id AS "userId",
-       likes_count AS "likesCount",
-       dislikes_count AS "dislikesCount"
-        FROM comments WHERE id = $1`,
-      [commentId],
-    );
-
-    return comment[0] || null;
+    return await this.commentsRepository.findOneBy({ id: commentId });
   }
 
   async getById(commentId: any) {
     const comment = await this.findById(commentId);
 
-    if (!comment) {
+    if (comment === null) {
       throw new EntityNotFoundException(
         `Comment with id: ${commentId} is not found`,
       );
@@ -88,45 +41,17 @@ export class CommentsRepository {
     return comment;
   }
 
-  async delete(commentId: string) {
-    await this.dataSource.query(`DELETE FROM comments WHERE id = $1`, [
-      commentId,
-    ]);
-  }
-
-  async update(comment: any) {
-    await this.dataSource.query(
-      `UPDATE comments SET content = $1 WHERE id = $2`,
-      [comment.content, comment.id],
-    );
-  }
-
-  async throwIfNotExists(commentId: string) {
-    const comment = await this.findById(commentId);
-
-    if (!comment) {
-      throw new EntityNotFoundException(
-        `Comment with id: ${commentId} is not found`,
-      );
-    }
-  }
-
-  async updateLikesInfo(
-    commentId: string,
-    likesCount: any,
-    dislikesCount: any,
-  ) {
-    await this.dataSource.query(
-      `UPDATE comments SET likes_count = $1, dislikes_count = $2 WHERE id = $3`,
-      [likesCount, dislikesCount, commentId],
-    );
+  async delete(comment: Comment) {
+    await this.commentsRepository.remove(comment);
   }
 
   async setBanStatusByUserId(userId: string, isBanned: boolean) {
-    await this.dataSource.query(
-      `UPDATE comments SET is_banned = $1 WHERE user_id = $2`,
-      [isBanned, userId],
-    );
+    await this.commentsRepository
+      .createQueryBuilder()
+      .update(Comment)
+      .set({ isBanned })
+      .where('userId = :userId', { userId: userId })
+      .execute();
   }
 
   async recalculateCommentReactionsAfterUserBan(userId: string) {
