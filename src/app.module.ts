@@ -96,6 +96,16 @@ import { Post } from './posts/application/entities/post';
 import { Comment } from './comments/application/entities/comment';
 import { CommentReaction } from './comments/application/entities/comment-reaction';
 import { PostReaction } from './posts/application/entities/post-reaction';
+import { CreateQuestionUseCase } from './quiz/application/use-cases/create-question.use-case';
+import { UpdateQuestionUseCase } from './quiz/application/use-cases/update-question.use-case';
+import { DeleteQuestionUseCase } from './quiz/application/use-cases/delete-question.use-case';
+import { SetQuestionPublishStatusUseCase } from './quiz/application/use-cases/set-question-publish-status.use-case';
+import { GetQuestionsListHandler } from './quiz/application/queries/get-questions-list.query';
+import { SuperAdminQuizController } from './quiz/api/super-admin-quiz.controller';
+import { QuizQuestionRepository } from './quiz/infrastructure/quiz-question.repository';
+import { QuizQuestionsFactory } from './quiz/quiz-questions.factory';
+import { QuizQuestion } from './quiz/application/entities/quiz-question';
+import { GetQuestionHandler } from './quiz/application/queries/get-question.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -110,6 +120,15 @@ const userUseCases = [
   SetNewPasswordUseCase,
   UserMakeReactionOnPostUseCase,
 ];
+
+const questionUseCase = [
+  CreateQuestionUseCase,
+  UpdateQuestionUseCase,
+  DeleteQuestionUseCase,
+  SetQuestionPublishStatusUseCase,
+];
+
+const questionsQueries = [GetQuestionsListHandler, GetQuestionHandler];
 
 const bloggerUseCases = [
   BloggerCreateBlogUseCase,
@@ -194,6 +213,7 @@ const postsQueries = [
       Comment,
       PostReaction,
       CommentReaction,
+      QuizQuestion,
     ]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
@@ -216,6 +236,7 @@ const postsQueries = [
     BloggerController,
     SuperAdminBlogsController,
     SuperAdminUsersController,
+    SuperAdminQuizController,
   ],
   providers: [
     ConfigService,
@@ -235,6 +256,8 @@ const postsQueries = [
     BlogUserBanRepository,
     PostsFactory,
     PostsRepository,
+    QuizQuestionsFactory,
+    QuizQuestionRepository,
     PostsReactionsRepository,
     PostReactionsFactory,
     PostsReactionsRepository,
@@ -258,6 +281,8 @@ const postsQueries = [
     ...postsQueries,
     ...commentUseCases,
     ...commentQueries,
+    ...questionUseCase,
+    ...questionsQueries,
   ],
 })
 export class AppModule {}

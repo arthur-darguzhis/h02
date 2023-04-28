@@ -61,7 +61,6 @@ export class Post {
     array: false,
     nullable: true,
     name: 'newest_likes',
-    // default: () => "('{}')",
   })
   newestLikes: any;
 
