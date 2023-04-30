@@ -106,6 +106,15 @@ import { QuizQuestionRepository } from './quiz/infrastructure/quiz-question.repo
 import { QuizQuestionsFactory } from './quiz/quiz-questions.factory';
 import { QuizQuestion } from './quiz/application/entities/quiz-question';
 import { GetQuestionHandler } from './quiz/application/queries/get-question.query';
+import { PairGameQuizController } from './quiz/pair-game-quiz.controller';
+import { PairGameQuizUseCase } from './quiz/application/use-cases/pair-game-quiz.use-case';
+import { Game } from './quiz/application/entities/game';
+import { GameProgress } from './quiz/application/entities/game-progress';
+import { GameRepository } from './quiz/infrastructure/game.repository';
+import { GameProgressRepository } from './quiz/infrastructure/game-progress.repository';
+import { SetAnswerUseCase } from './quiz/application/use-cases/set-answer.use-case';
+import { GetResultOfAnswerHandler } from './quiz/application/queries/get-result-of-answer.query';
+import { GetGamePairQuizHandler } from './quiz/application/queries/get-game-pair-quiz.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -120,12 +129,15 @@ const userUseCases = [
   SetNewPasswordUseCase,
   UserMakeReactionOnPostUseCase,
 ];
+const pairGameQuizUseCase = [PairGameQuizUseCase];
+const pairGameQuizQuery = [GetGamePairQuizHandler, GetResultOfAnswerHandler];
 
 const questionUseCase = [
   CreateQuestionUseCase,
   UpdateQuestionUseCase,
   DeleteQuestionUseCase,
   SetQuestionPublishStatusUseCase,
+  SetAnswerUseCase,
 ];
 
 const questionsQueries = [GetQuestionsListHandler, GetQuestionHandler];
@@ -214,6 +226,8 @@ const postsQueries = [
       PostReaction,
       CommentReaction,
       QuizQuestion,
+      Game,
+      GameProgress,
     ]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
@@ -237,6 +251,7 @@ const postsQueries = [
     SuperAdminBlogsController,
     SuperAdminUsersController,
     SuperAdminQuizController,
+    PairGameQuizController,
   ],
   providers: [
     ConfigService,
@@ -265,6 +280,8 @@ const postsQueries = [
     CommentsRepository,
     CommentReactionsFactory,
     CommentReactionsRepository,
+    GameRepository,
+    GameProgressRepository,
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,
@@ -283,6 +300,8 @@ const postsQueries = [
     ...commentQueries,
     ...questionUseCase,
     ...questionsQueries,
+    ...pairGameQuizUseCase,
+    ...pairGameQuizQuery,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { QuizQuestion } from '../application/entities/quiz-question';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
 import { Injectable } from '@nestjs/common';
@@ -9,6 +9,7 @@ export class QuizQuestionRepository {
   constructor(
     @InjectRepository(QuizQuestion)
     private quizQuestionsRepository: Repository<QuizQuestion>,
+    @InjectDataSource() protected dataSource: DataSource,
   ) {}
 
   async save(quizQuestion: QuizQuestion) {
@@ -31,5 +32,12 @@ export class QuizQuestionRepository {
       );
     }
     return post;
+  }
+
+  async getListOfId(questionsCount = 5): Promise<[{ id: string }]> {
+    return await this.dataSource.query(
+      `SELECT id FROM quiz_questions ORDER BY RANDOM() LIMIT $1;`,
+      [questionsCount],
+    );
   }
 }

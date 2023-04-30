@@ -1,6 +1,5 @@
 import { Given } from '../../../../test/xxx/testEntities/Given';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UnauthorizedActionException } from '../../../common/exceptions/domain.exceptions/unauthorized-action.exception';
 import { CreateQuestionCommand } from '../use-cases/create-question.use-case';
 import { GetQuestionQuery } from './get-question.query';
 import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';

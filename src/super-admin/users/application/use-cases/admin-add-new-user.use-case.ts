@@ -24,6 +24,6 @@ export class AdminAddNewUserUseCase {
       command.email,
     );
 
-    await this.usersPgRepository.save(user);
+    return await this.usersPgRepository.save(user);
   }
 }

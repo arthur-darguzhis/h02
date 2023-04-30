@@ -2,7 +2,6 @@ import { PaginationQueryParametersDto } from '../../../common/dto/PaginationQuer
 import { IsIn, IsOptional, IsString } from 'class-validator';
 import { Trim } from '../../../common/crutches/class-transformer/trim.decorator';
 
-//TODO в качестве примера оформления вот сюда можно подглянуть PaginatedUserListDto
 export class GetQuestionsListDto extends PaginationQueryParametersDto {
   @Trim()
   @IsString()

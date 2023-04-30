@@ -3,7 +3,6 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateQuestionCommand } from './create-question.use-case';
 import { UUID_THAT_IS_NOT_EXISTS } from '../../../testing/testing_consts';
 import { EntityNotFoundException } from '../../../common/exceptions/domain.exceptions/entity-not-found.exception';
-import { DeleteQuestionCommand } from './delete-question.use-case';
 import { QuizQuestionRepository } from '../../infrastructure/quiz-question.repository';
 import { SetQuestionPublishStatusCommand } from './set-question-publish-status.use-case';
 
