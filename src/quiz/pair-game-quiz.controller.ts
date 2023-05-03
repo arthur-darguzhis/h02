@@ -16,11 +16,30 @@ import { SetGamePairCommand } from './application/use-cases/pair-game-quiz.use-c
 import { GetGamePairQuizQuery } from './application/queries/get-game-pair-quiz.query';
 import { SetAnswerCommand } from './application/use-cases/set-answer.use-case';
 import { GetResultOfAnswerQuery } from './application/queries/get-result-of-answer.query';
+import { GetUserGamesHistoryListDto } from './api/dto/get-user-games-history-list.dto';
+import { GetUserGamesHistoryListQuery } from './application/queries/get-user-games-history-list.query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('pair-game-quiz/pairs')
 export class PairGameQuizController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
+
+  @Get('my')
+  @HttpCode(HttpStatus.OK)
+  async returnGamesHistoryListForUser(
+    @Param() dto: GetUserGamesHistoryListDto,
+    @CurrentUserId() currentUserId: string,
+  ) {
+    return this.queryBus.execute(
+      new GetUserGamesHistoryListQuery(
+        dto.sortBy,
+        dto.sortDirection,
+        dto.pageSize,
+        dto.pageNumber,
+        currentUserId,
+      ),
+    );
+  }
 
   @Get('my-current')
   @HttpCode(HttpStatus.OK)

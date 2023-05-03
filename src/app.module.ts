@@ -115,6 +115,8 @@ import { GameProgressRepository } from './quiz/infrastructure/game-progress.repo
 import { SetAnswerUseCase } from './quiz/application/use-cases/set-answer.use-case';
 import { GetResultOfAnswerHandler } from './quiz/application/queries/get-result-of-answer.query';
 import { GetGamePairQuizHandler } from './quiz/application/queries/get-game-pair-quiz.query';
+import { GetUserGamesHistoryListHandler } from './quiz/application/queries/get-user-games-history-list.query';
+import { GameQueryRepository } from './quiz/infrastructure/game-query.repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -130,7 +132,11 @@ const userUseCases = [
   UserMakeReactionOnPostUseCase,
 ];
 const pairGameQuizUseCase = [PairGameQuizUseCase];
-const pairGameQuizQuery = [GetGamePairQuizHandler, GetResultOfAnswerHandler];
+const pairGameQuizQuery = [
+  GetGamePairQuizHandler,
+  GetResultOfAnswerHandler,
+  GetUserGamesHistoryListHandler,
+];
 
 const questionUseCase = [
   CreateQuestionUseCase,
@@ -282,6 +288,7 @@ const postsQueries = [
     CommentReactionsRepository,
     GameRepository,
     GameProgressRepository,
+    GameQueryRepository,
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,

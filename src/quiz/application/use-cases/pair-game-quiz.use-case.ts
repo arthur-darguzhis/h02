@@ -26,7 +26,7 @@ export class PairGameQuizUseCase implements ICommandHandler {
     if (activeGame !== null) {
       console.log('activeGame:: ' + activeGame.status);
       throw new UnauthorizedActionException(
-        `Current user is already participating in active pair1`,
+        `Current user is already participating in active pair`,
       );
     }
     const openedGame = await this.gameRepository.findOpenedGame();
@@ -42,7 +42,7 @@ export class PairGameQuizUseCase implements ICommandHandler {
 
     if (openedGame.firstPlayerId === command.userId) {
       throw new UnauthorizedActionException(
-        'Current user is already participating in active pair2',
+        'Current user is already participating in active pair',
       );
     }
 
