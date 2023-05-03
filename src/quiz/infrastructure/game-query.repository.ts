@@ -1,13 +1,17 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { GameStatus } from '../../common/pgTypes/enum/gameStatus';
 import { EntityNotFoundException } from '../../common/exceptions/domain.exceptions/entity-not-found.exception';
-import { InvalidValueException } from '../../common/exceptions/domain.exceptions/invalid-value-exception';
+import { Game } from '../application/entities/game';
 
 @Injectable()
 export class GameQueryRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(Game)
+    private gameRepository: Repository<Game>,
+  ) {}
 
   async getActiveGameIdForUser(currentUserId) {
     const activeGame = await this.dataSource.query(
@@ -24,33 +28,43 @@ export class GameQueryRepository {
     return activeGame[0].id;
   }
 
-  async getGameData(gameId) {
-    const sql = `
-        SELECT 
-           id, 
-           first_player_id AS "firstPlayerId",
-           first_player_score AS "firstPlayerScore",
-           second_player_id AS "secondPlayerId",
-           second_player_score AS "secondPlayerScore",
-           status,
-           pair_created_date AS "pairCreatedDate",
-           start_game_date AS "startGameDate",
-           finish_game_date AS "finishGameDate"
-        FROM game 
-        WHERE id = $1`;
+  async getGameData(gameId): Promise<Game | never> {
+    const game: Game = await this.gameRepository.findOneBy({ id: gameId });
 
-    let gameData;
-    try {
-      gameData = await this.dataSource.query(sql, [gameId]);
-    } catch (e) {
-      throw new InvalidValueException('gameId is invalid', 'gameId');
-    }
-
-    if (gameData.length === 0) {
+    if (game === null) {
       throw new EntityNotFoundException(`There is no game with id: ${gameId}`);
     }
+    return game;
 
-    return gameData[0];
+    ///
+    // const sql = `
+    //     SELECT
+    //        id,
+    //        first_player_id AS "firstPlayerId",
+    //        first_player_score AS "firstPlayerScore",
+    //        second_player_id AS "secondPlayerId",
+    //        second_player_score AS "secondPlayerScore",
+    //        status,
+    //        pair_created_date AS "pairCreatedDate",
+    //        start_game_date AS "startGameDate",
+    //        finish_game_date AS "finishGameDate"
+    //     FROM game
+    //     WHERE id = $1`;
+    //
+    // const gameData = await this.dataSource.query(sql, [gameId]);
+
+    // let gameData;
+    // try {
+    //   gameData = await this.dataSource.query(sql, [gameId]);
+    // } catch (e) {
+    //   throw new InvalidValueException('gameId is invalid', 'gameId');
+    // }
+
+    // if (gameData.length === 0) {
+    //   throw new EntityNotFoundException(`There is no game with id: ${gameId}`);
+    // }
+    //
+    // return gameData[0];
   }
 
   async getUserAnswers(gameId, userId): Promise<[] | null> {

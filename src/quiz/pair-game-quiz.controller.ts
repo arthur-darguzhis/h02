@@ -32,11 +32,11 @@ export class PairGameQuizController {
   ) {
     return this.queryBus.execute(
       new GetUserGamesHistoryListQuery(
+        currentUserId,
         dto.sortBy,
         dto.sortDirection,
         dto.pageSize,
         dto.pageNumber,
-        currentUserId,
       ),
     );
   }

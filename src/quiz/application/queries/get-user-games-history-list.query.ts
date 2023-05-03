@@ -6,11 +6,11 @@ import { GameQueryRepository } from '../../infrastructure/game-query.repository'
 
 export class GetUserGamesHistoryListQuery {
   constructor(
+    public readonly currentUserId: string,
     public readonly sortBy: string = 'pairCreatedDate',
     public readonly sortDirection: string = 'desc',
     public readonly pageSize: number = 10,
     public readonly pageNumber: number = 1,
-    public readonly currentUserId: string,
   ) {}
 }
 
@@ -49,8 +49,8 @@ export class GetUserGamesHistoryListHandler implements IQueryHandler {
       ],
     );
 
-    const result = gamesIdList.map(
-      async (id) => await this.prepareGameInfo(id),
+    const result = await Promise.all(
+      gamesIdList.map(async (row) => await this.prepareGameInfo(row.id)),
     );
     return {
       pagesCount: Math.ceil(count / query.pageSize),
