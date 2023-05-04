@@ -30,7 +30,9 @@ export class PairGameQuizController {
   @Get('users/top')
   @HttpCode(HttpStatus.OK)
   async getTopStatistic(@Query() dto: GetUsersTopListDto) {
-    return this.queryBus.execute(new GetUsersTopListQuery(dto.sort));
+    return this.queryBus.execute(
+      new GetUsersTopListQuery(dto.sort, dto.pageSize, dto.pageNumber),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
