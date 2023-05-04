@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard';
@@ -19,15 +20,23 @@ import { GetResultOfAnswerQuery } from './application/queries/get-result-of-answ
 import { GetUserGamesHistoryListDto } from './api/dto/get-user-games-history-list.dto';
 import { GetUserGamesHistoryListQuery } from './application/queries/get-user-games-history-list.query';
 import { GetUserStatisticQuery } from './application/queries/get-user-statistic.query';
+import { GetUsersTopListDto } from './api/dto/get-users-top-list.dto';
+import { GetUsersTopListQuery } from './application/queries/get-users-top-list.query';
 
 @UseGuards(JwtAuthGuard)
 @Controller('pair-game-quiz')
 export class PairGameQuizController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
+  @Get('users/top')
+  @HttpCode(HttpStatus.OK)
+  async getTopStatistic(@Query() dto: GetUsersTopListDto) {
+    return this.queryBus.execute(new GetUsersTopListQuery(dto.sort));
+  }
+
   @Get('users/my-statistic')
   @HttpCode(HttpStatus.OK)
-  async getData(@CurrentUserId() currentUserId: string) {
+  async getStatisticForUser(@CurrentUserId() currentUserId: string) {
     return this.queryBus.execute(new GetUserStatisticQuery(currentUserId));
   }
 

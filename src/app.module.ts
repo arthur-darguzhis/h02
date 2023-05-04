@@ -120,6 +120,7 @@ import { GameQueryRepository } from './quiz/infrastructure/game-query.repository
 import { GetUserStatisticHandler } from './quiz/application/queries/get-user-statistic.query';
 import { GamePlayerStatistic } from './quiz/application/entities/game-players-statistic';
 import { GamePlayersStatisticRepository } from './quiz/infrastructure/game-players-statistic.repository';
+import { GetUsersTopListHandler } from './quiz/application/queries/get-users-top-list.query';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -140,6 +141,7 @@ const pairGameQuizQuery = [
   GetResultOfAnswerHandler,
   GetUserGamesHistoryListHandler,
   GetUserStatisticHandler,
+  GetUsersTopListHandler,
 ];
 
 const questionUseCase = [
