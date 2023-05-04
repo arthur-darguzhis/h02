@@ -34,7 +34,9 @@ export class GetUsersTopListHandler implements IQueryHandler {
     const sortByConditions = this.prepareSortConditions(query.sort);
 
     let count = await this.dataSource.query(
-      `SELECT COUNT(*) as count FROM game_players_statistic GROUP BY user_id`,
+      `SELECT COUNT(DISTINCT user_id) AS count
+       FROM game_players_statistic
+      `,
     );
     count = Number(count[0].count);
     const offset = (query.pageNumber - 1) * query.pageSize;
