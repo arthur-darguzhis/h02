@@ -41,13 +41,14 @@ export class GetUsersTopListHandler implements IQueryHandler {
 
     const top = await this.dataSource.query(
       `
-        SELECT SUM(score)::int                              AS "sumScore",
-               ROUND(AVG(score), 2)::float                  AS "avgScores",
-               COUNT(game_id)::int                          AS "gamesCount",
-               COUNT(*) FILTER (WHERE result = 'Win')::int  AS "winsCount",
-               COUNT(*) FILTER (WHERE result = 'Lose')::int AS "lossesCount",
-               COUNT(*) FILTER (WHERE result = 'Draw')::int AS "drawsCount",
-               (SELECT jsonb_build_object('id', users.id, 'login', users.login) FROM users WHERE users.id = game_players_statistic.user_id) as player
+        SELECT
+            COUNT(game_id)::int                          AS "gamesCount",
+            COUNT(*) FILTER (WHERE result = 'Win')::int  AS "winsCount",
+            COUNT(*) FILTER (WHERE result = 'Lose')::int AS "lossesCount",
+            COUNT(*) FILTER (WHERE result = 'Draw')::int AS "drawsCount",
+            SUM(score)::int                              AS "sumScore",
+            ROUND(AVG(score), 2)::float                  AS "avgScores",
+            (SELECT jsonb_build_object('id', users.id, 'login', users.login) FROM users WHERE users.id = game_players_statistic.user_id) as player
         FROM game_players_statistic
           GROUP BY user_id
           ORDER BY ${sortByConditions}
