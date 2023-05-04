@@ -16,6 +16,10 @@ export class GameRepository {
     return await this.gameRepository.save(game);
   }
 
+  async findById(gameId) {
+    return await this.gameRepository.findOneBy({ id: gameId });
+  }
+
   async findOpenedGame(): Promise<Game | null> {
     return await this.gameRepository.findOneBy({
       status: GameStatus.PendingSecondPlayer,

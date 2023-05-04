@@ -51,10 +51,36 @@ export class SetAnswerUseCase implements ICommandHandler {
     }
     await this.gameRepository.save(activeGame);
 
-    const areAllQuestionsAnswered =
+    const howManyQuestionsLeft =
+      await this.gameProgressRepository.getCountNotAnsweredQuestions(
+        activeGame.id,
+        command.currentUserId,
+      );
+
+    if (howManyQuestionsLeft === 0) {
+      setTimeout(async () => {
+        const opponentId = isCurrentUserFirstPlayer
+          ? activeGame.secondPlayerId
+          : activeGame.firstPlayerId;
+        const gameAfter10sec = await this.gameRepository.findById(
+          activeGame.id,
+        );
+        if (gameAfter10sec.finishGameDate !== null) {
+          return;
+        }
+        await this.gameProgressRepository.abortNotAnsweredQuestions(
+          activeGame.id,
+          opponentId,
+        );
+
+        this.finishGame(gameAfter10sec, opponentId);
+      }, 10000);
+    }
+
+    const bothPlayersAnsweredAllQuestions =
       await this.gameProgressRepository.areAllQuestionsAnswered(activeGame.id);
 
-    if (areAllQuestionsAnswered) {
+    if (bothPlayersAnsweredAllQuestions) {
       await this.finishGame(activeGame, command.currentUserId);
     }
 

@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   Index,
+  JoinColumn,
 } from 'typeorm';
 import { Game } from './game';
 import { User } from '../../../users/application/entities/user';
@@ -28,8 +29,10 @@ export class GamePlayerStatistic {
   result: string;
 
   @ManyToOne(() => Game)
+  @JoinColumn({ name: 'game_id' })
   game: Game;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }
