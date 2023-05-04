@@ -23,7 +23,6 @@ import { GetUserStatisticQuery } from './application/queries/get-user-statistic.
 import { GetUsersTopListDto } from './api/dto/get-users-top-list.dto';
 import { GetUsersTopListQuery } from './application/queries/get-users-top-list.query';
 
-@UseGuards(JwtAuthGuard)
 @Controller('pair-game-quiz')
 export class PairGameQuizController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
@@ -34,12 +33,14 @@ export class PairGameQuizController {
     return this.queryBus.execute(new GetUsersTopListQuery(dto.sort));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('users/my-statistic')
   @HttpCode(HttpStatus.OK)
   async getStatisticForUser(@CurrentUserId() currentUserId: string) {
     return this.queryBus.execute(new GetUserStatisticQuery(currentUserId));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('pairs/my')
   @HttpCode(HttpStatus.OK)
   async returnGamesHistoryListForUser(
@@ -57,12 +58,14 @@ export class PairGameQuizController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('pairs/my-current')
   @HttpCode(HttpStatus.OK)
   async returnCurrentGame(@CurrentUserId() currentUserId: string) {
     return await this.queryBus.execute(new GetGamePairQuizQuery(currentUserId));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('pairs/:gameId')
   @HttpCode(HttpStatus.OK)
   async returnGameById(
@@ -74,6 +77,7 @@ export class PairGameQuizController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('pairs/connection')
   @HttpCode(HttpStatus.OK)
   async connection(@CurrentUserId() currentUserId: string) {
@@ -86,6 +90,7 @@ export class PairGameQuizController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('pairs/my-current/answers')
   @HttpCode(HttpStatus.OK)
   async sendAnswer(

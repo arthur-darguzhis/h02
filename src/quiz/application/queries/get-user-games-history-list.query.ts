@@ -52,6 +52,7 @@ export class GetUserGamesHistoryListHandler implements IQueryHandler {
     const result = await Promise.all(
       gamesIdList.map(async (row) => await this.prepareGameInfo(row.id)),
     );
+
     return {
       pagesCount: Math.ceil(count / query.pageSize),
       page: query.pageNumber,
