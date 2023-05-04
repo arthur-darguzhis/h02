@@ -6,9 +6,8 @@ import { Game } from '../entities/game';
 import { SetAnswerCommand } from '../use-cases/set-answer.use-case';
 import { CreateQuestionCommand } from '../use-cases/create-question.use-case';
 import { SetGamePairCommand } from '../use-cases/pair-game-quiz.use-case';
-import { GetUserGamesHistoryListQuery } from './get-user-games-history-list.query';
 import { wait } from '../../../testing/wait';
-import { GameStatus } from '../../../common/pgTypes/enum/gameStatus';
+import { GetUserStatisticQuery } from './get-user-statistic.query';
 
 describe('Set publish status to quiz question', () => {
   let given: Given;
@@ -42,39 +41,19 @@ describe('Set publish status to quiz question', () => {
     await given.closeApp();
   });
 
-  it(`Get games history for firstUser`, async () => {
-    const data = await queryBus.execute(
-      new GetUserGamesHistoryListQuery(firstUser.id),
+  it(`Get games statistic for firstUser`, async () => {
+    const statistic = await queryBus.execute(
+      new GetUserStatisticQuery(firstUser.id),
     );
 
-    expect(data.items.length).toBe(5);
-    expect(data.items[0].status).toBe(GameStatus.Active);
-    expect(data.items[4].status).toBe(GameStatus.Finished);
-  });
-
-  it(`Check order`, async () => {
-    const data = await queryBus.execute(
-      new GetUserGamesHistoryListQuery(firstUser.id, 'pairCreatedDate', 'asc'),
-    );
-
-    expect(data.items.length).toBe(5);
-    expect(data.items[0].status).toBe(GameStatus.Finished);
-    expect(data.items[4].status).toBe(GameStatus.Active);
-  });
-
-  it(`Check that pagination works`, async () => {
-    const data = await queryBus.execute(
-      new GetUserGamesHistoryListQuery(
-        firstUser.id,
-        'pairCreatedDate',
-        'asc',
-        2,
-        3,
-      ),
-    );
-
-    expect(data.items.length).toBe(1);
-    expect(data.items[0].status).toBe(GameStatus.Active);
+    expect(statistic).toEqual({
+      sumScore: 11,
+      avgScores: 2.75,
+      gamesCount: 4,
+      winsCount: 1,
+      lossesCount: 1,
+      drawsCount: 2,
+    });
   });
 
   async function prepareData() {

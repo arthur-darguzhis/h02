@@ -6,6 +6,9 @@ import { Game } from '../entities/game';
 import { AnswerStatus } from '../../../common/pgTypes/enum/answerStatus';
 import { QuizQuestionRepository } from '../../infrastructure/quiz-question.repository';
 import { GameStatus } from '../../../common/pgTypes/enum/gameStatus';
+import { GamePlayerStatistic } from '../entities/game-players-statistic';
+import { GameResult } from '../../../common/pgTypes/enum/gameResult';
+import { GamePlayersStatisticRepository } from '../../infrastructure/game-players-statistic.repository';
 
 export class SetAnswerCommand {
   constructor(
@@ -20,6 +23,7 @@ export class SetAnswerUseCase implements ICommandHandler {
     private gameRepository: GameRepository,
     private gameProgressRepository: GameProgressRepository,
     private quizQuestionRepository: QuizQuestionRepository,
+    private gamePlayersStatisticRepository: GamePlayersStatisticRepository,
   ) {}
   async execute(command: SetAnswerCommand) {
     const activeGame = await this.gameRepository.getActiveGameForUser(
@@ -78,5 +82,36 @@ export class SetAnswerUseCase implements ICommandHandler {
     }
     game.status = GameStatus.Finished;
     await this.gameRepository.save(game);
+    await this.addStatistic(game);
+  }
+
+  async addStatistic(game: Game) {
+    const firstPlayerStatistic = new GamePlayerStatistic();
+    firstPlayerStatistic.gameId = game.id;
+    firstPlayerStatistic.userId = game.firstPlayerId;
+    firstPlayerStatistic.score = game.firstPlayerScore;
+
+    const secondPlayerStatistic = new GamePlayerStatistic();
+    secondPlayerStatistic.gameId = game.id;
+    secondPlayerStatistic.userId = game.secondPlayerId;
+    secondPlayerStatistic.score = game.secondPlayerScore;
+
+    if (firstPlayerStatistic.score === secondPlayerStatistic.score) {
+      firstPlayerStatistic.result = GameResult.Draw;
+      secondPlayerStatistic.result = GameResult.Draw;
+    }
+
+    if (firstPlayerStatistic.score < secondPlayerStatistic.score) {
+      firstPlayerStatistic.result = GameResult.Lose;
+      secondPlayerStatistic.result = GameResult.Win;
+    }
+
+    if (firstPlayerStatistic.score > secondPlayerStatistic.score) {
+      firstPlayerStatistic.result = GameResult.Win;
+      secondPlayerStatistic.result = GameResult.Lose;
+    }
+
+    await this.gamePlayersStatisticRepository.save(firstPlayerStatistic);
+    await this.gamePlayersStatisticRepository.save(secondPlayerStatistic);
   }
 }

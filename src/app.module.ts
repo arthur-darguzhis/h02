@@ -117,6 +117,9 @@ import { GetResultOfAnswerHandler } from './quiz/application/queries/get-result-
 import { GetGamePairQuizHandler } from './quiz/application/queries/get-game-pair-quiz.query';
 import { GetUserGamesHistoryListHandler } from './quiz/application/queries/get-user-games-history-list.query';
 import { GameQueryRepository } from './quiz/infrastructure/game-query.repository';
+import { GetUserStatisticHandler } from './quiz/application/queries/get-user-statistic.query';
+import { GamePlayerStatistic } from './quiz/application/entities/game-players-statistic';
+import { GamePlayersStatisticRepository } from './quiz/infrastructure/game-players-statistic.repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -136,6 +139,7 @@ const pairGameQuizQuery = [
   GetGamePairQuizHandler,
   GetResultOfAnswerHandler,
   GetUserGamesHistoryListHandler,
+  GetUserStatisticHandler,
 ];
 
 const questionUseCase = [
@@ -234,6 +238,7 @@ const postsQueries = [
       QuizQuestion,
       Game,
       GameProgress,
+      GamePlayerStatistic,
     ]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
@@ -289,6 +294,7 @@ const postsQueries = [
     GameRepository,
     GameProgressRepository,
     GameQueryRepository,
+    GamePlayersStatisticRepository,
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,
