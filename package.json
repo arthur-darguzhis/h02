@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "ngrok:dev": "ngrok http 3000"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -61,6 +62,7 @@
     "@types/node": "18.11.18",
     "@types/nodemailer": "^6.4.7",
     "@types/passport-local": "^1.0.35",
+    "ngrok": "^4.3.3",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
