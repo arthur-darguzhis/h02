@@ -122,6 +122,8 @@ import { GamePlayerStatistic } from './quiz/application/entities/game-players-st
 import { GamePlayersStatisticRepository } from './quiz/infrastructure/game-players-statistic.repository';
 import { GetUsersTopListHandler } from './quiz/application/queries/get-users-top-list.query';
 import { Image } from './images/application/entity/image';
+import { UploadWallpaperForBlogUseCase } from './images/application/use-cases/upload-wallpaper-for-blog';
+import { ImagesRepository } from './images/infrastructure/images-repository';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -144,6 +146,8 @@ const pairGameQuizQuery = [
   GetUserStatisticHandler,
   GetUsersTopListHandler,
 ];
+
+const imagesUseCase = [UploadWallpaperForBlogUseCase];
 
 const questionUseCase = [
   CreateQuestionUseCase,
@@ -299,6 +303,7 @@ const postsQueries = [
     GameProgressRepository,
     GameQueryRepository,
     GamePlayersStatisticRepository,
+    ImagesRepository,
     BasicStrategy,
     LocalStrategy,
     JwtStrategy,
@@ -319,6 +324,7 @@ const postsQueries = [
     ...questionsQueries,
     ...pairGameQuizUseCase,
     ...pairGameQuizQuery,
+    ...imagesUseCase,
   ],
 })
 export class AppModule {}
