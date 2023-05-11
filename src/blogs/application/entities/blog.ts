@@ -6,10 +6,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { User } from '../../../users/application/entities/user';
 import { BlogUserBan } from './blog-user-ban';
 import { Post } from '../../../posts/application/entities/post';
+import { Image } from '../../../images/application/entity/image';
 
 @Entity({ name: 'blogs' })
 export class Blog {
@@ -53,4 +55,12 @@ export class Blog {
 
   @OneToMany(() => Post, (post) => post.blog)
   posts: Post[];
+
+  @OneToOne(() => Image)
+  @Column('uuid', { name: 'wallpaper', nullable: true })
+  wallpaper: Image;
+
+  @OneToOne(() => Image)
+  @Column('uuid', { name: 'main_image', nullable: true })
+  mainImage: Image;
 }
