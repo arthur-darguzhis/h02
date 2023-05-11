@@ -121,6 +121,7 @@ import { GetUserStatisticHandler } from './quiz/application/queries/get-user-sta
 import { GamePlayerStatistic } from './quiz/application/entities/game-players-statistic';
 import { GamePlayersStatisticRepository } from './quiz/infrastructure/game-players-statistic.repository';
 import { GetUsersTopListHandler } from './quiz/application/queries/get-users-top-list.query';
+import { Image } from './images/application/entity/image';
 
 //TODO разбивать для других будущих модулей список их useCases.
 const userUseCases = [
@@ -241,6 +242,7 @@ const postsQueries = [
       Game,
       GameProgress,
       GamePlayerStatistic,
+      Image,
     ]),
     ThrottlerModule.forRoot({
       ttl: 10, // Time to live (seconds)
