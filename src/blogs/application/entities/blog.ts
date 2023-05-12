@@ -58,9 +58,9 @@ export class Blog {
 
   @OneToOne(() => Image)
   @Column('uuid', { name: 'wallpaper', nullable: true })
-  wallpaper: Image;
+  wallpaper: string;
 
   @OneToOne(() => Image)
   @Column('uuid', { name: 'main_image', nullable: true })
-  mainImage: Image;
+  mainImage: string;
 }

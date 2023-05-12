@@ -6,10 +6,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -34,12 +37,78 @@ import { BloggerGetCommentsFromCurrentUserBlogsQuery } from '../application/quer
 import { GetListOfBlogsByOwnerQuery } from '../application/queries/get-list-of-blogs-by-owner.query';
 import { GetBlogInfoQuery } from '../../blogs/application/query/get-blog-info.query';
 import { GetPostQuery } from '../../posts/application/query/get-post.query';
+import { Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadWallpaperForBlogCommand } from '../../images/application/use-cases/upload-wallpaper-for-blog';
 
 @Controller('blogger')
 export class BloggerController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @UseGuards(JwtAuthGuard)
+  @Post(':blogId/images/wallpaper')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadBackgroundWallpaper(
+    @Param('blogId') blogId: string,
+    @CurrentUserId() currentUserId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpeg|jpg|png)$/,
+        })
+        .addMaxSizeValidator({ maxSize: 100 * 1000 })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    await this.commandBus.execute(
+      new UploadWallpaperForBlogCommand(file.buffer, blogId, currentUserId),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':blogId/images/main')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadMainImageForBlog(
+    @Param('blogId') blogId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpeg|jpg|png)$/,
+        })
+        .addMaxSizeValidator({ maxSize: 100 * 1000 })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    console.log(file);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':blogId/posts/:postId/images/main')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadMainImageForPost(
+    @Param('blogId') blogId: string,
+    @Param('blogId') postId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpeg|jpg|png)$/,
+        })
+        .addMaxSizeValidator({ maxSize: 100 * 1000 })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    console.log(file);
+  }
+
   @Post('blogs')
   @HttpCode(HttpStatus.CREATED)
   async createBlog(
